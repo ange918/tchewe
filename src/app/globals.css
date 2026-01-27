@@ -1,81 +1,100 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
-:root {
-  --color-black: #0B0B0B;
-  --color-gold: #C9A24D;
-  --color-gold-light: #E6C77A;
-  --color-grey: #B5B5B5;
+@layer base {
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 600;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2') format('woff2');
+  }
+  
+  @font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvXDXbtM.woff2') format('woff2');
+  }
+
+  :root {
+    --color-black: #0B0B0B;
+    --color-gold: #C9A24D;
+    --color-gold-light: #E6C77A;
+    --color-grey: #B5B5B5;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-black);
+    color: var(--color-grey);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-black);
+  }
+
+  a {
+    transition: color 0.3s ease;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer components {
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  .font-sans {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
 
-body {
-  background-color: var(--color-black);
-  color: var(--color-grey);
-  font-family: 'Inter', system-ui, sans-serif;
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  .text-gold {
+    color: var(--color-gold);
+  }
 
-.font-serif {
-  font-family: 'Playfair Display', Georgia, serif;
-}
+  .text-gold-light {
+    color: var(--color-gold-light);
+  }
 
-.font-sans {
-  font-family: 'Inter', system-ui, sans-serif;
-}
+  .bg-black-primary {
+    background-color: var(--color-black);
+  }
 
-.text-gold {
-  color: var(--color-gold);
-}
+  .border-gold {
+    border-color: var(--color-gold);
+  }
 
-.text-gold-light {
-  color: var(--color-gold-light);
-}
+  .texture-bg {
+    background-image: 
+      linear-gradient(45deg, rgba(201, 162, 77, 0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(201, 162, 77, 0.03) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(201, 162, 77, 0.03) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(201, 162, 77, 0.03) 75%);
+    background-size: 80px 80px;
+    background-position: 0 0, 40px 0, 40px -40px, 0px 40px;
+  }
 
-.bg-black-primary {
-  background-color: var(--color-black);
-}
-
-.border-gold {
-  border-color: var(--color-gold);
-}
-
-.texture-bg {
-  background-image: 
-    linear-gradient(45deg, rgba(201, 162, 77, 0.03) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(201, 162, 77, 0.03) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(201, 162, 77, 0.03) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(201, 162, 77, 0.03) 75%);
-  background-size: 80px 80px;
-  background-position: 0 0, 40px 0, 40px -40px, 0px 40px;
-}
-
-::selection {
-  background-color: var(--color-gold);
-  color: var(--color-black);
-}
-
-a {
-  transition: color 0.3s ease;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-.gold-separator {
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
-  margin: 2rem auto;
+  .gold-separator {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    margin: 2rem auto;
+  }
 }

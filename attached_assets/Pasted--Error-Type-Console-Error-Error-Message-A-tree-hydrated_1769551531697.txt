@@ -1,0 +1,56 @@
+## Error Type
+Console Error
+
+## Error Message
+A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="fr">
+                          <body
+                            className="bg-[#0B0B0B] text-[#B5B5B5] antialiased"
+-                           __processed_862f6808-1e31-42aa-8564-c4063a29d72b__="true"
+-                           __processed_1a044df3-03e9-4e95-add8-c79cd4ff6d9f__="true"
+                          >
+                  ...
+
+
+
+    at body (<anonymous>:null:null)
+    at RootLayout (src/app/layout.tsx:18:7)
+
+## Code Frame
+  16 |   return (
+  17 |     <html lang="fr">
+> 18 |       <body className="bg-[#0B0B0B] text-[#B5B5B5] antialiased">
+     |       ^
+  19 |         <Header />
+  20 |         <main className="pt-16">
+  21 |           {children}
+
+Next.js version: 16.1.5 (Turbopack)

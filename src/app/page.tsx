@@ -1,65 +1,145 @@
-import Image from "next/image";
+"use client";
+
+import { tenues } from "@/data/tenues";
+import { OutfitCard } from "@/components/OutfitCard";
+import { SocialIcons } from "@/components/SocialIcons";
+import { useState } from "react";
+
+function HeroSection() {
+  return (
+    <section className="min-h-[90vh] flex items-center justify-center texture-bg relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0B0B]/50 to-[#0B0B0B]" />
+      <div className="relative z-10 text-center px-6 py-20">
+        <p className="text-[#C9A24D] text-sm tracking-[0.4em] uppercase mb-8">
+          TCHÉ WÊ
+        </p>
+        <h1 className="font-serif text-[#E6C77A] text-6xl md:text-8xl lg:text-9xl tracking-[0.2em] uppercase mb-8">
+          AFFIN
+        </h1>
+        <div className="gold-separator" />
+        <p className="text-[#B5B5B5] text-sm tracking-[0.3em] uppercase mt-8">
+          Présenté par : TCHÉ WÊ
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function AboutSection() {
+  return (
+    <section className="py-32 px-6">
+      <div className="max-w-2xl mx-auto text-center">
+        <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
+          À propos d'AFFIN
+        </h2>
+        <div className="gold-separator" />
+        <div className="mt-12 space-y-6 text-[#B5B5B5] leading-relaxed">
+          <p>
+            AFFIN est une collection née d'un dialogue entre héritage et modernité.
+          </p>
+          <p>
+            Chaque tenue incarne une identité culturelle affirmée, traduite dans un langage contemporain.
+          </p>
+          <p className="italic text-[#C9A24D]">
+            AFFIN ne suit pas les tendances, elle affirme une vision.
+          </p>
+        </div>
+        <div className="gold-separator mt-12" />
+      </div>
+    </section>
+  );
+}
+
+function CollectionSection() {
+  return (
+    <section className="py-24 px-6" id="collection">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
+            Les tenues
+          </h2>
+          <div className="gold-separator" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {tenues.map((tenue) => (
+            <OutfitCard key={tenue.slug} tenue={tenue} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ContactSection() {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("contact@tchewe.com");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy email");
+    }
+  };
+
+  return (
+    <section className="py-32 px-6 border-t border-[#C9A24D]/20" id="contact">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
+            Contact
+          </h2>
+          <div className="gold-separator" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div>
+            <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
+              Téléphone
+            </h3>
+            <p className="text-[#B5B5B5]">+225 07 00 00 00 00</p>
+            <p className="text-[#B5B5B5]">+225 05 00 00 00 00</p>
+          </div>
+          
+          <div>
+            <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
+              Email
+            </h3>
+            <button 
+              onClick={handleCopyEmail}
+              className="text-[#B5B5B5] hover:text-[#E6C77A] transition-colors cursor-pointer"
+            >
+              contact@tchewe.com
+              <span className="block text-xs text-[#C9A24D]/60 mt-1">
+                {copied ? "Copié !" : "Cliquez pour copier"}
+              </span>
+            </button>
+          </div>
+          
+          <div>
+            <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
+              Localisation
+            </h3>
+            <p className="text-[#B5B5B5]">Abidjan — Côte d'Ivoire</p>
+          </div>
+        </div>
+        
+        <div className="mt-16 flex justify-center">
+          <SocialIcons size={24} />
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <HeroSection />
+      <AboutSection />
+      <CollectionSection />
+      <ContactSection />
+    </>
   );
 }

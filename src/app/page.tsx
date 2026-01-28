@@ -76,6 +76,12 @@ function CollectionSection() {
   );
 }
 
+import { 
+  PhoneIcon, 
+  EnvelopeIcon, 
+  MapPinIcon 
+} from "@heroicons/react/24/outline";
+
 function ContactSection() {
   const [copied, setCopied] = useState(false);
   
@@ -100,14 +106,16 @@ function ContactSection() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div>
+          <div className="flex flex-col items-center">
+            <PhoneIcon className="w-6 h-6 text-[#C9A24D] mb-4" />
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
               Service Client
             </h3>
             <p className="text-[#B5B5B5]">+225 07 00 00 00 00</p>
           </div>
           
-          <div>
+          <div className="flex flex-col items-center">
+            <EnvelopeIcon className="w-6 h-6 text-[#C9A24D] mb-4" />
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
               Email Professionnel
             </h3>
@@ -122,7 +130,8 @@ function ContactSection() {
             </button>
           </div>
           
-          <div>
+          <div className="flex flex-col items-center">
+            <MapPinIcon className="w-6 h-6 text-[#C9A24D] mb-4" />
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
               Atelier
             </h3>

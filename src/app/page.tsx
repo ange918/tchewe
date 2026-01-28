@@ -11,14 +11,14 @@ function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0B0B]/50 to-[#0B0B0B]" />
       <div className="relative z-10 text-center px-6 py-20">
         <p className="text-[#C9A24D] text-sm tracking-[0.4em] uppercase mb-8">
-          TCHÉ WÊ
+          LE TCHĒ WÊ
         </p>
         <h1 className="font-serif text-[#E6C77A] text-6xl md:text-8xl lg:text-9xl tracking-[0.2em] uppercase mb-8">
-          AFFIN
+          AFFĪN
         </h1>
         <div className="gold-separator" />
         <p className="text-[#B5B5B5] text-sm tracking-[0.3em] uppercase mt-8">
-          Présenté par : TCHÉ WÊ
+          Présenté par ANDYCHRIS
         </p>
       </div>
     </section>
@@ -28,20 +28,23 @@ function HeroSection() {
 function AboutSection() {
   return (
     <section className="py-32 px-6">
-      <div className="max-w-2xl mx-auto text-center">
+      <div className="max-w-4xl mx-auto text-center">
         <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
-          À propos d'AFFIN
+          Royauté Africaine & Modernité
         </h2>
         <div className="gold-separator" />
-        <div className="mt-12 space-y-6 text-[#B5B5B5] leading-relaxed">
+        <div className="mt-12 space-y-8 text-[#B5B5B5] leading-relaxed text-lg">
           <p>
-            AFFIN est une collection née d'un dialogue entre héritage et modernité.
+            AFFĪN est une collection de costumes artistiques présentée par <span className="text-[#E6C77A]">ANDYCHRIS</span>, célébrant la royauté africaine aux couleurs de nos origines.
           </p>
           <p>
-            Chaque tenue incarne une identité culturelle affirmée, traduite dans un langage contemporain.
+            Notre style incarne l'authenticité dans le luxe. Chaque pièce est conçue avec une fidélité de plus de 50% aux originaux, utilisant des matériaux typiquement africains, respectant les codes couleurs et intégrant des accessoires et symboles sacrés.
           </p>
-          <p className="italic text-[#C9A24D]">
-            AFFIN ne suit pas les tendances, elle affirme une vision.
+          <p>
+            L'objectif est de prouver que notre héritage peut être exploité dans le moderne sans paraître "old school", mais au contraire, être préservant et attachant. Nous voulons impacter le domaine socio-culturel en montrant que l'Afrique peut créer des costumes d'envergure hollywoodienne.
+          </p>
+          <p className="italic text-[#C9A24D] text-xl font-serif">
+            "Le TCHĒ WÊ peut traverser des frontières avec toute sa valeur et son authenticité sans paraître vétuste ou dépassé. Il suffit de savoir l'adapter."
           </p>
         </div>
         <div className="gold-separator mt-12" />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { SocialIcons } from "./SocialIcons";
+import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 
 export function Header() {
   return (
@@ -13,7 +14,16 @@ export function Header() {
         >
           TCHÉ WÊ
         </Link>
-        <SocialIcons />
+        <div className="flex items-center gap-8">
+          <SocialIcons />
+          <div className="h-6 w-px bg-[#C9A24D]/20 hidden md:block" />
+          <button className="text-[#C9A24D] hover:text-[#E6C77A] transition-colors relative">
+            <ShoppingBagIcon className="w-6 h-6" />
+            <span className="absolute -top-1 -right-1 bg-[#C9A24D] text-[#0B0B0B] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              0
+            </span>
+          </button>
+        </div>
       </div>
     </header>
   );

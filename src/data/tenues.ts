@@ -10,14 +10,14 @@ export const tenues: Tenue[] = [
   {
     slug: "ancestrale",
     name: "Ancestrale",
-    image: "/images/tenue-01.jpg",
+    image: "/images/tenue-01.png",
     description: "Une silhouette qui puise dans les racines profondes de notre héritage. Ancestrale célèbre les lignes épurées et la noblesse des formes traditionnelles, réinterprétées avec une sensibilité contemporaine. Chaque pli raconte une histoire transmise de génération en génération.",
     materials: ["Coton tissé à la main du Burkina Faso", "Fil d'or artisanal", "Soie naturelle teinte aux pigments végétaux"]
   },
   {
     slug: "soleil-noir",
     name: "Soleil Noir",
-    image: "/images/tenue-02.jpg",
+    image: "/images/tenue-02.png",
     description: "L'éclat mystérieux d'un astre caché. Soleil Noir joue sur les contrastes, mariant l'obscurité élégante à des éclats dorés subtils. Une pièce pour ceux qui comprennent que la vraie lumière émane de l'intérieur.",
     materials: ["Velours de soie ébène", "Broderies dorées à la main", "Doublure en satin de coton"]
   },

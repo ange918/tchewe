@@ -59,9 +59,12 @@ function CollectionSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
-            Les tenues
+            La Collection
           </h2>
           <div className="gold-separator" />
+          <p className="text-[#B5B5B5] mt-4 max-w-2xl mx-auto">
+            Une trentaine de pièces d'exception où l'authenticité africaine rencontre le luxe contemporain.
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {tenues.map((tenue) => (
@@ -78,7 +81,7 @@ function ContactSection() {
   
   const handleCopyEmail = async () => {
     try {
-      await navigator.clipboard.writeText("contact@tchewe.com");
+      await navigator.clipboard.writeText("contact@affin.com");
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -91,7 +94,7 @@ function ContactSection() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-serif text-[#E6C77A] text-3xl md:text-4xl tracking-[0.1em] uppercase mb-4">
-            Contact
+            Contactez l'Atelier
           </h2>
           <div className="gold-separator" />
         </div>
@@ -99,21 +102,20 @@ function ContactSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
           <div>
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
-              Téléphone
+              Service Client
             </h3>
             <p className="text-[#B5B5B5]">+225 07 00 00 00 00</p>
-            <p className="text-[#B5B5B5]">+225 05 00 00 00 00</p>
           </div>
           
           <div>
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
-              Email
+              Email Professionnel
             </h3>
             <button 
               onClick={handleCopyEmail}
               className="text-[#B5B5B5] hover:text-[#E6C77A] transition-colors cursor-pointer"
             >
-              contact@tchewe.com
+              contact@affin.com
               <span className="block text-xs text-[#C9A24D]/60 mt-1">
                 {copied ? "Copié !" : "Cliquez pour copier"}
               </span>
@@ -122,7 +124,7 @@ function ContactSection() {
           
           <div>
             <h3 className="text-[#C9A24D] text-xs tracking-[0.3em] uppercase mb-4">
-              Localisation
+              Atelier
             </h3>
             <p className="text-[#B5B5B5]">Abidjan — Côte d'Ivoire</p>
           </div>

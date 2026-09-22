@@ -148,28 +148,28 @@ export function SupremeAdmin() {
   return (
     <div className="min-h-screen bg-ink-950 text-white selection:bg-brand-500 selection:text-white">
       {/* Barre supérieure Supreme */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/95 backdrop-blur-md">
+        <div className="mx-auto flex h-auto min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-6 sm:py-0">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 font-black text-ink-950 shadow-md">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 font-black text-ink-950 shadow-md">
               <ShieldIcon className="h-5 w-5" />
             </span>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-base font-extrabold tracking-tight text-white">
+                <span className="text-sm sm:text-base font-extrabold tracking-tight text-white truncate">
                   SUPREME <span className="text-amber-400">CONSOLE</span>
                 </span>
-                <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[0.65rem] font-bold text-amber-300 uppercase tracking-widest">
+                <span className="rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[0.6rem] sm:text-[0.65rem] font-bold text-amber-300 uppercase tracking-widest whitespace-nowrap">
                   Super Admin
                 </span>
               </div>
-              <p className="text-[0.7rem] text-ink-400">
+              <p className="hidden text-[0.7rem] text-ink-400 sm:block">
                 Direction du Programme INNOVA FUND — Contrôle & Décaissement
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             {!isSuperAdmin ? (
               <Button
                 size="sm"
@@ -177,43 +177,43 @@ export function SupremeAdmin() {
                   login('supreme.director@innovafund.org', 'Admin2026!')
                   toast.success('Session Super Admin activée', 'Plein contrôle accordé.')
                 }}
-                className="bg-amber-400 text-ink-950 hover:bg-amber-300 font-bold"
+                className="bg-amber-400 text-ink-950 hover:bg-amber-300 font-bold text-xs py-1.5 px-3"
               >
                 Activer droits Super-Admin
               </Button>
             ) : (
-              <span className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 text-xs text-ink-300 border border-white/10">
+              <span className="hidden md:inline-flex items-center gap-2 rounded-lg bg-white/5 px-2.5 py-1 text-xs text-ink-300 border border-white/10">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Connecté : {user?.email}
+                {user?.email}
               </span>
             )}
             <ButtonLink
               to="/admin/dossiers"
               size="sm"
               variant="secondary"
-              className="bg-white/10 text-white ring-white/20 hover:bg-white/20"
+              className="bg-white/10 text-white ring-white/20 hover:bg-white/20 text-xs py-1.5 px-2.5"
             >
-              Back-office classique
+              Back-office
             </ButtonLink>
             <ButtonLink
               to="/"
               size="sm"
               variant="secondary"
-              className="bg-white/10 text-white ring-white/20 hover:bg-white/20"
+              className="bg-white/10 text-white ring-white/20 hover:bg-white/20 text-xs py-1.5 px-2.5"
             >
-              Portail Public
+              Portail
             </ButtonLink>
           </div>
         </div>
 
-        {/* Navigation par onglets */}
-        <div className="border-t border-white/10 bg-ink-950/60 px-4 sm:px-6">
-          <nav className="mx-auto flex max-w-7xl gap-2 overflow-x-auto py-2">
+        {/* Navigation par onglets - scrollable sur mobile avec scrollbar masquée */}
+        <div className="border-t border-white/10 bg-ink-950/80 px-4 sm:px-6">
+          <nav className="mx-auto flex max-w-7xl gap-1.5 sm:gap-2 overflow-x-auto py-2 scrollbar-none">
             {[
-              { id: 'overview', label: 'Vue Générale & Flux', icon: TrendingUpIcon },
-              { id: 'dossiers', label: `Dossiers & Décisions (${dossiers.length})`, icon: FolderIcon },
-              { id: 'verifications', label: `Vérifications & Déblocages (${proofsList.length})`, icon: ReceiptIcon },
-              { id: 'direct_actions', label: 'Actions d’Urgence & Live', icon: AlertCircleIcon },
+              { id: 'overview', label: 'Vue Générale', fullLabel: 'Vue Générale & Flux', icon: TrendingUpIcon },
+              { id: 'dossiers', label: `Dossiers (${dossiers.length})`, fullLabel: `Dossiers & Décisions (${dossiers.length})`, icon: FolderIcon },
+              { id: 'verifications', label: `Vérifications (${proofsList.length})`, fullLabel: `Vérifications & Déblocages (${proofsList.length})`, icon: ReceiptIcon },
+              { id: 'direct_actions', label: 'Live & Urgence', fullLabel: 'Actions d’Urgence & Live', icon: AlertCircleIcon },
             ].map((t) => {
               const Icon = t.icon
               const active = tab === t.id
@@ -223,14 +223,15 @@ export function SupremeAdmin() {
                   type="button"
                   onClick={() => setTab(t.id as TabType)}
                   className={cn(
-                    'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition whitespace-nowrap',
+                    'flex items-center gap-1.5 sm:gap-2 rounded-xl px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-bold transition whitespace-nowrap shrink-0',
                     active
                       ? 'bg-amber-400 text-ink-950 shadow-md shadow-amber-400/20'
                       : 'text-ink-400 hover:bg-white/5 hover:text-white'
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  {t.label}
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="sm:hidden">{t.label}</span>
+                  <span className="hidden sm:inline">{t.fullLabel}</span>
                 </button>
               )
             })}
@@ -460,8 +461,107 @@ export function SupremeAdmin() {
               </div>
             </div>
 
-            {/* Tableau complet des dossiers */}
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-xl">
+            {/* Vue Mobile (Cartes adaptées tactile) */}
+            <div className="space-y-3 md:hidden">
+              {filteredDossiers.map((dossier) => {
+                const st = STATUS_LABELS[dossier.status]
+                return (
+                  <div
+                    key={dossier.id}
+                    className="rounded-2xl border border-white/10 bg-ink-900/90 p-4 shadow-md space-y-3"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-amber-400">
+                          {dossier.reference}
+                        </span>
+                        {dossier.live && (
+                          <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[0.6rem] font-bold text-emerald-400">
+                            LIVE
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        className={cn(
+                          'inline-block rounded-full px-2 py-0.5 text-[0.65rem] font-bold',
+                          st.tone === 'success' && 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30',
+                          st.tone === 'warning' && 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+                          st.tone === 'brand' && 'bg-brand-500/20 text-brand-300 border border-brand-500/30',
+                          st.tone === 'danger' && 'bg-rose-500/20 text-rose-300 border border-rose-500/30',
+                          st.tone === 'neutral' && 'bg-white/10 text-ink-300'
+                        )}
+                      >
+                        {st.label}
+                      </span>
+                    </div>
+
+                    <div>
+                      <p className="font-bold text-white text-sm leading-snug">{dossier.title}</p>
+                      <p className="text-xs text-ink-400 mt-1">
+                        {dossier.applicant} • {dossier.email}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 rounded-xl bg-white/5 p-2.5 text-xs">
+                      <div>
+                        <span className="text-[0.65rem] text-ink-400 uppercase block font-semibold">Subvention</span>
+                        <span className="font-bold text-white text-sm">{formatEuro(dossier.amount)}</span>
+                      </div>
+                      <div>
+                        <span className="text-[0.65rem] text-ink-400 uppercase block font-semibold">Garantie 30 %</span>
+                        <span className="font-semibold text-sky-400 text-sm">{formatEuro(dossier.amount * GUARANTEE_RATE)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 text-[0.7rem] text-ink-400 border-t border-white/5">
+                      <span>Déposé le {formatDate(dossier.submittedAt)}</span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => setOpenDrawerId(dossier.id)}
+                        className="bg-white/10 text-white ring-white/20 hover:bg-white/20 text-xs py-1.5 px-3 flex-1 justify-center"
+                      >
+                        Consulter détails
+                      </Button>
+                      {dossier.status === 'submitted' && (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => handleDirectApprove(dossier)}
+                            className="bg-emerald-500 text-white hover:bg-emerald-400 text-xs py-1.5 px-3 flex-1 justify-center"
+                          >
+                            Approuver
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => handleDirectReject(dossier)}
+                            className="text-xs py-1.5 px-3"
+                          >
+                            Refuser
+                          </Button>
+                        </>
+                      )}
+                      {dossier.status === 'proofs_submitted' && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleDirectDisburse(dossier)}
+                          className="bg-amber-400 text-ink-950 hover:bg-amber-300 font-bold text-xs py-1.5 px-3 flex-1 justify-center"
+                        >
+                          Décaiser
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Tableau complet des dossiers (Desktop et tablettes) */}
+            <div className="hidden md:block overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-ink-300">
                   <thead className="border-b border-white/10 bg-white/5 text-[0.7rem] uppercase tracking-wider text-ink-400">
@@ -691,18 +791,20 @@ export function SupremeAdmin() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl bg-white/5 p-4 border border-white/10 text-xs text-ink-300 flex items-center justify-between">
+                    <div className="rounded-xl bg-white/5 p-4 border border-white/10 text-xs text-ink-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <span className="text-ink-400">IBAN Porteur :</span>{' '}
-                        <span className="font-mono text-white font-bold">{activeProofDossier.funding?.iban ?? 'Non renseigné'}</span>
+                        <span className="font-mono text-white font-bold break-all">{activeProofDossier.funding?.iban ?? 'Non renseigné'}</span>
                       </div>
-                      <div>
-                        <span className="text-ink-400">Montant Subvention :</span>{' '}
-                        <span className="text-amber-400 font-extrabold">{formatEuro(activeProofDossier.amount)}</span>
-                      </div>
-                      <div>
-                        <span className="text-ink-400">Garantie 30 % :</span>{' '}
-                        <span className="text-sky-400 font-extrabold">{formatEuro(activeProofDossier.amount * GUARANTEE_RATE)}</span>
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <span className="text-ink-400">Subvention :</span>{' '}
+                          <span className="text-amber-400 font-extrabold">{formatEuro(activeProofDossier.amount)}</span>
+                        </div>
+                        <div>
+                          <span className="text-ink-400">Garantie 30 % :</span>{' '}
+                          <span className="text-sky-400 font-extrabold">{formatEuro(activeProofDossier.amount * GUARANTEE_RATE)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>

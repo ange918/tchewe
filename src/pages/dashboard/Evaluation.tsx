@@ -24,7 +24,7 @@ function PhaseIntro({ phase, onStart }: { phase: PhaseNumber; onStart: () => voi
         action={<Badge tone="brand">{definition.day}</Badge>}
       />
       <CardBody className="space-y-6">
-        <dl className="grid grid-cols-3 gap-3">
+        <dl className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { label: 'Questions', value: definition.questions.length },
             { label: 'Durée totale', value: `≈ ${Math.ceil(totalSeconds / 60)} min` },

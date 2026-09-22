@@ -1,7 +1,9 @@
-import { ArrowRight, Banknote, CheckCircle2, ClipboardList, FileCheck2, HeartHandshake, Timer, UserPlus, Wallet } from 'lucide-react'
+import { ArrowRightIcon, BadgeCheckIcon, CheckCircleIcon, ClipboardIcon, DonateIcon, MoneyIcon, TimerIcon, UserPlusIcon, WalletIcon } from '../components/ui/icons'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/Button'
 import { HeroVisual } from '../components/marketing/HeroVisual'
+import { Partners } from '../components/marketing/Partners'
+import { MEDIA } from '../data/media'
 
 const PARTNERS = [
   'Fonds d’Impact',
@@ -13,37 +15,37 @@ const PARTNERS = [
 
 const STEPS = [
   {
-    icon: UserPlus,
+    icon: UserPlusIcon,
     step: '01',
     title: 'Inscription',
     text: 'Créez votre compte et acceptez les conditions du programme : subvention non remboursable, reversement de dividendes aux ONG, garantie de 30 %.',
   },
   {
-    icon: ClipboardList,
+    icon: ClipboardIcon,
     step: '02',
     title: 'Soumission du dossier',
     text: 'Présentez votre projet, le montant sollicité et la durée d’exécution, puis joignez votre pitch deck, business plan et documents d’enregistrement.',
   },
   {
-    icon: Timer,
+    icon: TimerIcon,
     step: '03',
     title: 'QCM — Phase 1 (J0)',
     text: 'Dès la validation de votre dossier par l’administration, 10 questions chronométrées évaluent vos fondamentaux entrepreneuriaux.',
   },
   {
-    icon: Timer,
+    icon: TimerIcon,
     step: '04',
     title: 'QCM — Phases 2 & 3 (J+2, J+4)',
     text: 'Deux sessions supplémentaires s’ouvrent toutes les 48 heures : modèle économique, gestion financière, impact et conformité.',
   },
   {
-    icon: Wallet,
+    icon: WalletIcon,
     step: '05',
     title: 'Dépôt de la garantie de 30 %',
     text: 'Ouvrez votre compte auprès de la banque partenaire, déposez votre apport puis transmettez le reçu et le justificatif de compte.',
   },
   {
-    icon: Banknote,
+    icon: MoneyIcon,
     step: '06',
     title: 'Virement de la subvention',
     text: 'Après vérification des preuves par l’administration, l’ordre de virement est émis vers votre compte.',
@@ -52,17 +54,17 @@ const STEPS = [
 
 const COMMITMENTS = [
   {
-    icon: CheckCircle2,
+    icon: CheckCircleIcon,
     title: 'Subvention non remboursable',
     text: 'Les fonds accordés n’ont pas vocation à être restitués dès lors que les conditions du programme sont respectées et que les dépenses restent traçables.',
   },
   {
-    icon: HeartHandshake,
+    icon: DonateIcon,
     title: 'Reversement aux ONG partenaires',
     text: 'Chaque lauréat s’engage à reverser une part de ses dividendes aux ONG partenaires du programme, afin d’alimenter les éditions suivantes.',
   },
   {
-    icon: FileCheck2,
+    icon: BadgeCheckIcon,
     title: 'Apport de garantie de 30 %',
     text: 'Un apport équivalent à 30 % du montant sollicité est déposé sur le compte partenaire avant le virement, comme preuve d’engagement du porteur.',
   },
@@ -82,9 +84,10 @@ export function Landing() {
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:pt-20 lg:pb-24">
           <div className="animate-[var(--animate-fade-up)]">
-            <Badge className="px-3.5 py-1.5 text-[0.7rem] tracking-wide uppercase sm:text-xs">
-              🌍 Programme d’Appui au Financement — Édition 2026
-            </Badge>
+            <p className="flex items-center gap-2.5 text-xs font-extrabold tracking-[0.16em] text-brand-600 uppercase sm:text-[0.78rem]">
+              <span aria-hidden>🌍</span>
+              Programme d’Appui au Financement — Édition 2026
+            </p>
 
             <h1 className="mt-6 text-[2.6rem] leading-[0.95] text-brand-600 sm:text-6xl lg:text-[4.1rem]">
               Obtenez jusqu’à 10 000 € pour financer votre projet à fort impact.
@@ -99,7 +102,7 @@ export function Landing() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink to="/auth/register" size="lg" className="sm:w-auto">
                 Présenter mon projet
-                <ArrowRight className="h-4 w-4" aria-hidden />
+                <ArrowRightIcon className="h-4 w-4" aria-hidden />
               </ButtonLink>
               <ButtonLink to="/#processus" size="lg" variant="secondary">
                 Découvrir le processus
@@ -180,11 +183,13 @@ export function Landing() {
           <div className="mt-10">
             <ButtonLink to="/auth/register" size="lg">
               Démarrer mon inscription
-              <ArrowRight className="h-4 w-4" aria-hidden />
+              <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
           </div>
         </div>
       </section>
+
+      <Partners />
 
       {/* ---------------------------------------------------------- Engagements */}
       <section className="bg-ink-50/70">
@@ -217,8 +222,16 @@ export function Landing() {
       {/* --------------------------------------------------------- CTA de sortie */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <div className="relative overflow-hidden rounded-3xl bg-brand-600 px-6 py-14 text-center sm:px-12 lg:py-20">
-            <div className="grid-motif absolute inset-0 opacity-30" aria-hidden />
+          <div className="relative overflow-hidden rounded-3xl bg-brand-800 px-6 py-16 text-center sm:px-12 lg:py-24">
+            <img
+              src={MEDIA.ctaBand}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-ink-950/45" />
+            <div className="grid-motif absolute inset-0 opacity-20" aria-hidden />
             <div className="relative mx-auto max-w-2xl">
               <h2 className="text-3xl leading-[1.05] text-white sm:text-4xl lg:text-5xl">
                 Soyez le moteur de ce qui vient ensuite.
@@ -228,13 +241,12 @@ export function Landing() {
                 minutes, l’évaluation démarre dès la validation de votre dossier.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <ButtonLink to="/auth/register" size="lg" variant="secondary" pill>
+                <ButtonLink to="/auth/register" size="lg" variant="secondary">
                   Présenter mon projet
                 </ButtonLink>
                 <ButtonLink
                   to="/a-propos"
                   size="lg"
-                  pill
                   className="bg-white/10 text-white ring-1 ring-inset ring-white/25 hover:bg-white/20"
                 >
                   En savoir plus

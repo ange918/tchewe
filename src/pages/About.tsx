@@ -2,6 +2,7 @@ import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/Button'
 import { Arch } from '../components/ui/Card'
 import { LogoMark } from '../components/ui/Logo'
+import { MEDIA, MEDIA_ALT } from '../data/media'
 
 const ELIGIBILITY = [
   'Porteur majeur, résidant dans l’un des pays couverts par l’édition 2026.',
@@ -99,11 +100,19 @@ export function About() {
           </div>
 
           <div className="mt-12 lg:mt-0">
-            <Arch className="relative aspect-4/3 bg-brand-600">
-              <div className="absolute inset-0 bg-linear-to-br from-brand-500 to-brand-800" />
-              <div className="grid-motif absolute inset-0 opacity-35" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <LogoMark className="h-28 w-28 text-white/80" />
+            <Arch className="relative aspect-4/3 bg-brand-800">
+              <img
+                src={MEDIA.aboutArch}
+                alt={MEDIA_ALT.aboutArch}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,7,0.94)_0%,rgba(5,5,7,0.6)_20%,rgba(5,5,7,0.12)_42%,transparent_62%)]" />
+              <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-6">
+                <LogoMark className="h-9 w-9 text-white" />
+                <p className="text-sm leading-snug font-extrabold tracking-[-0.01em] text-white">
+                  Édition 2026 — projets à fort impact social et environnemental
+                </p>
               </div>
             </Arch>
           </div>

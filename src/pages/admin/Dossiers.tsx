@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Search } from 'lucide-react'
+import { SearchIcon } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
 import { Input } from '../../components/ui/Field'
 import { DossierDrawer } from '../../components/admin/DossierDrawer'
@@ -92,7 +92,7 @@ export function Dossiers() {
         </div>
 
         <div className="relative w-full sm:w-72">
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden />
+          <SearchIcon className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-ink-400" aria-hidden />
           <Input
             placeholder="Rechercher un porteur, un projet…"
             value={query}

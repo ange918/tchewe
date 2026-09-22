@@ -1,4 +1,4 @@
-import { FileWarning } from 'lucide-react'
+import { FileBlankIcon } from '../ui/icons'
 import { cn, formatBytes } from '../../lib/utils'
 import { getFileUrl, type FileMeta } from '../../lib/fileVault'
 
@@ -20,7 +20,7 @@ export function DocumentViewer({ file, className }: { file: FileMeta; className?
           className,
         )}
       >
-        <FileWarning className="h-6 w-6 text-ink-400" aria-hidden />
+        <FileBlankIcon className="h-6 w-6 text-ink-400" aria-hidden />
         <p className="text-sm font-bold text-ink-700">{file.name}</p>
         <p className="max-w-xs text-xs leading-relaxed text-ink-500">
           Aperçu indisponible : le fichier n’a pas été téléversé dans cette session de

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, CheckCircle2, Clock3, RotateCcw, Timer, TriangleAlert } from 'lucide-react'
+import { AlertIcon, ArrowRightIcon, CheckCircleIcon, ClockIcon, ResetIcon, TimerIcon } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
@@ -43,19 +43,19 @@ function PhaseIntro({ phase, onStart }: { phase: PhaseNumber; onStart: () => voi
 
         <ul className="space-y-2 text-sm leading-relaxed text-ink-600">
           <li className="flex gap-2.5">
-            <Timer className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
+            <TimerIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
             Chaque question est chronométrée de 5 à 10 secondes. Le passage à la suivante est
             automatique à la fin du temps imparti.
           </li>
           <li className="flex gap-2.5">
-            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden />
+            <AlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden />
             La session se déroule d’une traite : ne quittez pas la page avant la dernière question.
           </li>
         </ul>
 
         <Button size="lg" onClick={onStart}>
           Démarrer la phase {phase}
-          <ArrowRight className="h-4 w-4" aria-hidden />
+          <ArrowRightIcon className="h-4 w-4" aria-hidden />
         </Button>
       </CardBody>
     </Card>
@@ -86,9 +86,9 @@ function PhaseResult({
           }`}
         >
           {passed ? (
-            <CheckCircle2 className="h-7 w-7" aria-hidden />
+            <CheckCircleIcon className="h-7 w-7" aria-hidden />
           ) : (
-            <TriangleAlert className="h-7 w-7" aria-hidden />
+            <AlertIcon className="h-7 w-7" aria-hidden />
           )}
         </span>
 
@@ -104,7 +104,7 @@ function PhaseResult({
 
         {!passed && (
           <Button size="lg" variant="secondary" onClick={onRetry}>
-            <RotateCcw className="h-4 w-4" aria-hidden />
+            <ResetIcon className="h-4 w-4" aria-hidden />
             Repasser la session
           </Button>
         )}
@@ -172,7 +172,7 @@ export function Evaluation() {
         <Card className="border-emerald-200 bg-emerald-50/50">
           <CardBody className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-              <CheckCircle2 className="h-6 w-6" aria-hidden />
+              <CheckCircleIcon className="h-6 w-6" aria-hidden />
             </span>
             <div className="flex-1">
               <h1 className="text-2xl text-ink-900">Évaluation terminée</h1>
@@ -182,7 +182,7 @@ export function Evaluation() {
             </div>
             <ButtonLink to="/dashboard/funding" size="lg">
               Continuer
-              <ArrowRight className="h-4 w-4" aria-hidden />
+              <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
           </CardBody>
         </Card>
@@ -197,7 +197,7 @@ export function Evaluation() {
       <Card className="border-amber-200 bg-amber-50/60">
         <CardBody className="flex items-start gap-4">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-            <Clock3 className="h-5 w-5" aria-hidden />
+            <ClockIcon className="h-5 w-5" aria-hidden />
           </span>
           <div>
             <h1 className="text-lg text-ink-900">Évaluation non encore ouverte</h1>

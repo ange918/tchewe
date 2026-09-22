@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banknote, CheckCircle2, ExternalLink, PartyPopper, ShieldCheck } from 'lucide-react'
+import { CheckCircleIcon, ExternalLinkIcon, MoneyIcon, PartyIcon, ShieldIcon } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
@@ -65,7 +65,7 @@ function FundingForm({ amount }: { amount: number }) {
           <div className="grid-motif absolute inset-0 opacity-25" aria-hidden />
           <div className="relative">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white ring-1 ring-inset ring-white/25">
-              <PartyPopper className="h-3.5 w-3.5" aria-hidden />
+              <PartyIcon className="h-3.5 w-3.5" aria-hidden />
               Évaluation réussie
             </span>
             <h1 className="mt-5 max-w-2xl text-3xl leading-[1.05] text-white sm:text-4xl">
@@ -84,10 +84,9 @@ function FundingForm({ amount }: { amount: number }) {
                 external
                 size="lg"
                 variant="secondary"
-                pill
               >
                 Ouvrir mon compte bancaire partenaire
-                <ExternalLink className="h-4 w-4" aria-hidden />
+                <ExternalLinkIcon className="h-4 w-4" aria-hidden />
               </ButtonLink>
             </div>
           </div>
@@ -157,7 +156,7 @@ function FundingForm({ amount }: { amount: number }) {
             contrôle de l’usage des fonds.
           </p>
           <Button type="submit" size="lg" loading={submitting}>
-            <ShieldCheck className="h-4 w-4" aria-hidden />
+            <ShieldIcon className="h-4 w-4" aria-hidden />
             Transmettre mes preuves
           </Button>
         </div>
@@ -183,9 +182,9 @@ function FundingStatus() {
             }`}
           >
             {financed ? (
-              <Banknote className="h-6 w-6" aria-hidden />
+              <MoneyIcon className="h-6 w-6" aria-hidden />
             ) : (
-              <ShieldCheck className="h-6 w-6" aria-hidden />
+              <ShieldIcon className="h-6 w-6" aria-hidden />
             )}
           </span>
           <div>
@@ -221,7 +220,7 @@ function FundingStatus() {
                 key={file.id}
                 className="flex items-center gap-3 rounded-xl border border-ink-200 px-3.5 py-2.5"
               >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
                 <span className="truncate text-sm font-semibold text-ink-900">{file.name}</span>
               </li>
             ))}

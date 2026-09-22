@@ -4,7 +4,7 @@ Front-end de la plateforme d’appui au financement INNOVA FUND : landing page p
 espace porteur de projet (soumission, QCM chronométré, dépôt de garantie) et back-office
 d’instruction des dossiers.
 
-**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand**
+**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand · Boxicons**
 
 ## Démarrage
 
@@ -34,10 +34,30 @@ ou en pilule, bandeaux noirs pleine largeur, et une **forme en arche** comme sig
 | `--color-ink-50` → `500` | gris neutres | Fonds, bordures, texte secondaire |
 | `--font-sans` | Plus Jakarta Sans Variable | Titres et corps de texte |
 | `.arch` / `.arch-sm` | `border-radius` elliptique | Visuels en arche |
+| Boutons | `rounded-full` | Tous les boutons sont entièrement arrondis |
 
 Les jetons sont déclarés dans `src/index.css` via le bloc `@theme` de Tailwind v4. La
 police est auto-hébergée (`@fontsource-variable/plus-jakarta-sans`) : aucun appel réseau
 externe au chargement.
+
+### Icônes
+
+Le jeu d'icônes est **Boxicons**, servi par `react-icons/bi`. Les icônes ne sont jamais
+importées directement dans les écrans : `src/components/ui/icons.ts` les réexporte sous
+des noms métier (`ArrowRightIcon`, `ShieldIcon`, `TimerIcon`…). Un changement de
+bibliothèque ne touche donc que ce fichier.
+
+### Visuels
+
+`src/data/media.ts` recense les quatre emplacements visuels de l'interface : arche du
+héros, bande d'appel à l'action, panneau d'authentification et arche de la page à propos.
+Les fichiers livrés sont des **illustrations vectorielles** (`public/images/*.svg`)
+composées dans la palette de la charte.
+
+Pour passer à des photographies : déposer le fichier dans `public/images/`, remplacer le
+chemin dans `src/data/media.ts` et mettre à jour le texte alternatif correspondant. Aucun
+composant n'a besoin d'être modifié — ils lisent tous cette table. Les rapports d'aspect
+attendus sont documentés dans le fichier.
 
 ## Arborescence des routes
 
@@ -105,8 +125,15 @@ L’interface fonctionne de bout en bout **sans backend**. Ce qui en découle :
   qu’un cadre vide.
 - **Jeu de démonstration** — huit dossiers fictifs alimentent le pipeline
   (`src/data/mockDossiers.ts`), auxquels s’ajoute le dossier réellement déposé.
-- **Noms des bailleurs** — intitulés génériques de remplacement, à substituer par les
-  identités réelles du programme.
+- **Partenaires & sponsors** — la section `src/components/marketing/Partners.tsx` liste
+  des intitulés génériques. Pour afficher un partenaire réel, déposer son logo dans
+  `public/images/partners/` et renseigner le champ `logo` de son entrée.
+
+  N'y inscrire qu'une organisation qui **finance ou soutient effectivement** le programme
+  et dont l'autorisation d'usage de la marque a été obtenue : un logo institutionnel
+  affiché sur cette page vaut affirmation de parrainage auprès des candidats.
+- **Visuels** — illustrations vectorielles, à remplacer par les photographies du
+  programme (voir « Visuels » plus haut).
 - **Blocage 48 h** — un bouton « Débloquer maintenant (démo) », explicitement étiqueté,
   permet de parcourir les trois phases sans attendre.
 - **Lien bancaire** — `PARTNER_BANK_URL` dans `src/pages/dashboard/Funding.tsx` pointe

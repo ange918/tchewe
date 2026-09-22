@@ -1,4 +1,4 @@
-import { Lock, PartyPopper } from 'lucide-react'
+import { LockIcon, PartyIcon } from '../ui/icons'
 import { Button } from '../ui/Button'
 import { useDeadline } from '../../hooks/useCountdown'
 import { splitDuration } from '../../lib/utils'
@@ -42,7 +42,7 @@ export function PhaseGate({
 
         <div className="relative">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-bold text-white ring-1 ring-inset ring-white/25">
-            {ready ? <Lock className="h-3.5 w-3.5" aria-hidden /> : <PartyPopper className="h-3.5 w-3.5" aria-hidden />}
+            {ready ? <LockIcon className="h-3.5 w-3.5" aria-hidden /> : <PartyIcon className="h-3.5 w-3.5" aria-hidden />}
             Phase {completedPhase} validée
           </span>
 

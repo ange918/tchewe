@@ -1,13 +1,13 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import { LoaderIcon } from './icons'
 import { cn } from '../../lib/utils'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'dark' | 'danger' | 'success'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-bold tracking-[-0.01em] transition ' +
+  'inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-[-0.01em] transition ' +
   'disabled:pointer-events-none disabled:opacity-50 active:translate-y-px select-none'
 
 const variants: Record<Variant, string> = {
@@ -19,16 +19,16 @@ const variants: Record<Variant, string> = {
   success: 'bg-emerald-600 text-white hover:bg-emerald-700',
 }
 
+// Tous les boutons sont entièrement arrondis : c'est la forme de la charte.
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-3.5 text-sm rounded-[0.5rem]',
-  md: 'h-11 px-5 text-[0.95rem] rounded-button',
-  lg: 'h-13 px-7 text-base rounded-button',
+  sm: 'h-9 px-4 text-sm',
+  md: 'h-11 px-6 text-[0.95rem]',
+  lg: 'h-13 px-8 text-base',
 }
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
   size?: Size
-  pill?: boolean
   loading?: boolean
   full?: boolean
   children?: ReactNode
@@ -37,7 +37,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({
   variant = 'primary',
   size = 'md',
-  pill,
   loading,
   full,
   className,
@@ -51,14 +50,13 @@ export function Button({
         base,
         variants[variant],
         sizes[size],
-        pill && 'rounded-full',
         full && 'w-full',
         className,
       )}
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+      {loading && <LoaderIcon className="h-4 w-4 animate-spin" aria-hidden />}
       {children}
     </button>
   )
@@ -68,7 +66,6 @@ export function ButtonLink({
   to,
   variant = 'primary',
   size = 'md',
-  pill,
   full,
   className,
   children,
@@ -77,7 +74,6 @@ export function ButtonLink({
   to: string
   variant?: Variant
   size?: Size
-  pill?: boolean
   full?: boolean
   className?: string
   children: ReactNode
@@ -87,7 +83,6 @@ export function ButtonLink({
     base,
     variants[variant],
     sizes[size],
-    pill && 'rounded-full',
     full && 'w-full',
     className,
   )

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { ClipboardList, Lock, LogOut, Timer, Wallet } from 'lucide-react'
+import { ClipboardIcon, LockIcon, LogOutIcon, TimerIcon, WalletIcon } from '../ui/icons'
 import { Logo } from '../ui/Logo'
 import { Badge } from '../ui/Badge'
 import { cn } from '../../lib/utils'
@@ -7,9 +7,9 @@ import { useAuth } from '../../store/auth'
 import { STATUS_LABELS, useApplication, type DossierStatus } from '../../store/application'
 
 const STEPS = [
-  { to: '/dashboard/submission', label: 'Mon dossier', icon: ClipboardList },
-  { to: '/dashboard/evaluation', label: 'Évaluation', icon: Timer },
-  { to: '/dashboard/funding', label: 'Financement', icon: Wallet },
+  { to: '/dashboard/submission', label: 'Mon dossier', icon: ClipboardIcon },
+  { to: '/dashboard/evaluation', label: 'Évaluation', icon: TimerIcon },
+  { to: '/dashboard/funding', label: 'Financement', icon: WalletIcon },
 ] as const
 
 /** Une étape n'est accessible que lorsque le dossier a atteint le statut requis. */
@@ -68,10 +68,10 @@ export function DashboardLayout() {
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-lg p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900"
+              className="rounded-full p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900"
               aria-label="Se déconnecter"
             >
-              <LogOut className="h-5 w-5" aria-hidden />
+              <LogOutIcon className="h-5 w-5" aria-hidden />
             </button>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function DashboardLayout() {
                     {unlocked ? (
                       <Icon className="h-4 w-4 shrink-0" aria-hidden />
                     ) : (
-                      <Lock className="h-4 w-4 shrink-0" aria-hidden />
+                      <LockIcon className="h-4 w-4 shrink-0" aria-hidden />
                     )}
                     <span className="whitespace-nowrap">
                       <span className="lg:hidden">{index + 1}. </span>

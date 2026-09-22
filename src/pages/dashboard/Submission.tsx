@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, CircleAlert, Clock3, FileText, Send } from 'lucide-react'
+import { AlertCircleIcon, ArrowRightIcon, ClockIcon, FileIcon, SendIcon } from '../../components/ui/icons'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
 import { Dropzone } from '../../components/ui/Dropzone'
@@ -168,7 +168,7 @@ function SubmissionForm() {
             En envoyant ce dossier, vous confirmez l’exactitude des informations fournies.
           </p>
           <Button type="submit" size="lg" loading={submitting}>
-            <Send className="h-4 w-4" aria-hidden />
+            <SendIcon className="h-4 w-4" aria-hidden />
             Envoyer mon dossier
           </Button>
         </div>
@@ -201,7 +201,7 @@ function DossierRecap() {
         <Card className="border-amber-200 bg-amber-50/60">
           <CardBody className="flex items-start gap-4">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
-              <Clock3 className="h-5 w-5" aria-hidden />
+              <ClockIcon className="h-5 w-5" aria-hidden />
             </span>
             <div>
               <h2 className="text-lg text-ink-900">Dossier en cours d’analyse</h2>
@@ -219,7 +219,7 @@ function DossierRecap() {
         <Card className="border-rose-200 bg-rose-50/60">
           <CardBody className="flex items-start gap-4">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
-              <CircleAlert className="h-5 w-5" aria-hidden />
+              <AlertCircleIcon className="h-5 w-5" aria-hidden />
             </span>
             <div>
               <h2 className="text-lg text-ink-900">Dossier non retenu</h2>
@@ -250,7 +250,7 @@ function DossierRecap() {
                 className="flex items-center gap-3 rounded-xl border border-ink-200 px-3.5 py-2.5"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                  <FileText className="h-4 w-4" aria-hidden />
+                  <FileIcon className="h-4 w-4" aria-hidden />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-ink-900">
@@ -267,7 +267,7 @@ function DossierRecap() {
       {['approved', 'awaiting_next_phase'].includes(status) && (
         <ButtonLink to="/dashboard/evaluation" size="lg">
           Accéder à l’évaluation
-          <ArrowRight className="h-4 w-4" aria-hidden />
+          <ArrowRightIcon className="h-4 w-4" aria-hidden />
         </ButtonLink>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { FileText, Paperclip, Trash2, UploadCloud } from 'lucide-react'
+import { FileIcon, PaperclipIcon, TrashIcon, UploadIcon } from './icons'
 import { cn, formatBytes } from '../../lib/utils'
 import { releaseFile, storeFile, type FileMeta } from '../../lib/fileVault'
 
@@ -97,7 +97,7 @@ export function Dropzone({
         )}
       >
         <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-600/10 text-brand-600">
-          <UploadCloud className="h-5 w-5" aria-hidden />
+          <UploadIcon className="h-5 w-5" aria-hidden />
         </span>
         <span className="text-sm font-bold text-ink-800">
           Déposez vos fichiers ou <span className="text-brand-600">parcourez</span>
@@ -134,9 +134,9 @@ export function Dropzone({
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                 {file.type === 'application/pdf' ? (
-                  <FileText className="h-4 w-4" aria-hidden />
+                  <FileIcon className="h-4 w-4" aria-hidden />
                 ) : (
-                  <Paperclip className="h-4 w-4" aria-hidden />
+                  <PaperclipIcon className="h-4 w-4" aria-hidden />
                 )}
               </span>
               <span className="min-w-0 flex-1">
@@ -147,9 +147,9 @@ export function Dropzone({
                 type="button"
                 onClick={() => remove(file.id)}
                 aria-label={`Retirer ${file.name}`}
-                className="rounded-lg p-2 text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"
+                className="rounded-full p-2 text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"
               >
-                <Trash2 className="h-4 w-4" aria-hidden />
+                <TrashIcon className="h-4 w-4" aria-hidden />
               </button>
             </li>
           ))}

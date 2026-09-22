@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { CheckIcon, CloseIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
 import { Textarea } from '../ui/Field'
@@ -64,9 +64,9 @@ export function DossierDrawer({
             type="button"
             onClick={onClose}
             aria-label="Fermer"
-            className="rounded-lg p-2 text-ink-400 transition hover:bg-ink-100 hover:text-ink-900"
+            className="rounded-full p-2 text-ink-400 transition hover:bg-ink-100 hover:text-ink-900"
           >
-            <X className="h-5 w-5" aria-hidden />
+            <CloseIcon className="h-5 w-5" aria-hidden />
           </button>
         </header>
 
@@ -169,7 +169,7 @@ export function DossierDrawer({
             ) : (
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Button size="lg" onClick={() => onApprove(dossier)} className="flex-1">
-                  <Check className="h-4 w-4" aria-hidden />
+                  <CheckIcon className="h-4 w-4" aria-hidden />
                   Approuver le dossier
                 </Button>
                 <Button size="lg" variant="danger" onClick={() => setRejecting(true)}>

@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Circle, Lock } from 'lucide-react'
+import { ArrowRightIcon, CheckIcon, CircleIcon, LockIcon } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
 import { ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
@@ -101,7 +101,7 @@ export function Overview() {
           action={
             <ButtonLink to={action.to} size="sm">
               {action.label}
-              <ArrowRight className="h-4 w-4" aria-hidden />
+              <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
           }
         />
@@ -123,11 +123,11 @@ export function Overview() {
                     )}
                   >
                     {done ? (
-                      <Check className="h-4 w-4" aria-hidden />
+                      <CheckIcon className="h-4 w-4" aria-hidden />
                     ) : current ? (
-                      <Circle className="h-3 w-3 fill-current" aria-hidden />
+                      <CircleIcon className="h-3 w-3 fill-current" aria-hidden />
                     ) : (
-                      <Lock className="h-3.5 w-3.5" aria-hidden />
+                      <LockIcon className="h-3.5 w-3.5" aria-hidden />
                     )}
                   </span>
                   <span

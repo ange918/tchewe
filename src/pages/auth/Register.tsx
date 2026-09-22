@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldIcon } from '../../components/ui/icons'
 import { AuthLayout } from '../../components/layout/AuthLayout'
 import { Button } from '../../components/ui/Button'
 import { Checkbox, Input } from '../../components/ui/Field'
@@ -184,7 +184,7 @@ export function Register() {
         {/* Composant légal — acceptation explicite et obligatoire */}
         <div className="rounded-2xl border border-ink-200 bg-ink-50/60 p-4">
           <p className="flex items-center gap-2 text-sm font-extrabold text-ink-900">
-            <ShieldCheck className="h-4 w-4 text-brand-600" aria-hidden />
+            <ShieldIcon className="h-4 w-4 text-brand-600" aria-hidden />
             Conditions générales du programme
           </p>
           <ul className="mt-3 space-y-2">

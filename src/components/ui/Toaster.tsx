@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { CheckCircle2, Info, TriangleAlert, X } from 'lucide-react'
+import { AlertIcon, CheckCircleIcon, CloseIcon, InfoIcon } from './icons'
 import { cn } from '../../lib/utils'
 import { useToastStore, type Toast, type ToastTone } from '../../lib/toast'
 
-const tones: Record<ToastTone, { ring: string; icon: typeof Info; color: string }> = {
-  success: { ring: 'ring-emerald-200', icon: CheckCircle2, color: 'text-emerald-600' },
-  error: { ring: 'ring-rose-200', icon: TriangleAlert, color: 'text-rose-600' },
-  info: { ring: 'ring-brand-200', icon: Info, color: 'text-brand-600' },
+const tones: Record<ToastTone, { ring: string; icon: typeof InfoIcon; color: string }> = {
+  success: { ring: 'ring-emerald-200', icon: CheckCircleIcon, color: 'text-emerald-600' },
+  error: { ring: 'ring-rose-200', icon: AlertIcon, color: 'text-rose-600' },
+  info: { ring: 'ring-brand-200', icon: InfoIcon, color: 'text-brand-600' },
 }
 
 function ToastItem({ toast: item }: { toast: Toast }) {
@@ -35,9 +35,9 @@ function ToastItem({ toast: item }: { toast: Toast }) {
         type="button"
         onClick={() => dismiss(item.id)}
         aria-label="Fermer la notification"
-        className="rounded-md p-1 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700"
+        className="rounded-full p-1 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700"
       >
-        <X className="h-4 w-4" aria-hidden />
+        <CloseIcon className="h-4 w-4" aria-hidden />
       </button>
     </div>
   )

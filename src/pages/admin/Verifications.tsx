@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banknote, CheckCircle2, Inbox } from 'lucide-react'
+import { CheckCircleIcon, InboxIcon, MoneyIcon } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
@@ -56,7 +56,7 @@ export function Verifications() {
       <Card>
         <CardBody className="flex flex-col items-center gap-3 py-16 text-center">
           <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-100 text-ink-400">
-            <Inbox className="h-6 w-6" aria-hidden />
+            <InboxIcon className="h-6 w-6" aria-hidden />
           </span>
           <h1 className="text-xl font-extrabold tracking-[-0.02em] text-ink-900">
             Aucune preuve en attente
@@ -158,7 +158,7 @@ export function Verifications() {
                   titulaire du compte est bien le porteur du dossier.
                 </p>
                 <Button size="lg" variant="success" onClick={() => validate(selected)}>
-                  <Banknote className="h-4 w-4" aria-hidden />
+                  <MoneyIcon className="h-4 w-4" aria-hidden />
                   Valider le financement
                 </Button>
               </div>
@@ -168,7 +168,7 @@ export function Verifications() {
       </div>
 
       <p className="flex items-center gap-2 text-xs text-ink-500">
-        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
+        <CheckCircleIcon className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
         La validation émet l’ordre de virement et bascule le dossier dans la colonne « Financés ».
       </p>
     </div>

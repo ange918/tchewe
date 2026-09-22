@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { CloseIcon, MenuIcon } from '../ui/icons'
 import { Logo, LogoMark } from '../ui/Logo'
 import { ButtonLink } from '../ui/Button'
 import { useAuth } from '../../store/auth'
@@ -50,7 +50,7 @@ function Navbar() {
         </ul>
 
         <div className="hidden lg:block">
-          <ButtonLink to={memberLink.to} size="sm" pill>
+          <ButtonLink to={memberLink.to} size="sm">
             {memberLink.label}
           </ButtonLink>
         </div>
@@ -60,9 +60,9 @@ function Navbar() {
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
-          className="rounded-lg p-2 text-ink-700 transition hover:bg-ink-100 lg:hidden"
+          className="rounded-full p-2 text-ink-700 transition hover:bg-ink-100 lg:hidden"
         >
-          {open ? <X className="h-6 w-6" aria-hidden /> : <Menu className="h-6 w-6" aria-hidden />}
+          {open ? <CloseIcon className="h-6 w-6" aria-hidden /> : <MenuIcon className="h-6 w-6" aria-hidden />}
         </button>
       </nav>
 
@@ -82,7 +82,7 @@ function Navbar() {
             ))}
           </ul>
           <div className="mt-3" onClick={() => setOpen(false)}>
-            <ButtonLink to={memberLink.to} full pill>
+            <ButtonLink to={memberLink.to} full>
               {memberLink.label}
             </ButtonLink>
           </div>
@@ -107,6 +107,7 @@ const FOOTER_GROUPS = [
     links: [
       { label: 'Questions fréquentes', to: '/a-propos#faq' },
       { label: 'Espace membre', to: '/auth/login' },
+      { label: 'Partenaires & sponsors', to: '/#partenaires' },
       { label: 'Nos bailleurs', to: '/a-propos#bailleurs' },
     ],
   },

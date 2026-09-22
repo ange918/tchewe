@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="Lever de soleil sur un paysage cultivé, porteurs de projet au premier plan">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#150d52" />
+      <stop offset="30%" stop-color="#4331d6" />
+      <stop offset="58%" stop-color="#9a62ca" />
+      <stop offset="80%" stop-color="#f0a463" />
+      <stop offset="100%" stop-color="#ffd9a2" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff3d8" stop-opacity="1" />
+      <stop offset="36%" stop-color="#ffcd7d" stop-opacity="0.62" />
+      <stop offset="100%" stop-color="#ff9f5a" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#170e58" />
+      <stop offset="100%" stop-color="#070418" />
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#sky)" />
+  <circle cx="742" cy="556" r="330" fill="url(#glow)" />
+  <circle cx="742" cy="556" r="126" fill="#fff2d4" />
+
+  <g fill="#ffffff" opacity="0.2">
+    <rect x="60" y="219" width="312" height="11" rx="5.5" />
+    <rect x="156" y="270" width="204" height="9" rx="4.5" />
+    <rect x="744" y="180" width="288" height="9" rx="4.5" />
+    <rect x="888" y="283" width="204" height="8" rx="4" />
+  </g>
+
+  <path d="M0 602 C 168 562 360 612 552 592 C 768 572 984 616 1200 578 L1200 674 L0 674 Z" fill="#2a1c9c" opacity="0.85" />
+  <path d="M0 628 C 240 596 456 648 696 626 C 912 606 1080 642 1200 622 L1200 674 L0 674 Z" fill="#1c1378" />
+
+  <ellipse cx="742" cy="634" rx="300" ry="45" fill="#ffb066" opacity="0.3" />
+
+  <g fill="#060418">
+    <g transform="translate(790 644) scale(1.0)">
+      <circle cx="0" cy="-232" r="46" />
+      <path d="M0 -190 C-34 -190 -58 -178 -62 -158 L-70 -58 Q-71 -48 -61 -47 L-53 -46 Q-45 -45 -44 -55 L-40 -140 L-38 -74 L-34 0 L-9 0 L-4 -76 L0 -82 L4 -76 L9 0 L34 0 L38 -74 L40 -140 L44 -55 Q45 -45 53 -46 L61 -47 Q71 -48 70 -58 L62 -158 C58 -178 34 -190 0 -190 Z" />
+    </g>
+
+    <g transform="translate(918 648) scale(0.84)">
+      <circle cx="0" cy="-232" r="46" />
+      <path d="M0 -190 C-34 -190 -58 -178 -62 -158 L-70 -58 Q-71 -48 -61 -47 L-53 -46 Q-45 -45 -44 -55 L-40 -140 L-38 -74 L-34 0 L-9 0 L-4 -76 L0 -82 L4 -76 L9 0 L34 0 L38 -74 L40 -140 L44 -55 Q45 -45 53 -46 L61 -47 Q71 -48 70 -58 L62 -158 C58 -178 34 -190 0 -190 Z" />
+    </g>
+
+    <g transform="translate(664 646) scale(0.76)">
+      <circle cx="0" cy="-232" r="46" />
+      <path d="M0 -190 C-34 -190 -58 -178 -62 -158 L-70 -58 Q-71 -48 -61 -47 L-53 -46 Q-45 -45 -44 -55 L-40 -140 L-38 -74 L-34 0 L-9 0 L-4 -76 L0 -82 L4 -76 L9 0 L34 0 L38 -74 L40 -140 L44 -55 Q45 -45 53 -46 L61 -47 Q71 -48 70 -58 L62 -158 C58 -178 34 -190 0 -190 Z" />
+    </g>
+
+  </g>
+
+  <path d="M0 650 C 240 620 480 674 696 652 C 936 630 1056 668 1200 644 L1200 900 L0 900 Z" fill="url(#ground)" />
+  <g stroke="#4331d6" stroke-width="4" opacity="0.38" stroke-linecap="round" fill="none">
+    <path d="M30 726 C 312 684 696 684 1170 716" />
+    <path d="M30 780 C 312 738 696 738 1170 770" />
+    <path d="M30 836 C 312 794 696 794 1170 826" />
+    <path d="M30 892 C 312 850 696 850 1170 882" />
+  </g>
+
+  <g transform="translate(108 674) rotate(-11)">
+    <rect width="150" height="74" rx="4" fill="#150e52" />
+    <path d="M0 25h150M0 50h150M50 0v74M100 0v74" stroke="#5844e6" stroke-width="2.4" />
+  </g>
+  <rect x="174" y="744" width="9" height="46" rx="4.5" fill="#070418" />
+  <g transform="translate(288 704) rotate(-11)">
+    <rect width="112" height="56" rx="4" fill="#150e52" />
+    <path d="M0 19h112M0 37h112M37 0v56M75 0v56" stroke="#5844e6" stroke-width="2" />
+  </g>
+  <rect x="334" y="760" width="8" height="38" rx="4" fill="#070418" />
+
+  <rect width="1200" height="900" filter="url(#grain)" opacity="0.07" style="mix-blend-mode:overlay" />
+</svg>

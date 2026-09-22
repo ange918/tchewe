@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { ArrowLeftIcon, CheckCircleIcon } from '../ui/icons'
 import { Logo, LogoMark } from '../ui/Logo'
+import { MEDIA, MEDIA_ALT } from '../../data/media'
 
 const HIGHLIGHTS = [
   'Subvention non remboursable jusqu’à 10 000 €',
@@ -23,18 +24,16 @@ export function AuthLayout({
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[1fr_minmax(0,34rem)]">
       {/* Panneau de marque — masqué sur mobile pour laisser la place au formulaire */}
-      <aside className="relative hidden overflow-hidden bg-brand-600 lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div className="grid-motif absolute inset-0 opacity-30" aria-hidden />
-        <svg
-          viewBox="0 0 400 400"
-          aria-hidden
-          className="absolute -bottom-32 -left-24 h-[80%] w-auto text-white/10"
-        >
-          <circle cx="200" cy="200" r="190" fill="none" stroke="currentColor" strokeWidth="2" />
-          <circle cx="200" cy="200" r="140" fill="none" stroke="currentColor" strokeWidth="2" />
-          <circle cx="200" cy="200" r="90" fill="none" stroke="currentColor" strokeWidth="2" />
-          <circle cx="200" cy="200" r="40" fill="currentColor" />
-        </svg>
+      <aside className="relative hidden overflow-hidden bg-brand-800 lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <img
+          src={MEDIA.authPanel}
+          alt={MEDIA_ALT.authPanel}
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
+        {/* Voile : le texte du panneau reste lisible quelle que soit l'image */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,7,0.92)_0%,rgba(5,5,7,0.68)_34%,rgba(19,14,77,0.38)_66%,rgba(19,14,77,0.3)_100%)]" />
+        <div className="grid-motif absolute inset-0 opacity-20" aria-hidden />
 
         <Link to="/" className="relative inline-flex items-center gap-2 text-white">
           <LogoMark />
@@ -50,7 +49,7 @@ export function AuthLayout({
           <ul className="mt-8 space-y-3">
             {HIGHLIGHTS.map((item) => (
               <li key={item} className="flex items-start gap-3 text-brand-100">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden />
+                <CheckCircleIcon className="mt-0.5 h-5 w-5 shrink-0 text-white" aria-hidden />
                 <span className="text-[0.98rem] leading-relaxed">{item}</span>
               </li>
             ))}
@@ -74,7 +73,7 @@ export function AuthLayout({
             to="/"
             className="mt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-500 transition hover:text-brand-600 lg:mt-0"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden />
+            <ArrowLeftIcon className="h-4 w-4" aria-hidden />
             Retour à l’accueil
           </Link>
 

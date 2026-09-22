@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { FolderKanban, LogOut, ReceiptText } from 'lucide-react'
+import { FolderIcon, LogOutIcon, ReceiptIcon } from '../ui/icons'
 import { LogoMark } from '../ui/Logo'
 import { cn } from '../../lib/utils'
 import { useAuth } from '../../store/auth'
 
 const LINKS = [
-  { to: '/admin/dossiers', label: 'Dossiers', icon: FolderKanban },
-  { to: '/admin/verifications', label: 'Vérifications', icon: ReceiptText },
+  { to: '/admin/dossiers', label: 'Dossiers', icon: FolderIcon },
+  { to: '/admin/verifications', label: 'Vérifications', icon: ReceiptIcon },
 ]
 
 export function AdminLayout() {
@@ -37,9 +37,9 @@ export function AdminLayout() {
                 window.location.assign('/')
               }}
               aria-label="Se déconnecter"
-              className="rounded-lg p-2 text-ink-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-full p-2 text-ink-400 transition hover:bg-white/10 hover:text-white"
             >
-              <LogOut className="h-5 w-5" aria-hidden />
+              <LogOutIcon className="h-5 w-5" aria-hidden />
             </button>
           </div>
         </div>

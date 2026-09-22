@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Skyline au crépuscule et réseau de projets financés">
+  <defs>
+    <linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#120b44" />
+      <stop offset="34%" stop-color="#3423bd" />
+      <stop offset="64%" stop-color="#8b5ad0" />
+      <stop offset="86%" stop-color="#e8955f" />
+      <stop offset="100%" stop-color="#ffc98d" />
+    </linearGradient>
+    <radialGradient id="cityGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe0ab" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#ffb26b" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="towerA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#150d55" />
+      <stop offset="100%" stop-color="#070418" />
+    </linearGradient>
+    <linearGradient id="towerB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d0838" />
+      <stop offset="100%" stop-color="#050310" />
+    </linearGradient>
+    <filter id="grainCity">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#dusk)" />
+  <ellipse cx="800" cy="720" rx="620" ry="230" fill="url(#cityGlow)" />
+
+  <!-- Réseau de projets financés -->
+  <g stroke="#ffffff" stroke-width="1.4" opacity="0.3" fill="none">
+    <path d="M170 210 L430 146 L660 262 L920 172 L1200 282 L1430 200" />
+    <path d="M230 380 L520 318 L770 424 L1050 340 L1330 432" />
+    <path d="M430 146 L520 318M920 172 L770 424M1200 282 L1050 340M660 262 L520 318" />
+  </g>
+  <g fill="#ffe9c6">
+    <circle cx="170" cy="210" r="5" opacity="0.8" /><circle cx="430" cy="146" r="8" />
+    <circle cx="660" cy="262" r="5" opacity="0.8" /><circle cx="920" cy="172" r="9" />
+    <circle cx="1200" cy="282" r="5" opacity="0.8" /><circle cx="1430" cy="200" r="6" />
+    <circle cx="230" cy="380" r="5" opacity="0.8" /><circle cx="520" cy="318" r="7" />
+    <circle cx="770" cy="424" r="5" opacity="0.8" /><circle cx="1050" cy="340" r="6" />
+    <circle cx="1330" cy="432" r="5" opacity="0.8" />
+  </g>
+
+  <!-- Skyline -->
+  <g>
+    <rect x="40" y="606" width="126" height="294" fill="url(#towerB)" />
+    <rect x="188" y="520" width="100" height="380" fill="url(#towerA)" />
+    <rect x="308" y="646" width="146" height="254" fill="url(#towerB)" />
+    <rect x="474" y="462" width="114" height="438" fill="url(#towerA)" />
+    <rect x="608" y="578" width="92" height="322" fill="url(#towerB)" />
+    <rect x="720" y="418" width="132" height="482" fill="url(#towerA)" />
+    <rect x="872" y="622" width="108" height="278" fill="url(#towerB)" />
+    <rect x="1000" y="494" width="122" height="406" fill="url(#towerA)" />
+    <rect x="1142" y="588" width="96" height="312" fill="url(#towerB)" />
+    <rect x="1258" y="440" width="136" height="460" fill="url(#towerA)" />
+    <rect x="1414" y="612" width="114" height="288" fill="url(#towerB)" />
+    <rect x="1548" y="536" width="52" height="364" fill="url(#towerA)" />
+  </g>
+
+  <!-- Fenêtres allumées -->
+  <g fill="#ffd28a">
+    <rect x="68" y="648" width="13" height="20" /><rect x="104" y="690" width="13" height="20" />
+    <rect x="68" y="728" width="13" height="20" /><rect x="136" y="648" width="13" height="20" />
+    <rect x="212" y="562" width="13" height="20" /><rect x="248" y="606" width="13" height="20" />
+    <rect x="212" y="656" width="13" height="20" /><rect x="248" y="712" width="13" height="20" />
+    <rect x="500" y="504" width="13" height="20" /><rect x="540" y="554" width="13" height="20" />
+    <rect x="500" y="604" width="13" height="20" /><rect x="540" y="664" width="13" height="20" />
+    <rect x="750" y="460" width="13" height="20" /><rect x="798" y="514" width="13" height="20" />
+    <rect x="750" y="572" width="13" height="20" /><rect x="798" y="640" width="13" height="20" />
+    <rect x="750" y="704" width="13" height="20" /><rect x="1030" y="536" width="13" height="20" />
+    <rect x="1074" y="596" width="13" height="20" /><rect x="1030" y="660" width="13" height="20" />
+    <rect x="1074" y="726" width="13" height="20" /><rect x="1288" y="482" width="13" height="20" />
+    <rect x="1334" y="542" width="13" height="20" /><rect x="1288" y="610" width="13" height="20" />
+    <rect x="1334" y="682" width="13" height="20" /><rect x="1444" y="654" width="13" height="20" />
+    <rect x="1486" y="708" width="13" height="20" /><rect x="1444" y="768" width="13" height="20" />
+    <rect x="336" y="688" width="13" height="20" /><rect x="392" y="740" width="13" height="20" />
+    <rect x="636" y="620" width="13" height="20" /><rect x="668" y="684" width="13" height="20" />
+    <rect x="900" y="664" width="13" height="20" /><rect x="944" y="722" width="13" height="20" />
+    <rect x="1170" y="630" width="13" height="20" /><rect x="1206" y="700" width="13" height="20" />
+  </g>
+
+  <rect width="1600" height="900" filter="url(#grainCity)" opacity="0.08" style="mix-blend-mode:overlay" />
+</svg>

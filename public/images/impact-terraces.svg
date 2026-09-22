@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500" role="img" aria-label="Lever du jour sur des terrasses cultivées et une installation solaire">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#120a46" />
+      <stop offset="26%" stop-color="#4331d6" />
+      <stop offset="54%" stop-color="#8f5bc8" />
+      <stop offset="76%" stop-color="#f0a463" />
+      <stop offset="100%" stop-color="#ffdcab" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff5dd" stop-opacity="1" />
+      <stop offset="34%" stop-color="#ffce80" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#ff9f5a" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="terraceA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1c9c" />
+      <stop offset="100%" stop-color="#1b1276" />
+    </linearGradient>
+    <linearGradient id="terraceB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#170e5c" />
+      <stop offset="100%" stop-color="#0d0836" />
+    </linearGradient>
+    <linearGradient id="terraceC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0630" />
+      <stop offset="100%" stop-color="#050211" />
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1500" fill="url(#sky)" />
+  <circle cx="712" cy="742" r="420" fill="url(#glow)" />
+  <circle cx="712" cy="742" r="148" fill="#fff3d8" />
+
+  <!-- Anneaux concentriques, écho de la marque -->
+  <g fill="none" stroke="#ffffff" stroke-width="2.5" opacity="0.16">
+    <circle cx="712" cy="742" r="560" /><circle cx="712" cy="742" r="440" />
+    <circle cx="712" cy="742" r="320" /><circle cx="712" cy="742" r="228" />
+  </g>
+
+  <!-- Nuages étirés -->
+  <g fill="#ffffff" opacity="0.22">
+    <rect x="80" y="286" width="330" height="12" rx="6" />
+    <rect x="176" y="346" width="214" height="10" rx="5" />
+    <rect x="742" y="240" width="300" height="10" rx="5" />
+    <rect x="884" y="384" width="204" height="9" rx="4.5" />
+    <rect x="120" y="512" width="180" height="8" rx="4" />
+  </g>
+
+  <!-- Terrasses cultivées -->
+  <path d="M0 902 C 200 858 420 922 640 898 C 860 874 1030 920 1200 886 L1200 968 L0 968 Z" fill="url(#terraceA)" />
+  <path d="M0 986 C 220 946 440 1012 660 986 C 880 960 1040 1006 1200 972 L1200 1070 L0 1070 Z" fill="url(#terraceB)" />
+  <path d="M0 1092 C 240 1050 480 1122 720 1094 C 940 1068 1060 1112 1200 1080 L1200 1500 L0 1500 Z" fill="url(#terraceC)" />
+
+  <!-- Rangs de culture -->
+  <g stroke="#4331d6" stroke-width="4" opacity="0.4" stroke-linecap="round" fill="none">
+    <path d="M30 1188 C 320 1142 700 1142 1170 1180" />
+    <path d="M30 1276 C 320 1224 700 1224 1170 1266" />
+    <path d="M30 1368 C 320 1310 700 1310 1170 1356" />
+    <path d="M30 1462 C 320 1398 700 1398 1170 1450" />
+  </g>
+
+  <!-- Installation solaire -->
+  <g>
+    <g transform="translate(132 1006) rotate(-10)">
+      <rect width="186" height="92" rx="5" fill="#160e58" />
+      <path d="M0 31h186M0 62h186M62 0v92M124 0v92" stroke="#5844e6" stroke-width="3" />
+    </g>
+    <rect x="216" y="1098" width="12" height="58" rx="6" fill="#050211" />
+    <g transform="translate(372 1048) rotate(-10)">
+      <rect width="138" height="68" rx="4" fill="#160e58" />
+      <path d="M0 23h138M0 46h138M46 0v68M92 0v68" stroke="#5844e6" stroke-width="2.4" />
+    </g>
+    <rect x="432" y="1116" width="10" height="46" rx="5" fill="#050211" />
+  </g>
+
+  <!-- Éolienne -->
+  <g transform="translate(962 902)" fill="#050211">
+    <rect x="-6" y="0" width="12" height="192" rx="6" />
+    <circle cx="0" cy="0" r="12" />
+    <path d="M0 -8 L-10 -128 L10 -128 Z" />
+    <path d="M7 4 L118 58 L108 76 Z" />
+    <path d="M-7 4 L-112 66 L-102 84 Z" />
+  </g>
+
+  <rect width="1200" height="1500" filter="url(#grain)" opacity="0.07" style="mix-blend-mode:overlay" />
+</svg>

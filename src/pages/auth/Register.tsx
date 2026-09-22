@@ -206,7 +206,7 @@ export function Register() {
               error={errors.terms}
             >
               J’ai lu et j’accepte les{' '}
-              <Link to="/a-propos#cgu" className="font-bold text-brand-600 hover:underline">
+              <Link to="/conditions" className="font-bold text-brand-600 hover:underline">
                 conditions générales
               </Link>{' '}
               et la{' '}

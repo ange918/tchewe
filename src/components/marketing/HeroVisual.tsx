@@ -14,6 +14,7 @@ export function HeroVisual() {
           className="absolute inset-0 h-full w-full object-cover"
           loading="eager"
           fetchPriority="high"
+          referrerPolicy="no-referrer"
         />
         {/* Voile dégradé : garantit la lisibilité du texte posé sur l'image */}
         <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,7,0.94)_0%,rgba(5,5,7,0.6)_20%,rgba(5,5,7,0.12)_42%,transparent_62%)]" />
@@ -36,7 +37,7 @@ export function HeroVisual() {
             <TrendingUpIcon className="h-5 w-5" aria-hidden />
           </span>
           <div>
-            <p className="text-sm font-extrabold text-ink-900">10 000 €</p>
+            <p className="text-sm font-extrabold text-ink-900">650 000 €</p>
             <p className="text-xs text-ink-500">subvention maximale</p>
           </div>
         </div>

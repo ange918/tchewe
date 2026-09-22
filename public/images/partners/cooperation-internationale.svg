@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <!-- Flight Paths (Dashed Circular Orbit Lines) -->
+  <circle cx="200" cy="200" r="148" fill="none" stroke="#b0b8c9" stroke-width="1.8" stroke-dasharray="4,5" opacity="0.6"/>
+
+  <!-- World Landmarks Orbiting Around -->
+  <!-- 1. Eiffel Tower (Top Left ~ 11 o'clock) -->
+  <g transform="translate(136, 26) rotate(-18)">
+    <polygon points="12,0 9,18 5,68 0,82 6,82 10,70 14,70 18,82 24,82 19,68 15,18" fill="#F15A24"/>
+    <rect x="7" y="32" width="10" height="3" fill="#F15A24"/>
+    <rect x="5" y="52" width="14" height="4" fill="#F15A24"/>
+  </g>
+
+  <!-- 2. Colosseum (Top ~ 12 o'clock) -->
+  <g transform="translate(182, 60)">
+    <path d="M0,36 L0,12 Q30,0 60,12 L60,36 Z" fill="#E02947"/>
+    <!-- arches -->
+    <rect x="6" y="16" width="6" height="12" rx="3" fill="#ffffff" opacity="0.9"/>
+    <rect x="18" y="16" width="6" height="12" rx="3" fill="#ffffff" opacity="0.9"/>
+    <rect x="30" y="16" width="6" height="12" rx="3" fill="#ffffff" opacity="0.9"/>
+    <rect x="42" y="16" width="6" height="12" rx="3" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- 3. Leaning Tower of Pisa (Top Right ~ 1 o'clock) -->
+  <g transform="translate(262, 58) rotate(16)">
+    <rect x="0" y="0" width="22" height="66" fill="#2E3192"/>
+    <line x1="0" y1="12" x2="22" y2="12" stroke="#ffffff" stroke-width="2"/>
+    <line x1="0" y1="24" x2="22" y2="24" stroke="#ffffff" stroke-width="2"/>
+    <line x1="0" y1="36" x2="22" y2="36" stroke="#ffffff" stroke-width="2"/>
+    <line x1="0" y1="48" x2="22" y2="48" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="11" cy="-4" r="5" fill="#2E3192"/>
+  </g>
+
+  <!-- 4. Big Ben / Elizabeth Tower (Right ~ 3 o'clock) -->
+  <g transform="translate(290, 180) rotate(88)">
+    <polygon points="9,0 0,22 18,22" fill="#00A859"/>
+    <rect x="2" y="22" width="14" height="88" fill="#00A859"/>
+    <circle cx="9" cy="38" r="4" fill="#ffffff"/>
+  </g>
+
+  <!-- 5. Taj Mahal / Pavilion (Bottom Right ~ 5:30) -->
+  <g transform="translate(150, 310)">
+    <path d="M12,42 L12,18 Q16,8 24,8 Q32,8 36,18 L36,42 Z" fill="#F7931E"/>
+    <polygon points="24,0 22,8 26,8" fill="#F7931E"/>
+    <rect x="3" y="14" width="7" height="28" fill="#F7931E"/>
+    <rect x="38" y="14" width="7" height="28" fill="#F7931E"/>
+    <rect x="6" y="42" width="36" height="12" fill="#F7931E"/>
+  </g>
+
+  <!-- 6. Golden Gate / Bridge Pylon & Torii (Bottom Left ~ 7 o'clock) -->
+  <g transform="translate(86, 230) rotate(-42)">
+    <path d="M0,0 L42,0 L36,12 L6,12 Z" fill="#ED1C24"/>
+    <rect x="8" y="12" width="8" height="64" fill="#ED1C24"/>
+    <rect x="26" y="12" width="8" height="64" fill="#ED1C24"/>
+    <rect x="4" y="32" width="34" height="6" fill="#ED1C24"/>
+    <rect x="8" y="76" width="26" height="42" fill="#00A99D"/>
+  </g>
+
+  <!-- 7. Statue of Liberty (Left ~ 9 o'clock) -->
+  <g transform="translate(10, 196) rotate(-88)">
+    <polygon points="12,0 8,14 16,14" fill="#1B75BC"/>
+    <rect x="9" y="14" width="6" height="16" fill="#1B75BC"/>
+    <path d="M4,30 L20,30 L24,78 L0,78 Z" fill="#1B75BC"/>
+    <path d="M16,16 L32,6 L35,10 L20,22 Z" fill="#1B75BC"/>
+  </g>
+
+  <!-- Flying Airplanes -->
+  <g transform="translate(80, 74) rotate(42) scale(0.9)">
+    <path d="M14,0 L18,12 L32,18 L32,22 L18,20 L16,34 L22,38 L22,41 L14,39 L6,41 L6,38 L12,34 L10,20 L-4,22 L-4,18 L10,12 Z" fill="#E02947"/>
+  </g>
+  <g transform="translate(312, 114) rotate(138) scale(0.9)">
+    <path d="M14,0 L18,12 L32,18 L32,22 L18,20 L16,34 L22,38 L22,41 L14,39 L6,41 L6,38 L12,34 L10,20 L-4,22 L-4,18 L10,12 Z" fill="#F7931E"/>
+  </g>
+  <g transform="translate(42, 280) rotate(-32) scale(0.85)">
+    <path d="M14,0 L18,12 L32,18 L32,22 L18,20 L16,34 L22,38 L22,41 L14,39 L6,41 L6,38 L12,34 L10,20 L-4,22 L-4,18 L10,12 Z" fill="#F7931E"/>
+  </g>
+  <g transform="translate(300, 275) rotate(220) scale(0.9)">
+    <path d="M14,0 L18,12 L32,18 L32,22 L18,20 L16,34 L22,38 L22,41 L14,39 L6,41 L6,38 L12,34 L10,20 L-4,22 L-4,18 L10,12 Z" fill="#00A99D"/>
+  </g>
+
+  <!-- Travel bus -->
+  <g transform="translate(104, 156) rotate(-55) scale(0.8)">
+    <rect x="0" y="0" width="34" height="15" rx="3" fill="#F7931E"/>
+    <rect x="3" y="3" width="6" height="5" fill="#ffffff"/>
+    <rect x="11" y="3" width="6" height="5" fill="#ffffff"/>
+    <rect x="19" y="3" width="6" height="5" fill="#ffffff"/>
+    <rect x="27" y="3" width="4" height="5" fill="#ffffff"/>
+  </g>
+
+  <!-- Central Earth Globe -->
+  <g transform="translate(200, 200)">
+    <!-- Globe Ocean -->
+    <circle cx="0" cy="0" r="88" fill="#E8F4F8" stroke="#ffffff" stroke-width="7"/>
+    
+    <!-- Continents in Turquoise/Cyan -->
+    <!-- North & Central America -->
+    <path d="M-68,-22 C-55,-48 -35,-65 -5,-68 C-2,-50 -18,-35 -8,-15 C-4,0 -20,20 -15,40 C-30,28 -48,15 -58,-5 Z" fill="#00A3B4"/>
+    <!-- South America -->
+    <path d="M-12,38 C-2,44 -8,70 12,65 C18,74 8,82 -2,84 C-18,80 -25,58 -22,45 Z" fill="#00A3B4"/>
+    <!-- Eurasia / Africa edge -->
+    <path d="M18,-72 C45,-60 68,-30 75,0 C55,-5 42,-25 35,-42 C22,-52 15,-65 18,-72 Z" fill="#00A3B4"/>
+    <!-- Africa / Middle East -->
+    <path d="M38,-10 C58,-5 72,18 68,48 C50,42 42,20 32,10 Z" fill="#00A3B4"/>
+  </g>
+</svg>

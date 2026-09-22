@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="100%" height="100%">
+  <defs>
+    <g id="star">
+      <polygon points="0,-12 3.7,-3.7 11.4,-3.7 5.2,1.4 7.6,9.7 0,4.6 -7.6,9.7 -5.2,1.4 -11.4,-3.7 -3.7,-3.7" fill="#FFCC00"/>
+    </g>
+    <clipPath id="rounded-flag">
+      <rect width="240" height="160" rx="14" ry="14" />
+    </clipPath>
+  </defs>
+  <rect width="240" height="160" rx="14" ry="14" fill="#003399"/>
+  <!-- 12 stars at 30 deg intervals on radius 48 from center (120, 80) -->
+  <g transform="translate(120, 80)">
+    <!-- 12 o'clock -->
+    <use href="#star" y="-48"/>
+    <!-- 1 o'clock -->
+    <use href="#star" x="24" y="-41.57"/>
+    <!-- 2 o'clock -->
+    <use href="#star" x="41.57" y="-24"/>
+    <!-- 3 o'clock -->
+    <use href="#star" x="48" y="0"/>
+    <!-- 4 o'clock -->
+    <use href="#star" x="41.57" y="24"/>
+    <!-- 5 o'clock -->
+    <use href="#star" x="24" y="41.57"/>
+    <!-- 6 o'clock -->
+    <use href="#star" y="48"/>
+    <!-- 7 o'clock -->
+    <use href="#star" x="-24" y="41.57"/>
+    <!-- 8 o'clock -->
+    <use href="#star" x="-41.57" y="24"/>
+    <!-- 9 o'clock -->
+    <use href="#star" x="-48" y="0"/>
+    <!-- 10 o'clock -->
+    <use href="#star" x="-41.57" y="-24"/>
+    <!-- 11 o'clock -->
+    <use href="#star" x="-24" y="-41.57"/>
+  </g>
+</svg>

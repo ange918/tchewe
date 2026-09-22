@@ -1,5 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { FolderIcon, LogOutIcon, ReceiptIcon } from '../ui/icons'
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import { FolderIcon, LogOutIcon, ReceiptIcon, ShieldIcon } from '../ui/icons'
 import { LogoMark } from '../ui/Logo'
 import { cn } from '../../lib/utils'
 import { useAuth } from '../../store/auth'
@@ -7,6 +7,7 @@ import { useAuth } from '../../store/auth'
 const LINKS = [
   { to: '/admin/dossiers', label: 'Dossiers', icon: FolderIcon },
   { to: '/admin/verifications', label: 'Vérifications', icon: ReceiptIcon },
+  { to: '/supreme', label: 'Console Supreme', icon: ShieldIcon },
 ]
 
 export function AdminLayout() {
@@ -27,7 +28,14 @@ export function AdminLayout() {
             </span>
           </NavLink>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/supreme"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-amber-400/20 px-3 py-1.5 text-xs font-bold text-amber-300 border border-amber-400/40 hover:bg-amber-400/30 transition"
+            >
+              <ShieldIcon className="h-3.5 w-3.5" />
+              Console Supreme (/supreme)
+            </Link>
             <span className="hidden text-sm font-semibold text-ink-300 sm:block">{user?.email}</span>
             <button
               type="button"

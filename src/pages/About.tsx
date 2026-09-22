@@ -8,7 +8,7 @@ import { Enter, Reveal } from '../components/ui/motion'
 const ELIGIBILITY = [
   'Porteur majeur, résidant dans l’un des pays couverts par l’édition 2026.',
   'Projet à impact social, environnemental ou éducatif, déjà formalisé.',
-  'Montant sollicité compris entre 2 000 € et 10 000 €.',
+  'Montant sollicité compris entre 2 000 € et 650 000 €.',
   'Durée d’exécution prévisionnelle inférieure à 24 mois.',
   'Capacité à déposer l’apport de garantie de 30 % du montant sollicité.',
   'Dossier complet : pitch deck, business plan et documents d’enregistrement légal.',
@@ -16,24 +16,29 @@ const ELIGIBILITY = [
 
 const FUNDERS = [
   {
-    name: 'Fonds d’Impact',
-    role: 'Bailleur principal — dotation de l’enveloppe annuelle.',
+    name: 'Banque Mondiale',
+    role: 'Bailleur institutionnel — dotation du fonds d’amorçage et appui structurel.',
+    logo: '/images/partners/banque-mondiale.svg',
+  },
+  {
+    name: 'Union Européenne',
+    role: 'Cofinancement des projets à fort impact social et transition écologique.',
+    logo: '/images/partners/union-europeenne.svg',
+  },
+  {
+    name: 'Organisation Mondiale de la Santé (OMS)',
+    role: 'Appui aux initiatives de santé communautaire et d’hygiène publique.',
+    logo: '/images/partners/oms.svg',
+  },
+  {
+    name: 'Mastercard',
+    role: 'Inclusion financière, autonomisation économique des jeunes et entrepreneuriat.',
+    logo: '/images/partners/mastercard.svg',
   },
   {
     name: 'Coopération Internationale',
-    role: 'Appui technique et suivi des indicateurs d’impact.',
-  },
-  {
-    name: 'Alliance ONG',
-    role: 'Réseau bénéficiaire du reversement de dividendes des lauréats.',
-  },
-  {
-    name: 'Fondation Partenaire',
-    role: 'Cofinancement des projets éducatifs et de santé.',
-  },
-  {
-    name: 'Banque Partenaire',
-    role: 'Ouverture des comptes et réception des apports de garantie.',
+    role: 'Appui technique, mobilité et suivi des indicateurs d’impact.',
+    logo: '/images/partners/cooperation-internationale.svg',
   },
 ]
 
@@ -134,16 +139,28 @@ export function About() {
           </ul>
         </Section>
 
-        <Section id="bailleurs" title="Nos bailleurs">
+        <Section id="bailleurs" title="Nos bailleurs &amp; partenaires">
           <p>
-            L’enveloppe de l’édition 2026 est constituée par les partenaires suivants. Les noms
-            affichés sur ce site sont des intitulés de démonstration, à remplacer par les identités
-            réelles des bailleurs du programme.
+            L’enveloppe et l’accompagnement de l’édition 2026 sont assurés par un collectif
+            de partenaires institutionnels et financiers internationaux engagés pour l’impact.
           </p>
-          <ul className="mt-2 divide-y divide-ink-100 rounded-2xl border border-ink-200/80">
+          <ul className="mt-4 divide-y divide-ink-100 rounded-2xl border border-ink-200/80 bg-white">
             {FUNDERS.map((funder) => (
-              <li key={funder.name} className="flex flex-col gap-1 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                <span className="font-bold tracking-[-0.01em] text-ink-900">{funder.name}</span>
+              <li
+                key={funder.name}
+                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div className="flex items-center gap-3.5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-ink-100 bg-white p-2">
+                    <img
+                      src={funder.logo}
+                      alt={funder.name}
+                      className="h-full w-full object-contain"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                  </span>
+                  <span className="font-bold tracking-[-0.01em] text-ink-900">{funder.name}</span>
+                </div>
                 <span className="text-sm text-ink-500 sm:text-right">{funder.role}</span>
               </li>
             ))}

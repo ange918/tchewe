@@ -1,31 +1,38 @@
-import { InstitutionIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { Reveal, RevealGroup, RevealItem } from '../ui/motion'
 
-/**
- * Partenaires & sponsors du programme.
- *
- * Les entrées ci-dessous sont des intitulés de remplacement. Pour afficher un
- * partenaire réel : déposer son logo dans `public/images/partners/` et renseigner
- * `logo` — la tuile bascule alors de l'emblème générique à l'image.
- *
- * N'inscrire ici qu'une organisation qui finance ou soutient effectivement le
- * programme et dont l'autorisation d'usage de la marque a été obtenue : un logo
- * institutionnel affiché sur cette page vaut affirmation de parrainage.
- */
 interface Partner {
   name: string
   role: string
-  logo?: string
+  logo: string
 }
 
 const PARTNERS: Partner[] = [
-  { name: 'Fonds d’Impact', role: 'Bailleur principal — dotation de l’enveloppe annuelle' },
-  { name: 'Coopération Internationale', role: 'Appui technique et suivi des indicateurs' },
-  { name: 'Alliance ONG', role: 'Réseau bénéficiaire du reversement de dividendes' },
-  { name: 'Fondation Partenaire', role: 'Cofinancement des projets éducatifs et de santé' },
-  { name: 'Banque Partenaire', role: 'Ouverture des comptes et dépôt des garanties' },
-  { name: 'Agence de Développement', role: 'Accompagnement des lauréats après financement' },
+  {
+    name: 'Banque Mondiale',
+    role: 'Bailleur institutionnel — dotation du fonds d’amorçage et appui structurel',
+    logo: '/images/partners/banque-mondiale.svg',
+  },
+  {
+    name: 'Union Européenne',
+    role: 'Cofinancement des projets à fort impact social et transition écologique',
+    logo: '/images/partners/union-europeenne.svg',
+  },
+  {
+    name: 'Organisation Mondiale de la Santé (OMS)',
+    role: 'Appui aux initiatives de santé communautaire et d’hygiène publique',
+    logo: '/images/partners/oms.svg',
+  },
+  {
+    name: 'Mastercard',
+    role: 'Inclusion financière, autonomisation économique des jeunes et entrepreneuriat',
+    logo: '/images/partners/mastercard.svg',
+  },
+  {
+    name: 'Coopération Internationale',
+    role: 'Appui technique, mobilité et suivi des indicateurs d’impact',
+    logo: '/images/partners/cooperation-internationale.svg',
+  },
 ]
 
 function PartnerTile({ partner }: { partner: Partner }) {
@@ -33,15 +40,17 @@ function PartnerTile({ partner }: { partner: Partner }) {
     <RevealItem
       as="li"
       className="group flex flex-col items-center gap-4 rounded-2xl border border-ink-200/80 bg-white p-6 text-center transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/5">
-      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
-        {partner.logo ? (
-          <img src={partner.logo} alt={partner.name} className="h-10 w-10 object-contain" loading="lazy" />
-        ) : (
-          <InstitutionIcon className="h-7 w-7" aria-hidden />
-        )}
+      <span className="flex h-20 w-20 items-center justify-center rounded-2xl border border-ink-100 bg-white p-3 shadow-xs transition group-hover:border-brand-200 group-hover:shadow-md">
+        <img
+          src={partner.logo}
+          alt={partner.name}
+          className="h-full w-full object-contain transition duration-200 group-hover:scale-105"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
       </span>
       <span>
-        <span className="block text-[0.98rem] font-extrabold tracking-[-0.015em] text-ink-900">
+        <span className="block text-[1.02rem] font-extrabold tracking-[-0.015em] text-ink-900">
           {partner.name}
         </span>
         <span className="mt-1.5 block text-sm leading-relaxed text-ink-500">{partner.role}</span>
@@ -61,21 +70,16 @@ export function Partners() {
           </h2>
           <p className="mt-4 text-lg text-ink-600">
             L’enveloppe de l’édition 2026 est constituée par un collectif de bailleurs
-            institutionnels et privés, qui suivent également l’usage des fonds et l’impact des
-            projets financés.
+            institutionnels et partenaires internationaux, qui accompagnent et soutiennent le
+            financement des projets retenus.
           </p>
         </Reveal>
 
-        <RevealGroup as="ul" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <RevealGroup as="ul" className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {PARTNERS.map((partner) => (
             <PartnerTile key={partner.name} partner={partner} />
           ))}
         </RevealGroup>
-
-        <p className="mt-8 text-sm text-ink-400">
-          Les intitulés affichés sont des emplacements de remplacement, à substituer par les
-          identités des partenaires réels du programme.
-        </p>
       </div>
     </section>
   )

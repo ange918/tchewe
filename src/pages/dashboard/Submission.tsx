@@ -12,7 +12,7 @@ import type { FileMeta } from '../../lib/fileVault'
 import { GUARANTEE_RATE, useApplication } from '../../store/application'
 
 const MIN_AMOUNT = 2000
-const MAX_AMOUNT = 10000
+const MAX_AMOUNT = 650000
 
 interface FormErrors {
   title?: string
@@ -110,7 +110,7 @@ function SubmissionForm() {
                 max={MAX_AMOUNT}
                 step={100}
                 suffix="€"
-                placeholder="10000"
+                placeholder="650000"
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 error={errors.amount}

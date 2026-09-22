@@ -13,16 +13,16 @@
  *   aboutArch  16:9 large    — au moins 1600 × 900
  */
 export const MEDIA = {
-  heroArch: '/images/impact-hero.svg',
-  ctaBand: '/images/impact-city.svg',
-  authPanel: '/images/impact-terraces.svg',
+  heroArch: '/images/hero-gears.jpg',
+  ctaBand: '/images/cta-community-funding.jpg',
+  authPanel: '/images/cta-community-funding.jpg',
   aboutArch: '/images/impact-city.svg',
 } as const
 
 /** Textes alternatifs — à mettre à jour en même temps que les fichiers. */
 export const MEDIA_ALT = {
-  heroArch: 'Lever de soleil sur un paysage cultivé et des porteurs de projet',
-  ctaBand: 'Réseau de projets financés au crépuscule',
-  authPanel: 'Lever du jour sur des terrasses cultivées et une installation solaire',
+  heroArch: 'Deux mains unissant des engrenages bleus symbolisant l’innovation et le partenariat',
+  ctaBand: 'Mains entourant des piles de pièces et des figurines représentant la communauté et le financement de projets',
+  authPanel: 'Mains protégeant et finançant des figurines communautaires et des projets d’impact',
   aboutArch: 'Réseau de projets financés au crépuscule',
 } as const

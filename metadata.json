@@ -1,0 +1,6 @@
+{
+  "name": "INNOVA FUND",
+  "description": "Programme d'appui au financement des projets à fort impact : jusqu'à 650 000 € de subvention non remboursable.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

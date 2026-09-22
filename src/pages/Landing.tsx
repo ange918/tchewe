@@ -3,15 +3,17 @@ import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/Button'
 import { HeroVisual } from '../components/marketing/HeroVisual'
 import { Partners } from '../components/marketing/Partners'
-import { MEDIA } from '../data/media'
+import { FAQSection } from '../components/marketing/FAQSection'
+import { Counter } from '../components/ui/Counter'
+import { MEDIA, MEDIA_ALT } from '../data/media'
 import { Enter, Reveal, RevealGroup, RevealItem } from '../components/ui/motion'
 
 const PARTNERS = [
-  'Fonds d’Impact',
-  'Coopération Internationale',
-  'Alliance ONG',
-  'Fondation Partenaire',
-  'Banque Partenaire',
+  { name: 'Banque Mondiale', logo: '/images/partners/banque-mondiale.svg' },
+  { name: 'Union Européenne', logo: '/images/partners/union-europeenne.svg' },
+  { name: 'OMS', logo: '/images/partners/oms.svg' },
+  { name: 'Mastercard', logo: '/images/partners/mastercard.svg' },
+  { name: 'Coopération Internationale', logo: '/images/partners/cooperation-internationale.svg' },
 ]
 
 const STEPS = [
@@ -20,36 +22,42 @@ const STEPS = [
     step: '01',
     title: 'Inscription',
     text: 'Créez votre compte et acceptez les conditions du programme : subvention non remboursable, reversement de dividendes aux ONG, garantie de 30 %.',
+    image: '/images/steps/01-inscription.jpg',
   },
   {
     icon: ClipboardIcon,
     step: '02',
     title: 'Soumission du dossier',
     text: 'Présentez votre projet, le montant sollicité et la durée d’exécution, puis joignez votre pitch deck, business plan et documents d’enregistrement.',
+    image: '/images/steps/02-soumission.jpg',
   },
   {
     icon: TimerIcon,
     step: '03',
     title: 'QCM — Phase 1 (J0)',
     text: 'Dès la validation de votre dossier par l’administration, 10 questions chronométrées évaluent vos fondamentaux entrepreneuriaux.',
+    image: '/images/steps/03-quiz1.jpg',
   },
   {
     icon: TimerIcon,
     step: '04',
     title: 'QCM — Phases 2 & 3 (J+2, J+4)',
     text: 'Deux sessions supplémentaires s’ouvrent toutes les 48 heures : modèle économique, gestion financière, impact et conformité.',
+    image: '/images/steps/04-quiz2.jpg',
   },
   {
     icon: WalletIcon,
     step: '05',
     title: 'Dépôt de la garantie de 30 %',
     text: 'Ouvrez votre compte auprès de la banque partenaire, déposez votre apport puis transmettez le reçu et le justificatif de compte.',
+    image: '/images/steps/05-garantie.jpg',
   },
   {
     icon: MoneyIcon,
     step: '06',
     title: 'Virement de la subvention',
     text: 'Après vérification des preuves par l’administration, l’ordre de virement est émis vers votre compte.',
+    image: '/images/steps/06-virement.jpg',
   },
 ]
 
@@ -72,10 +80,10 @@ const COMMITMENTS = [
 ]
 
 const FIGURES = [
-  { value: '10 000 €', label: 'Subvention maximale par projet' },
-  { value: '30 questions', label: 'Réparties sur 3 sessions chronométrées' },
-  { value: '48 h', label: 'Entre chaque phase d’évaluation' },
-  { value: '2026', label: 'Édition en cours, dossiers ouverts' },
+  { isCounter: true, end: 650000, suffix: ' €', label: 'Subvention maximale par projet' },
+  { isCounter: true, end: 30, suffix: ' questions', label: 'Réparties sur 3 sessions chronométrées' },
+  { isCounter: true, end: 48, suffix: ' h', label: 'Entre chaque phase d’évaluation' },
+  { isCounter: false, value: '2026', label: 'Édition en cours, dossiers ouverts' },
 ]
 
 export function Landing() {
@@ -87,7 +95,7 @@ export function Landing() {
           <div>
             <Enter>
             <h1 className="text-[2.6rem] leading-[0.95] text-brand-600 sm:text-6xl lg:text-[4.1rem]">
-              Obtenez jusqu’à 10 000 € pour financer votre projet à fort impact.
+              Obtenez jusqu’à 650 000 € pour financer votre projet à fort impact.
             </h1>
 
             </Enter>
@@ -113,15 +121,24 @@ export function Landing() {
 
             <Enter delay={0.24} className="mt-10 border-t border-ink-100 pt-6">
               <p className="text-xs font-bold tracking-[0.12em] text-ink-400 uppercase">
-                Avec le soutien de nos bailleurs
+                Avec le soutien de nos partenaires institutionnels
               </p>
-              <ul className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+              <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
                 {PARTNERS.map((partner) => (
                   <li
-                    key={partner}
-                    className="text-sm font-bold tracking-[-0.01em] text-ink-300 transition hover:text-ink-400"
+                    key={partner.name}
+                    className="inline-flex items-center gap-2 rounded-xl border border-ink-200/70 bg-white px-3 py-1.5 shadow-2xs transition hover:border-brand-200 hover:shadow-xs"
                   >
-                    {partner}
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="h-5 w-5 object-contain"
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                    <span className="text-xs font-bold tracking-[-0.01em] text-ink-700">
+                      {partner.name}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -135,14 +152,29 @@ export function Landing() {
       </section>
 
       {/* ------------------------------------------------------------- Chiffres */}
-      <section className="bg-ink-900">
-        <RevealGroup className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:py-14">
+      <section className="relative overflow-hidden bg-ink-950">
+        <img
+          src={MEDIA.ctaBand}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-ink-950/80 backdrop-blur-[2px]" />
+        <div className="grid-motif absolute inset-0 opacity-15" aria-hidden />
+
+        <RevealGroup className="relative mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:py-16">
           {FIGURES.map((figure) => (
             <RevealItem key={figure.label}>
-              <p className="text-2xl font-extrabold tracking-[-0.035em] text-white sm:text-3xl">
-                {figure.value}
+              <p className="text-2xl font-extrabold tracking-[-0.035em] text-white sm:text-3xl lg:text-4xl">
+                {figure.isCounter && figure.end !== undefined ? (
+                  <Counter end={figure.end} suffix={figure.suffix} />
+                ) : (
+                  figure.value
+                )}
               </p>
-              <p className="mt-1.5 text-sm leading-snug text-ink-400">{figure.label}</p>
+              <p className="mt-1.5 text-sm leading-snug text-ink-300">{figure.label}</p>
             </RevealItem>
           ))}
         </RevealGroup>
@@ -162,23 +194,44 @@ export function Landing() {
             </p>
           </Reveal>
 
-          <RevealGroup as="ol" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <RevealGroup as="ol" className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {STEPS.map(({ icon: Icon, ...step }) => (
               <RevealItem
                 as="li"
                 key={step.step}
-                className="group relative flex flex-col rounded-2xl border border-ink-200/80 bg-white p-6 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/5"
+                className="group relative flex min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink-200/80 bg-ink-950 p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-brand-400 hover:shadow-2xl hover:shadow-ink-950/30"
               >
-                <div className="flex items-center justify-between">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white">
+                {/* Image couvrant l'intégralité de la carte (Full Card) */}
+                <img
+                  src={step.image}
+                  alt={step.title}
+                  className="absolute inset-0 h-full w-full object-cover object-center brightness-90 transition duration-700 ease-out group-hover:scale-105 group-hover:brightness-95"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Voile dégradé léger pour garantir la clarté de l'image tout en assurant le contraste */}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink-950/95 via-ink-950/40 to-ink-950/20 transition duration-300 group-hover:via-ink-950/30" />
+
+                {/* En-tête de la carte : icône et numéro d'étape */}
+                <div className="relative z-10 flex items-center justify-between">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 text-brand-600 shadow-lg backdrop-blur-md ring-1 ring-white/40 transition duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
-                  <span className="text-sm font-extrabold tracking-[-0.02em] text-ink-200">
-                    {step.step}
+                  <span className="rounded-lg bg-ink-950/75 px-3 py-1 font-mono text-xs font-black tracking-wider text-amber-300 shadow-md backdrop-blur-md ring-1 ring-white/20">
+                    ÉTAPE {step.step}
                   </span>
                 </div>
-                <h3 className="mt-5 text-lg text-ink-900">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-600">{step.text}</p>
+
+                {/* Bloc de texte en bas : cartouche en verre dépoli ultra-lisible */}
+                <div className="relative z-10 mt-auto rounded-xl border border-white/15 bg-ink-950/80 p-4.5 shadow-xl backdrop-blur-md transition duration-300 group-hover:border-white/25 group-hover:bg-ink-950/85">
+                  <h3 className="text-lg font-bold tracking-tight text-white group-hover:text-amber-300">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-xs leading-relaxed text-ink-200">
+                    {step.text}
+                  </p>
+                </div>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -222,18 +275,21 @@ export function Landing() {
         </div>
       </section>
 
+      {/* ------------------------------------------------------------- Section FAQ */}
+      <FAQSection />
+
       {/* --------------------------------------------------------- CTA de sortie */}
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
           <div className="relative overflow-hidden rounded-3xl bg-brand-800 px-6 py-16 text-center sm:px-12 lg:py-24">
             <img
               src={MEDIA.ctaBand}
-              alt=""
-              aria-hidden
+              alt={MEDIA_ALT.ctaBand}
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"
+              referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-ink-950/45" />
+            <div className="absolute inset-0 bg-ink-950/65" />
             <div className="grid-motif absolute inset-0 opacity-20" aria-hidden />
             <Reveal className="relative mx-auto max-w-2xl">
               <h2 className="text-3xl leading-[1.05] text-white sm:text-4xl lg:text-5xl">

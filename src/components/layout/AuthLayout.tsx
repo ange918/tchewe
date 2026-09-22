@@ -5,7 +5,7 @@ import { Logo, LogoMark } from '../ui/Logo'
 import { MEDIA, MEDIA_ALT } from '../../data/media'
 
 const HIGHLIGHTS = [
-  'Subvention non remboursable jusqu’à 10 000 €',
+  'Subvention non remboursable jusqu’à 650 000 €',
   'Évaluation en 3 sessions chronométrées (J0, J+2, J+4)',
   'Suivi de votre dossier en temps réel dans votre espace',
 ]
@@ -30,6 +30,7 @@ export function AuthLayout({
           alt={MEDIA_ALT.authPanel}
           className="absolute inset-0 h-full w-full object-cover"
           loading="lazy"
+          referrerPolicy="no-referrer"
         />
         {/* Voile : le texte du panneau reste lisible quelle que soit l'image */}
         <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,7,0.92)_0%,rgba(5,5,7,0.68)_34%,rgba(19,14,77,0.38)_66%,rgba(19,14,77,0.3)_100%)]" />

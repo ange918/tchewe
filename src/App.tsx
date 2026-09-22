@@ -38,6 +38,10 @@ const Dossiers = lazy(() => import('./pages/admin/Dossiers').then((m) => ({ defa
 const Verifications = lazy(() =>
   import('./pages/admin/Verifications').then((m) => ({ default: m.Verifications })),
 )
+const SupremeAdmin = lazy(() =>
+  import('./pages/admin/SupremeAdmin').then((m) => ({ default: m.SupremeAdmin })),
+)
+const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms })))
 
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
 
@@ -51,7 +55,11 @@ export default function App() {
           <Route element={<PublicLayout />}>
             <Route index element={<Landing />} />
             <Route path="a-propos" element={<About />} />
+            <Route path="conditions" element={<Terms />} />
           </Route>
+
+          {/* Console Super Admin /supreme */}
+          <Route path="supreme" element={<SupremeAdmin />} />
 
           {/* Authentification */}
           <Route path="auth">

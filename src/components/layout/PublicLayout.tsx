@@ -10,6 +10,7 @@ const LINKS = [
   { label: 'Accueil', to: '/' },
   { label: 'À propos', to: '/a-propos' },
   { label: 'Comment ça marche', to: '/#processus' },
+  { label: 'Conditions', to: '/conditions' },
 ]
 
 function Navbar() {
@@ -105,7 +106,7 @@ const FOOTER_GROUPS = [
   {
     title: 'Ressources',
     links: [
-      { label: 'Questions fréquentes', to: '/a-propos#faq' },
+      { label: 'Questions fréquentes (FAQ)', to: '/#faq' },
       { label: 'Espace membre', to: '/auth/login' },
       { label: 'Partenaires & sponsors', to: '/#partenaires' },
       { label: 'Nos bailleurs', to: '/a-propos#bailleurs' },
@@ -114,9 +115,10 @@ const FOOTER_GROUPS = [
   {
     title: 'Légal',
     links: [
-      { label: 'Conditions générales', to: '/a-propos#cgu' },
+      { label: 'Conditions générales', to: '/conditions' },
       { label: 'Charte de confidentialité', to: '/a-propos#confidentialite' },
       { label: 'Mentions légales', to: '/a-propos#mentions' },
+      { label: 'Console Supreme', to: '/supreme' },
     ],
   },
 ]
@@ -135,7 +137,7 @@ function Footer() {
             </span>
             <p className="text-sm leading-relaxed text-ink-400">
               Programme d’appui au financement des projets à fort impact social et environnemental.
-              Subventions non remboursables jusqu’à 10 000 €, édition 2026.
+              Subventions non remboursables jusqu’à 650 000 €, édition 2026.
             </p>
           </div>
 

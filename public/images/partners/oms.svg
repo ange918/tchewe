@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <!-- WHO / OMS Blue Emblem -->
+  <g fill="#008dc9" stroke="#008dc9">
+    <!-- Center Globe Coordinates Grid -->
+    <circle cx="120" cy="120" r="76" fill="none" stroke-width="3.5"/>
+    <circle cx="120" cy="120" r="54" fill="none" stroke-width="3"/>
+    <circle cx="120" cy="120" r="32" fill="none" stroke-width="2.5"/>
+    <circle cx="120" cy="120" r="14" fill="none" stroke-width="2"/>
+    
+    <!-- Coordinate spokes -->
+    <line x1="120" y1="44" x2="120" y2="196" stroke-width="2.5"/>
+    <line x1="44" y1="120" x2="196" y2="120" stroke-width="2.5"/>
+    <line x1="66" y1="66" x2="174" y2="174" stroke-width="2"/>
+    <line x1="66" y1="174" x2="174" y2="66" stroke-width="2"/>
+
+    <!-- Continents silhouette hint (simplified polar projection) -->
+    <path d="M102 78 Q118 70 134 82 Q144 95 138 110 Q124 105 110 115 Q95 105 102 78 Z" fill="#008dc9" fill-opacity="0.22" stroke="none"/>
+    <path d="M85 118 Q98 126 95 142 Q80 150 78 132 Z" fill="#008dc9" fill-opacity="0.22" stroke="none"/>
+    <path d="M138 120 Q156 128 152 148 Q138 155 132 136 Z" fill="#008dc9" fill-opacity="0.22" stroke="none"/>
+
+    <!-- Laurel Wreath (Left and Right branches) -->
+    <!-- Left wreath arc -->
+    <path d="M120 208 C70 208 40 170 38 120 C38 80 62 45 92 28" fill="none" stroke-width="3" stroke-linecap="round"/>
+    <!-- Right wreath arc -->
+    <path d="M120 208 C170 208 200 170 202 120 C202 80 178 45 148 28" fill="none" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Leaves Left -->
+    <path d="M50 175 Q32 170 36 156 Q48 160 50 175 Z" fill="#008dc9"/>
+    <path d="M38 145 Q20 138 28 125 Q40 130 38 145 Z" fill="#008dc9"/>
+    <path d="M36 112 Q20 102 30 90 Q42 98 36 112 Z" fill="#008dc9"/>
+    <path d="M46 80 Q32 68 46 58 Q56 68 46 80 Z" fill="#008dc9"/>
+    <path d="M68 52 Q56 38 72 32 Q80 44 68 52 Z" fill="#008dc9"/>
+    <path d="M96 32 Q88 18 104 16 Q108 30 96 32 Z" fill="#008dc9"/>
+    <!-- Bottom leaves left -->
+    <path d="M72 196 Q56 200 62 184 Q76 186 72 196 Z" fill="#008dc9"/>
+    <path d="M102 210 Q88 220 92 204 Q104 202 102 210 Z" fill="#008dc9"/>
+
+    <!-- Leaves Right -->
+    <path d="M190 175 Q208 170 204 156 Q192 160 190 175 Z" fill="#008dc9"/>
+    <path d="M202 145 Q220 138 212 125 Q200 130 202 145 Z" fill="#008dc9"/>
+    <path d="M204 112 Q220 102 210 90 Q198 98 204 112 Z" fill="#008dc9"/>
+    <path d="M194 80 Q208 68 194 58 Q184 68 194 80 Z" fill="#008dc9"/>
+    <path d="M172 52 Q184 38 168 32 Q160 44 172 52 Z" fill="#008dc9"/>
+    <path d="M144 32 Q152 18 136 16 Q132 30 144 32 Z" fill="#008dc9"/>
+    <!-- Bottom leaves right -->
+    <path d="M168 196 Q184 200 178 184 Q164 186 168 196 Z" fill="#008dc9"/>
+    <path d="M138 210 Q152 220 148 204 Q136 202 138 210 Z" fill="#008dc9"/>
+
+    <!-- Staff of Asclepius (Central Rod) -->
+    <path d="M117 12 L123 12 L121.5 214 L118.5 214 Z" fill="#008dc9" stroke="none"/>
+    <circle cx="120" cy="10" r="4.5" fill="#008dc9" stroke="none"/>
+
+    <!-- Entwined Serpent -->
+    <path d="M104 62 C96 46 112 40 120 44 C132 50 140 64 126 80 C110 98 100 110 118 122 C138 134 142 152 124 168 C112 178 108 188 120 196" 
+          fill="none" stroke="#008dc9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Snake Head -->
+    <path d="M96 66 C93 63 94 56 100 56 C105 56 106 63 102 68 Z" fill="#008dc9" stroke="none"/>
+    <circle cx="98" cy="61" r="1.2" fill="#ffffff" stroke="none"/>
+  </g>
+</svg>

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { cn } from '../../lib/utils'
 import { useCountdown } from '../../hooks/useCountdown'
 import { TimerRing } from '../ui/TimerRing'
@@ -21,6 +22,7 @@ export function QuizRunner({
   phase: Phase
   onFinish: (score: number, total: number) => void
 }) {
+  const reduced = useReducedMotion()
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
   const scoreRef = useRef(0)
@@ -79,7 +81,17 @@ export function QuizRunner({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-ink-200/80 bg-white p-5 sm:p-7">
+      {/* `mode="wait"` : la question sortante s'efface avant l'entrée de la
+          suivante, pour que le chrono ne démarre pas derrière une transition. */}
+      <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={question.id}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, x: 28 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, x: -28 }}
+        transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+        className="rounded-2xl border border-ink-200/80 bg-white p-5 sm:p-7"
+      >
         <div className="flex items-start gap-5">
           <div className="min-w-0 flex-1">
             <h2 className="text-xl leading-snug text-ink-900 sm:text-2xl">{question.statement}</h2>
@@ -95,7 +107,9 @@ export function QuizRunner({
             const active = selected === optionIndex
             return (
               <li key={option}>
-                <button
+                <motion.button
+                  whileHover={reduced || selected !== null ? undefined : { scale: 1.012 }}
+                  whileTap={reduced ? undefined : { scale: 0.985 }}
                   type="button"
                   role="radio"
                   aria-checked={active}
@@ -122,12 +136,13 @@ export function QuizRunner({
                     {LETTERS[optionIndex]}
                   </span>
                   <span className="text-[0.98rem] font-semibold text-ink-800">{option}</span>
-                </button>
+                </motion.button>
               </li>
             )
           })}
         </ul>
-      </div>
+      </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

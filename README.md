@@ -4,7 +4,7 @@ Front-end de la plateforme d’appui au financement INNOVA FUND : landing page p
 espace porteur de projet (soumission, QCM chronométré, dépôt de garantie) et back-office
 d’instruction des dossiers.
 
-**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand · Boxicons**
+**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand · Framer Motion · Boxicons**
 
 ## Démarrage
 
@@ -46,6 +46,24 @@ Le jeu d'icônes est **Boxicons**, servi par `react-icons/bi`. Les icônes ne so
 importées directement dans les écrans : `src/components/ui/icons.ts` les réexporte sous
 des noms métier (`ArrowRightIcon`, `ShieldIcon`, `TimerIcon`…). Un changement de
 bibliothèque ne touche donc que ce fichier.
+
+### Animations
+
+`src/components/ui/motion.tsx` expose quatre primitives bâties sur **Framer Motion** :
+`Enter` (entrée au montage), `Reveal` et `RevealGroup`/`RevealItem` (apparition au
+défilement, jouée une seule fois). Deux règles tiennent l'ensemble : les mouvements
+restent courts et de faible amplitude, et toute animation se réduit à un fondu — ou
+disparaît — lorsque le système signale `prefers-reduced-motion`.
+
+Les transitions ponctuelles sont posées directement : changement de question du QCM
+(`AnimatePresence` en `mode="wait"`), panneau de révision glissant, entrée et sortie des
+notifications.
+
+### Découpage du bundle
+
+`src/App.tsx` charge la landing page dans le chunk principal et diffère le reste :
+page à propos, authentification, espace porteur et back-office. Un visiteur non connecté
+ne télécharge donc ni le moteur de QCM ni le pipeline d'instruction.
 
 ### Visuels
 

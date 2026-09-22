@@ -4,6 +4,7 @@ import { ButtonLink } from '../components/ui/Button'
 import { HeroVisual } from '../components/marketing/HeroVisual'
 import { Partners } from '../components/marketing/Partners'
 import { MEDIA } from '../data/media'
+import { Enter, Reveal, RevealGroup, RevealItem } from '../components/ui/motion'
 
 const PARTNERS = [
   'Fonds d’Impact',
@@ -83,23 +84,24 @@ export function Landing() {
       {/* ---------------------------------------------------------------- Hero */}
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-6xl px-4 pt-12 pb-16 sm:px-6 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:pt-20 lg:pb-24">
-          <div className="animate-[var(--animate-fade-up)]">
-            <p className="flex items-center gap-2.5 text-xs font-extrabold tracking-[0.16em] text-brand-600 uppercase sm:text-[0.78rem]">
-              <span aria-hidden>🌍</span>
-              Programme d’Appui au Financement — Édition 2026
-            </p>
-
-            <h1 className="mt-6 text-[2.6rem] leading-[0.95] text-brand-600 sm:text-6xl lg:text-[4.1rem]">
+          <div>
+            <Enter>
+            <h1 className="text-[2.6rem] leading-[0.95] text-brand-600 sm:text-6xl lg:text-[4.1rem]">
               Obtenez jusqu’à 10 000 € pour financer votre projet à fort impact.
             </h1>
 
+            </Enter>
+
+            <Enter delay={0.08}>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-600 sm:text-xl">
               INNOVA FUND accompagne les porteurs de projets à fort impact social et environnemental
               par une <strong className="font-bold text-ink-900">subvention non remboursable</strong>,
               attribuée après une évaluation en trois sessions et le dépôt d’une garantie de 30 %.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            </Enter>
+
+            <Enter delay={0.16} className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink to="/auth/register" size="lg" className="sm:w-auto">
                 Présenter mon projet
                 <ArrowRightIcon className="h-4 w-4" aria-hidden />
@@ -107,9 +109,9 @@ export function Landing() {
               <ButtonLink to="/#processus" size="lg" variant="secondary">
                 Découvrir le processus
               </ButtonLink>
-            </div>
+            </Enter>
 
-            <div className="mt-10 border-t border-ink-100 pt-6">
+            <Enter delay={0.24} className="mt-10 border-t border-ink-100 pt-6">
               <p className="text-xs font-bold tracking-[0.12em] text-ink-400 uppercase">
                 Avec le soutien de nos bailleurs
               </p>
@@ -123,33 +125,33 @@ export function Landing() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </Enter>
           </div>
 
-          <div className="mt-14 lg:mt-0">
+          <Enter delay={0.12} className="mt-14 lg:mt-0">
             <HeroVisual />
-          </div>
+          </Enter>
         </div>
       </section>
 
       {/* ------------------------------------------------------------- Chiffres */}
       <section className="bg-ink-900">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:py-14">
+        <RevealGroup className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:py-14">
           {FIGURES.map((figure) => (
-            <div key={figure.label}>
+            <RevealItem key={figure.label}>
               <p className="text-2xl font-extrabold tracking-[-0.035em] text-white sm:text-3xl">
                 {figure.value}
               </p>
               <p className="mt-1.5 text-sm leading-snug text-ink-400">{figure.label}</p>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       {/* ------------------------------------------------------------ Processus */}
       <section id="processus" className="scroll-mt-20 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <Badge tone="outline">Le parcours</Badge>
             <h2 className="mt-5 text-3xl leading-[1.05] text-ink-900 sm:text-4xl lg:text-5xl">
               Six étapes, de l’inscription au virement.
@@ -158,11 +160,12 @@ export function Landing() {
               Chaque étape se débloque automatiquement dans votre espace dès que la précédente est
               validée. Vous suivez l’avancement de votre dossier en temps réel.
             </p>
-          </div>
+          </Reveal>
 
-          <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <RevealGroup as="ol" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {STEPS.map(({ icon: Icon, ...step }) => (
-              <li
+              <RevealItem
+                as="li"
                 key={step.step}
                 className="group relative flex flex-col rounded-2xl border border-ink-200/80 bg-white p-6 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg hover:shadow-brand-600/5"
               >
@@ -176,16 +179,16 @@ export function Landing() {
                 </div>
                 <h3 className="mt-5 text-lg text-ink-900">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-600">{step.text}</p>
-              </li>
+              </RevealItem>
             ))}
-          </ol>
+          </RevealGroup>
 
-          <div className="mt-10">
+          <Reveal className="mt-10">
             <ButtonLink to="/auth/register" size="lg">
               Démarrer mon inscription
               <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -194,7 +197,7 @@ export function Landing() {
       {/* ---------------------------------------------------------- Engagements */}
       <section className="bg-ink-50/70">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
-          <div className="max-w-2xl">
+          <Reveal className="max-w-2xl">
             <Badge tone="outline">Les conditions du programme</Badge>
             <h2 className="mt-5 text-3xl leading-[1.05] text-ink-900 sm:text-4xl">
               Trois engagements à connaître avant de candidater.
@@ -203,19 +206,19 @@ export function Landing() {
               Ces conditions sont rappelées et acceptées explicitement à l’inscription. Elles
               conditionnent le versement de la subvention.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="mt-12 grid gap-4 lg:grid-cols-3">
+          <RevealGroup className="mt-12 grid gap-4 lg:grid-cols-3">
             {COMMITMENTS.map(({ icon: Icon, ...item }) => (
-              <div key={item.title} className="rounded-2xl bg-white p-6 ring-1 ring-ink-200/80">
+              <RevealItem key={item.title} className="rounded-2xl bg-white p-6 ring-1 ring-ink-200/80">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600 text-white">
                   <Icon className="h-5 w-5" aria-hidden />
                 </span>
                 <h3 className="mt-5 text-lg text-ink-900">{item.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-600">{item.text}</p>
-              </div>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -232,7 +235,7 @@ export function Landing() {
             />
             <div className="absolute inset-0 bg-ink-950/45" />
             <div className="grid-motif absolute inset-0 opacity-20" aria-hidden />
-            <div className="relative mx-auto max-w-2xl">
+            <Reveal className="relative mx-auto max-w-2xl">
               <h2 className="text-3xl leading-[1.05] text-white sm:text-4xl lg:text-5xl">
                 Soyez le moteur de ce qui vient ensuite.
               </h2>
@@ -252,7 +255,7 @@ export function Landing() {
                   En savoir plus
                 </ButtonLink>
               </div>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { ButtonLink } from '../components/ui/Button'
 import { Arch } from '../components/ui/Card'
 import { LogoMark } from '../components/ui/Logo'
 import { MEDIA, MEDIA_ALT } from '../data/media'
+import { Enter, Reveal } from '../components/ui/motion'
 
 const ELIGIBILITY = [
   'Porteur majeur, résidant dans l’un des pays couverts par l’édition 2026.',
@@ -70,8 +71,10 @@ function Section({
 }) {
   return (
     <section id={id} className="scroll-mt-24 border-t border-ink-100 py-12 lg:py-16">
-      <h2 className="text-2xl text-ink-900 sm:text-3xl">{title}</h2>
-      <div className="mt-5 space-y-4 text-[0.98rem] leading-relaxed text-ink-600">{children}</div>
+      <Reveal>
+        <h2 className="text-2xl text-ink-900 sm:text-3xl">{title}</h2>
+        <div className="mt-5 space-y-4 text-[0.98rem] leading-relaxed text-ink-600">{children}</div>
+      </Reveal>
     </section>
   )
 }
@@ -81,7 +84,7 @@ export function About() {
     <>
       <section className="bg-white">
         <div className="mx-auto max-w-6xl px-4 pt-12 pb-10 sm:px-6 lg:grid lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-14 lg:pt-20">
-          <div>
+          <Enter>
             <Badge tone="outline">Notre vision</Badge>
             <h1 className="mt-5 text-[2.4rem] leading-[0.98] text-brand-600 sm:text-5xl lg:text-[3.6rem]">
               Financer celles et ceux qui font bouger les lignes.
@@ -97,9 +100,9 @@ export function About() {
                 Présenter mon projet
               </ButtonLink>
             </div>
-          </div>
+          </Enter>
 
-          <div className="mt-12 lg:mt-0">
+          <Enter delay={0.12} className="mt-12 lg:mt-0">
             <Arch className="relative aspect-4/3 bg-brand-800">
               <img
                 src={MEDIA.aboutArch}
@@ -115,7 +118,7 @@ export function About() {
                 </p>
               </div>
             </Arch>
-          </div>
+          </Enter>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { CheckIcon, CloseIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
@@ -20,6 +21,7 @@ export function DossierDrawer({
   onApprove: (dossier: AdminDossier) => void
   onReject: (dossier: AdminDossier, note: string) => void
 }) {
+  const reduced = useReducedMotion()
   const [activeDoc, setActiveDoc] = useState(dossier.documents[0]?.id ?? '')
   const [rejecting, setRejecting] = useState(false)
   const [note, setNote] = useState('')
@@ -38,14 +40,22 @@ export function DossierDrawer({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label={`Dossier ${dossier.reference}`}>
-      <button
+      <motion.button
         type="button"
         aria-label="Fermer la fiche"
         onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
         className="absolute inset-0 bg-ink-900/40 backdrop-blur-[2px]"
       />
 
-      <aside className="relative flex h-full w-full max-w-2xl flex-col bg-white shadow-2xl">
+      <motion.aside
+        initial={reduced ? { opacity: 0 } : { x: '100%' }}
+        animate={reduced ? { opacity: 1 } : { x: 0 }}
+        transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex h-full w-full max-w-2xl flex-col bg-white shadow-2xl"
+      >
         <header className="flex items-start justify-between gap-4 border-b border-ink-100 p-5 sm:p-6">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -183,7 +193,7 @@ export function DossierDrawer({
             </p>
           </footer>
         )}
-      </aside>
+      </motion.aside>
     </div>
   )
 }

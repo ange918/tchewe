@@ -1,51 +1,77 @@
-import { useMemo } from 'react'
-import { MOCK_DOSSIERS, type AdminDossier } from '../data/mockDossiers'
-import { useAdmin } from '../store/admin'
-import { useApplication } from '../store/application'
-import { useAuth } from '../store/auth'
+import { useCallback, useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+import type {
+  DocumentRow,
+  DossierRow,
+  EligibilityRow,
+  FundingProofRow,
+  PhaseResultRow,
+} from '../lib/database.types'
 
-export const LIVE_DOSSIER_ID = 'live'
+/** Un dossier tel que le back-office le présente, pièces et résultats inclus. */
+export interface AdminDossier extends DossierRow {
+  applicant: string
+  email: string
+  documents: DocumentRow[]
+  eligibility: EligibilityRow | null
+  phases: PhaseResultRow[]
+  funding: FundingProofRow | null
+}
+
+interface Embedded extends DossierRow {
+  profiles: { first_name: string; last_name: string; email: string | null } | null
+  documents: DocumentRow[]
+  eligibility: EligibilityRow | null
+  phase_results: PhaseResultRow[]
+  funding_proofs: FundingProofRow | null
+}
+
+const SELECT =
+  '*, profiles(first_name, last_name, email), documents(*), eligibility(*), phase_results(*), funding_proofs(*)'
 
 /**
- * Liste consolidée du back-office : le jeu de démonstration, plus le dossier
- * réellement déposé depuis l'espace porteur de ce navigateur. Les deux stores
- * étant persistés, approuver le dossier « live » débloque immédiatement le QCM
- * côté candidat.
+ * Tous les dossiers, pour le back-office.
+ *
+ * Aucun filtre n'est appliqué côté client : c'est la politique RLS qui décide.
+ * Un compte candidat qui atteindrait cette page ne verrait que son dossier.
  */
-export function useDossiers(): AdminDossier[] {
-  const overrides = useAdmin((state) => state.overrides)
-  const notes = useAdmin((state) => state.notes)
-  const application = useApplication()
-  const accounts = useAuth((state) => state.accounts)
+export function useDossiers() {
+  const [dossiers, setDossiers] = useState<AdminDossier[]>([])
+  const [loading, setLoading] = useState(true)
 
-  return useMemo(() => {
-    const seeded = MOCK_DOSSIERS.map((dossier) => ({
-      ...dossier,
-      status: overrides[dossier.id] ?? dossier.status,
-      reviewNote: notes[dossier.id],
-    }))
+  const reload = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('dossiers')
+      .select(SELECT)
+      .order('submitted_at', { ascending: false, nullsFirst: false })
 
-    if (!application.project || !application.reference) return seeded
-
-    const owner = accounts.find((account) => account.role === 'candidate')
-    const live: AdminDossier = {
-      id: LIVE_DOSSIER_ID,
-      reference: application.reference,
-      applicant: owner ? `${owner.firstName} ${owner.lastName}` : 'Porteur de projet',
-      email: owner?.email ?? '—',
-      title: application.project.title,
-      amount: application.project.amount,
-      durationMonths: application.project.durationMonths,
-      summary: application.project.summary,
-      submittedAt: application.project.submittedAt,
-      status: application.status,
-      documents: application.project.documents,
-      phases: application.phases,
-      eligibility: application.eligibility ?? undefined,
-      funding: application.funding ?? undefined,
-      live: true,
+    if (error || !data) {
+      setLoading(false)
+      return
     }
 
-    return [live, ...seeded]
-  }, [accounts, application, notes, overrides])
+    setDossiers(
+      (data as unknown as Embedded[]).map((row) => ({
+        ...row,
+        applicant: row.profiles
+          ? `${row.profiles.first_name} ${row.profiles.last_name}`.trim()
+          : 'Porteur de projet',
+        email: row.profiles?.email ?? '—',
+        documents: row.documents ?? [],
+        eligibility: row.eligibility ?? null,
+        phases: (row.phase_results ?? []).sort((a, b) => a.phase - b.phase),
+        funding: row.funding_proofs ?? null,
+      })),
+    )
+    setLoading(false)
+  }, [])
+
+  useEffect(() => {
+    // Chargement initial depuis la base : c'est précisément la synchronisation
+    // avec un système externe pour laquelle un effet est fait.
+    // oxlint-disable-next-line react/set-state-in-effect
+    void reload()
+  }, [reload])
+
+  return { dossiers, loading, reload }
 }

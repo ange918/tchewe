@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { cn } from '../../lib/utils'
 import { useCountdown } from '../../hooks/useCountdown'
 import { TimerRing } from '../ui/TimerRing'
-import type { Phase } from '../../data/quiz'
+import type { QuizQuestion } from '../../lib/database.types'
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E']
 const FEEDBACK_MS = 320
@@ -16,20 +16,23 @@ const FEEDBACK_MS = 320
  * (court délai de confirmation visuelle).
  */
 export function QuizRunner({
-  phase,
+  questions,
+  title,
   onFinish,
 }: {
-  phase: Phase
-  onFinish: (score: number, total: number) => void
+  questions: QuizQuestion[]
+  title: string
+  /** Les réponses choisies, dans l'ordre des questions. -1 = pas de réponse. */
+  onFinish: (answers: number[]) => void
 }) {
   const reduced = useReducedMotion()
   const [index, setIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
-  const scoreRef = useRef(0)
+  const answersRef = useRef<number[]>([])
   const advancingRef = useRef(false)
 
-  const question = phase.questions[index]
-  const total = phase.questions.length
+  const question = questions[index]
+  const total = questions.length
   const durationMs = question.seconds * 1000
 
   const advance = useCallback(
@@ -37,14 +40,16 @@ export function QuizRunner({
       if (advancingRef.current) return
       advancingRef.current = true
 
-      if (choice === question.answer) scoreRef.current += 1
+      // Le client ne corrige rien : il enregistre le choix, la notation est
+      // faite par le serveur à la fin de la session.
+      answersRef.current[index] = choice ?? -1
 
       const next = index + 1
       const commit = () => {
         advancingRef.current = false
         setSelected(null)
         if (next >= total) {
-          onFinish(scoreRef.current, total)
+          onFinish(answersRef.current.slice(0, total))
         } else {
           setIndex(next)
         }
@@ -53,14 +58,14 @@ export function QuizRunner({
       if (choice === null) commit()
       else setTimeout(commit, FEEDBACK_MS)
     },
-    [index, onFinish, question.answer, total],
+    [index, onFinish, total],
   )
 
   const handleExpire = useCallback(() => {
     advance(selected)
   }, [advance, selected])
 
-  const remaining = useCountdown(durationMs, handleExpire, question.id)
+  const remaining = useCountdown(durationMs, handleExpire, question.question_id)
   const progress = useMemo(() => ((index + 1) / total) * 100, [index, total])
 
   return (
@@ -71,7 +76,7 @@ export function QuizRunner({
           <span>
             Question {index + 1} <span className="text-ink-400">/ {total}</span>
           </span>
-          <span className="hidden text-ink-400 sm:inline">{phase.title}</span>
+          <span className="hidden text-ink-400 sm:inline">{title}</span>
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ink-200">
           <div
@@ -85,7 +90,7 @@ export function QuizRunner({
           suivante, pour que le chrono ne démarre pas derrière une transition. */}
       <AnimatePresence mode="wait" initial={false}>
       <motion.div
-        key={question.id}
+        key={question.question_id}
         initial={reduced ? { opacity: 0 } : { opacity: 0, x: 28 }}
         animate={{ opacity: 1, x: 0 }}
         exit={reduced ? { opacity: 0 } : { opacity: 0, x: -28 }}

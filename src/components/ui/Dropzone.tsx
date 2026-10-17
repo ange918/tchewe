@@ -1,29 +1,44 @@
 import { useRef, useState } from 'react'
-import { FileIcon, PaperclipIcon, TrashIcon, UploadIcon } from './icons'
+import { FileIcon, LoaderIcon, PaperclipIcon, TrashIcon, UploadIcon } from './icons'
 import { cn, formatBytes } from '../../lib/utils'
-import { releaseFile, storeFile, type FileMeta } from '../../lib/fileVault'
+import { removeDocument, uploadDocument } from '../../lib/storage'
+import type { DocumentKind, DocumentRow } from '../../lib/database.types'
 
+/**
+ * Dépôt de pièces jointes.
+ *
+ * Le fichier part directement vers un bucket privé, puis la ligne de métadonnées
+ * est écrite. En cas d'échec de la seconde étape, le fichier téléversé est
+ * supprimé pour ne pas laisser d'orphelin dans le stockage.
+ */
 export function Dropzone({
   label,
   hint,
+  dossierId,
+  kind,
+  documents,
+  onAdded,
+  onRemoved,
   accept = 'application/pdf',
   multiple = true,
   maxSizeMb = 10,
-  files,
-  onChange,
   error,
 }: {
   label: string
   hint?: string
+  dossierId: string
+  kind: DocumentKind
+  documents: DocumentRow[]
+  onAdded: (document: DocumentRow) => void
+  onRemoved: (id: string) => void
   accept?: string
   multiple?: boolean
   maxSizeMb?: number
-  files: FileMeta[]
-  onChange: (files: FileMeta[]) => void
   error?: string
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
+  const [busy, setBusy] = useState(false)
   const [localError, setLocalError] = useState<string>()
 
   function accepts(file: File) {
@@ -35,28 +50,43 @@ export function Dropzone({
       )
   }
 
-  function addFiles(incoming: FileList | null) {
-    if (!incoming?.length) return
-    const next: FileMeta[] = []
+  async function addFiles(incoming: FileList | null) {
+    if (!incoming?.length || busy) return
+    setBusy(true)
+    setLocalError(undefined)
+
     for (const file of Array.from(incoming)) {
       if (!accepts(file)) {
-        setLocalError(`« ${file.name} » n'est pas dans un format accepté.`)
+        setLocalError(`« ${file.name} » n’est pas dans un format accepté.`)
         continue
       }
       if (file.size > maxSizeMb * 1024 * 1024) {
         setLocalError(`« ${file.name} » dépasse ${maxSizeMb} Mo.`)
         continue
       }
-      next.push(storeFile(file))
+      try {
+        const document = await uploadDocument(dossierId, kind, file)
+        onAdded(document)
+        if (!multiple) break
+      } catch (cause) {
+        setLocalError(
+          cause && typeof cause === 'object' && 'message' in cause
+            ? String((cause as { message: unknown }).message)
+            : 'Le téléversement a échoué.',
+        )
+      }
     }
-    if (!next.length) return
-    setLocalError(undefined)
-    onChange(multiple ? [...files, ...next] : next.slice(0, 1))
+
+    setBusy(false)
   }
 
-  function remove(id: string) {
-    releaseFile(id)
-    onChange(files.filter((file) => file.id !== id))
+  async function remove(document: DocumentRow) {
+    try {
+      await removeDocument(document)
+      onRemoved(document.id)
+    } catch {
+      setLocalError('Suppression impossible.')
+    }
   }
 
   const shown = error ?? localError
@@ -71,9 +101,10 @@ export function Dropzone({
       <div
         role="button"
         tabIndex={0}
-        onClick={() => inputRef.current?.click()}
+        aria-busy={busy}
+        onClick={() => !busy && inputRef.current?.click()}
         onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
+          if (!busy && (event.key === 'Enter' || event.key === ' ')) {
             event.preventDefault()
             inputRef.current?.click()
           }
@@ -86,21 +117,32 @@ export function Dropzone({
         onDrop={(event) => {
           event.preventDefault()
           setDragging(false)
-          addFiles(event.dataTransfer.files)
+          void addFiles(event.dataTransfer.files)
         }}
         className={cn(
           'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition',
           dragging
             ? 'border-brand-500 bg-brand-50'
             : 'border-ink-200 bg-ink-50/60 hover:border-brand-300 hover:bg-brand-50/50',
+          busy && 'cursor-wait opacity-70',
           shown && 'border-rose-300 bg-rose-50/50',
         )}
       >
         <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-600/10 text-brand-600">
-          <UploadIcon className="h-5 w-5" aria-hidden />
+          {busy ? (
+            <LoaderIcon className="h-5 w-5 animate-spin" aria-hidden />
+          ) : (
+            <UploadIcon className="h-5 w-5" aria-hidden />
+          )}
         </span>
         <span className="text-sm font-bold text-ink-800">
-          Déposez vos fichiers ou <span className="text-brand-600">parcourez</span>
+          {busy ? (
+            'Téléversement en cours…'
+          ) : (
+            <>
+              Déposez vos fichiers ou <span className="text-brand-600">parcourez</span>
+            </>
+          )}
         </span>
         <span className="text-xs text-ink-500">
           {accept.includes('pdf') && accept.includes('image')
@@ -117,7 +159,7 @@ export function Dropzone({
           multiple={multiple}
           className="sr-only"
           onChange={(event) => {
-            addFiles(event.target.files)
+            void addFiles(event.target.files)
             event.target.value = ''
           }}
         />
@@ -125,28 +167,32 @@ export function Dropzone({
 
       {shown && <p className="text-sm font-medium text-rose-600">{shown}</p>}
 
-      {files.length > 0 && (
+      {documents.length > 0 && (
         <ul className="space-y-2">
-          {files.map((file) => (
+          {documents.map((document) => (
             <li
-              key={file.id}
+              key={document.id}
               className="flex items-center gap-3 rounded-xl border border-ink-200 bg-white px-3.5 py-2.5"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                {file.type === 'application/pdf' ? (
+                {document.mime_type === 'application/pdf' ? (
                   <FileIcon className="h-4 w-4" aria-hidden />
                 ) : (
                   <PaperclipIcon className="h-4 w-4" aria-hidden />
                 )}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold text-ink-900">{file.name}</span>
-                <span className="block text-xs text-ink-500">{formatBytes(file.size)}</span>
+                <span className="block truncate text-sm font-semibold text-ink-900">
+                  {document.file_name}
+                </span>
+                <span className="block text-xs text-ink-500">
+                  {formatBytes(document.size_bytes ?? 0)}
+                </span>
               </span>
               <button
                 type="button"
-                onClick={() => remove(file.id)}
-                aria-label={`Retirer ${file.name}`}
+                onClick={() => void remove(document)}
+                aria-label={`Retirer ${document.file_name}`}
                 className="rounded-full p-2 text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"
               >
                 <TrashIcon className="h-4 w-4" aria-hidden />

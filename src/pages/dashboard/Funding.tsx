@@ -7,8 +7,7 @@ import { Dropzone } from '../../components/ui/Dropzone'
 import { Input } from '../../components/ui/Field'
 import { toast } from '../../lib/toast'
 import { formatDate, formatEuro } from '../../lib/utils'
-import type { FileMeta } from '../../lib/fileVault'
-import { GUARANTEE_RATE, useApplication } from '../../store/application'
+import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
 
 /** Lien d'affiliation vers la banque partenaire (à remplacer par l'URL réelle). */
 const PARTNER_BANK_URL = 'https://example.com/banque-partenaire'
@@ -24,16 +23,20 @@ interface Errors {
 
 function FundingForm({ amount }: { amount: number }) {
   const submitFunding = useApplication((state) => state.submitFunding)
+  const dossier = useApplication((state) => state.dossier)
+  const documents = useApplication((state) => state.documents)
+  const addDocument = useApplication((state) => state.addDocument)
+  const dropDocument = useApplication((state) => state.dropDocument)
+  const depositReceipt = documentsOfKind(documents, 'deposit_receipt')
+  const accountProof = documentsOfKind(documents, 'account_proof')
   const guarantee = Math.round(amount * GUARANTEE_RATE)
 
   const [iban, setIban] = useState('')
   const [bankName, setBankName] = useState('')
-  const [depositReceipt, setDepositReceipt] = useState<FileMeta[]>([])
-  const [accountProof, setAccountProof] = useState<FileMeta[]>([])
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     const next: Errors = {}
     const normalized = iban.replace(/\s+/g, '').toUpperCase()
@@ -52,8 +55,13 @@ function FundingForm({ amount }: { amount: number }) {
     }
 
     setSubmitting(true)
-    submitFunding({ iban: normalized, bankName: bankName.trim(), depositReceipt, accountProof })
+    const result = await submitFunding({ iban: normalized, bankName: bankName.trim() })
     setSubmitting(false)
+
+    if (!result.ok) {
+      toast.error('Envoi impossible', result.error)
+      return
+    }
     toast.success('Preuves transmises', 'L’administration procède à la vérification.')
   }
 
@@ -93,7 +101,7 @@ function FundingForm({ amount }: { amount: number }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-6">
         <Card>
           <CardHeader
             title="Coordonnées bancaires"
@@ -134,8 +142,11 @@ function FundingForm({ amount }: { amount: number }) {
               hint="Bordereau de versement ou avis d’opération remis par la banque."
               accept="application/pdf,image/*"
               multiple={false}
-              files={depositReceipt}
-              onChange={setDepositReceipt}
+              dossierId={dossier?.id ?? ''}
+              kind="deposit_receipt"
+              documents={depositReceipt}
+              onAdded={addDocument}
+              onRemoved={dropDocument}
               error={errors.depositReceipt}
             />
             <Dropzone
@@ -143,8 +154,11 @@ function FundingForm({ amount }: { amount: number }) {
               hint="Capture d’écran du compte ouvert, RIB ou photo de la carte (numéro masqué)."
               accept="application/pdf,image/*"
               multiple={false}
-              files={accountProof}
-              onChange={setAccountProof}
+              dossierId={dossier?.id ?? ''}
+              kind="account_proof"
+              documents={accountProof}
+              onAdded={addDocument}
+              onRemoved={dropDocument}
               error={errors.accountProof}
             />
           </CardBody>
@@ -166,11 +180,14 @@ function FundingForm({ amount }: { amount: number }) {
 }
 
 function FundingStatus() {
-  const { status, funding, project } = useApplication()
-  if (!funding || !project) return null
-
+  const dossier = useApplication((state) => state.dossier)
+  const funding = useApplication((state) => state.funding)
+  const documents = useApplication((state) => state.documents)
+  if (!funding || !dossier) return null
+  const status = dossier.status
+  const amount = dossier.amount ?? 0
   const financed = status === 'financed'
-  const guarantee = Math.round(project.amount * GUARANTEE_RATE)
+  const guarantee = Math.round(amount * GUARANTEE_RATE)
 
   return (
     <div className="space-y-6">
@@ -193,8 +210,8 @@ function FundingStatus() {
             </h1>
             <p className="mt-1.5 leading-relaxed text-ink-600">
               {financed
-                ? `L’ordre de virement de ${formatEuro(project.amount)} a été émis vers votre compte. Le délai de réception dépend de votre établissement bancaire.`
-                : `Vos justificatifs ont été transmis le ${formatDate(funding.submittedAt)}. L’administration compare le reçu de dépôt avec l’apport attendu de ${formatEuro(guarantee)}.`}
+                ? `L’ordre de virement de ${formatEuro(amount)} a été émis vers votre compte. Le délai de réception dépend de votre établissement bancaire.`
+                : `Vos justificatifs ont été transmis le ${formatDate(funding.submitted_at)}. L’administration compare le reçu de dépôt avec l’apport attendu de ${formatEuro(guarantee)}.`}
             </p>
           </div>
         </CardBody>
@@ -210,18 +227,20 @@ function FundingStatus() {
             </div>
             <div>
               <dt className="text-xs font-bold tracking-[0.08em] text-ink-400 uppercase">Banque</dt>
-              <dd className="mt-1 text-sm font-semibold text-ink-900">{funding.bankName}</dd>
+              <dd className="mt-1 text-sm font-semibold text-ink-900">{funding.bank_name}</dd>
             </div>
           </dl>
 
           <ul className="space-y-2">
-            {[...funding.depositReceipt, ...funding.accountProof].map((file) => (
+            {documents
+              .filter((file) => file.kind === 'deposit_receipt' || file.kind === 'account_proof')
+              .map((file) => (
               <li
                 key={file.id}
                 className="flex items-center gap-3 rounded-xl border border-ink-200 px-3.5 py-2.5"
               >
                 <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                <span className="truncate text-sm font-semibold text-ink-900">{file.name}</span>
+                <span className="truncate text-sm font-semibold text-ink-900">{file.file_name}</span>
               </li>
             ))}
           </ul>
@@ -232,16 +251,15 @@ function FundingStatus() {
 }
 
 export function Funding() {
-  const status = useApplication((state) => state.status)
-  const project = useApplication((state) => state.project)
+  const dossier = useApplication((state) => state.dossier)
 
-  if (!project) return null
+  if (!dossier) return null
 
-  if (status === 'evaluated') {
+  if (dossier.status === 'evaluated') {
     return (
       <div className="space-y-4">
         <Badge tone="outline">Étape 3 sur 3</Badge>
-        <FundingForm amount={project.amount} />
+        <FundingForm amount={dossier.amount ?? 0} />
       </div>
     )
   }

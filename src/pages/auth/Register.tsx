@@ -81,12 +81,12 @@ export function Register() {
     return Object.keys(next).length === 0
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (!validate()) return
 
     setSubmitting(true)
-    const result = register({
+    const result = await register({
       firstName: form.firstName,
       lastName: form.lastName,
       email: form.email,
@@ -123,7 +123,7 @@ export function Register() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-5">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nom"

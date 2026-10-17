@@ -1,14 +1,12 @@
 import { useMemo, useState } from 'react'
 import { SearchIcon } from '../../components/ui/icons'
-import { Badge } from '../../components/ui/Badge'
 import { Input } from '../../components/ui/Field'
 import { DossierDrawer } from '../../components/admin/DossierDrawer'
 import { toast } from '../../lib/toast'
 import { cn, formatDate, formatEuro } from '../../lib/utils'
-import { LIVE_DOSSIER_ID, useDossiers } from '../../hooks/useDossiers'
-import { useAdmin } from '../../store/admin'
-import { useApplication, type DossierStatus } from '../../store/application'
-import type { AdminDossier } from '../../data/mockDossiers'
+import { useDossiers, type AdminDossier } from '../../hooks/useDossiers'
+import { supabase, friendlyError } from '../../lib/supabase'
+import type { DossierStatus } from '../../lib/database.types'
 
 const COLUMNS: { id: string; label: string; statuses: DossierStatus[]; accent: string }[] = [
   { id: 'new', label: 'Nouveaux dossiers', statuses: ['submitted'], accent: 'bg-amber-400' },
@@ -29,25 +27,21 @@ function DossierCard({ dossier, onOpen }: { dossier: AdminDossier; onOpen: () =>
         <span className="text-[0.7rem] font-bold tracking-[0.05em] text-ink-400">
           {dossier.reference}
         </span>
-        {dossier.live && <Badge tone="brand" className="px-2 py-0.5 text-[0.6rem]">Live</Badge>}
       </div>
       <p className="mt-1.5 line-clamp-2 text-sm leading-snug font-bold text-ink-900">
         {dossier.title}
       </p>
       <p className="mt-1 truncate text-xs text-ink-500">{dossier.applicant}</p>
       <div className="mt-3 flex items-center justify-between text-xs">
-        <span className="font-extrabold text-brand-600">{formatEuro(dossier.amount)}</span>
-        <span className="text-ink-400">{formatDate(dossier.submittedAt)}</span>
+        <span className="font-extrabold text-brand-600">{formatEuro(dossier.amount ?? 0)}</span>
+        <span className="text-ink-400">{dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'}</span>
       </div>
     </button>
   )
 }
 
 export function Dossiers() {
-  const dossiers = useDossiers()
-  const setStatus = useAdmin((state) => state.setStatus)
-  const approveLive = useApplication((state) => state.approveDossier)
-  const rejectLive = useApplication((state) => state.rejectDossier)
+  const { dossiers, reload } = useDossiers()
 
   const [query, setQuery] = useState('')
   const [openId, setOpenId] = useState<string | null>(null)
@@ -65,17 +59,28 @@ export function Dossiers() {
 
   const open = dossiers.find((dossier) => dossier.id === openId) ?? null
 
-  function approve(dossier: AdminDossier) {
-    if (dossier.id === LIVE_DOSSIER_ID) approveLive()
-    else setStatus(dossier.id, 'approved')
+  async function approve(dossier: AdminDossier) {
+    const { error } = await supabase.rpc('approve_dossier', { p_dossier_id: dossier.id })
+    if (error) {
+      toast.error('Approbation impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
+    }
     setOpenId(null)
+    await reload()
     toast.success('Dossier approuvé', `${dossier.reference} — l’évaluation est ouverte au porteur.`)
   }
 
-  function reject(dossier: AdminDossier, note: string) {
-    if (dossier.id === LIVE_DOSSIER_ID) rejectLive(note)
-    else setStatus(dossier.id, 'rejected', note)
+  async function reject(dossier: AdminDossier, note: string) {
+    const { error } = await supabase.rpc('reject_dossier', {
+      p_dossier_id: dossier.id,
+      p_note: note,
+    })
+    if (error) {
+      toast.error('Rejet impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
+    }
     setOpenId(null)
+    await reload()
     toast.info('Dossier rejeté', `${dossier.reference} — le motif a été transmis au porteur.`)
   }
 
@@ -144,8 +149,8 @@ export function Dossiers() {
           key={open.id}
           dossier={open}
           onClose={() => setOpenId(null)}
-          onApprove={approve}
-          onReject={reject}
+          onApprove={(d) => void approve(d)}
+          onReject={(d, note) => void reject(d, note)}
         />
       )}
     </div>

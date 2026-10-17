@@ -18,10 +18,10 @@ export function Login() {
 
   const from = (location.state as { from?: string } | null)?.from
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setSubmitting(true)
-    const result = login(email, password)
+    const result = await login(email, password)
     setSubmitting(false)
 
     if (!result.ok) {
@@ -47,7 +47,7 @@ export function Login() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-5">
         <Input
           label="Adresse e-mail"
           type="email"
@@ -77,11 +77,7 @@ export function Login() {
           Se connecter
         </Button>
 
-        <p className="rounded-xl bg-ink-50 p-3 text-xs leading-relaxed text-ink-500">
-          <strong className="font-bold text-ink-700">Démonstration :</strong> les comptes sont
-          enregistrés dans ce navigateur. Une adresse contenant « admin » ouvre le back-office
-          administrateur.
-        </p>
+
       </form>
     </AuthLayout>
   )

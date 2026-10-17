@@ -7,7 +7,6 @@ import {
   InstitutionIcon,
   MoneyIcon,
   ReceiptIcon,
-  ResetIcon,
   SearchIcon,
   ShieldIcon,
   TrendingUpIcon,
@@ -15,13 +14,13 @@ import {
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { DossierDrawer } from '../../components/admin/DossierDrawer'
 import { DocumentViewer } from '../../components/admin/DocumentViewer'
-import { LIVE_DOSSIER_ID, useDossiers } from '../../hooks/useDossiers'
-import { useAdmin } from '../../store/admin'
-import { GUARANTEE_RATE, useApplication, type DossierStatus } from '../../store/application'
+import { useDossiers, type AdminDossier } from '../../hooks/useDossiers'
+import { GUARANTEE_RATE } from '../../store/application'
+import { supabase, friendlyError } from '../../lib/supabase'
+import type { DossierStatus } from '../../lib/database.types'
 import { useAuth } from '../../store/auth'
 import { toast } from '../../lib/toast'
 import { cn, formatDate, formatEuro } from '../../lib/utils'
-import type { AdminDossier } from '../../data/mockDossiers'
 
 type TabType = 'overview' | 'dossiers' | 'verifications' | 'direct_actions'
 
@@ -39,12 +38,10 @@ const STATUS_LABELS: Record<DossierStatus, { label: string; tone: 'brand' | 'suc
 export function SupremeAdmin() {
   const user = useAuth((state) => state.user)
   const login = useAuth((state) => state.login)
-  const dossiers = useDossiers()
+  const { dossiers, reload } = useDossiers()
 
   // Actions Live Application
-  const application = useApplication()
-  const setAdminStatus = useAdmin((state) => state.setStatus)
-  const resetAdmin = useAdmin((state) => state.reset)
+
 
   const [tab, setTab] = useState<TabType>('overview')
   const [search, setSearch] = useState('')
@@ -57,10 +54,10 @@ export function SupremeAdmin() {
     const totalCount = dossiers.length
     const totalGranted = dossiers
       .filter((d) => d.status === 'financed')
-      .reduce((sum, d) => sum + d.amount, 0)
+      .reduce((sum, d) => sum + (d.amount ?? 0), 0)
     const inPipeline = dossiers
       .filter((d) => d.status !== 'financed' && d.status !== 'rejected')
-      .reduce((sum, d) => sum + d.amount, 0)
+      .reduce((sum, d) => sum + (d.amount ?? 0), 0)
     const pendingReview = dossiers.filter((d) => d.status === 'submitted').length
     const pendingProofs = dossiers.filter((d) => d.status === 'proofs_submitted').length
     const financedCount = dossiers.filter((d) => d.status === 'financed').length
@@ -105,42 +102,58 @@ export function SupremeAdmin() {
     )
   }, [proofsList, selectedProofId])
 
+  // Les preuves de garantie sont des pièces du dossier, repérées par leur type.
+  const depositProof =
+    activeProofDossier?.documents.find((d) => d.kind === 'deposit_receipt') ?? null
+  const accountProof =
+    activeProofDossier?.documents.find((d) => d.kind === 'account_proof') ?? null
+
   const openDrawerDossier = useMemo(() => {
     if (!openDrawerId) return null
     return dossiers.find((d) => d.id === openDrawerId) ?? null
   }, [dossiers, openDrawerId])
 
   // Validation rapide
-  function handleDirectApprove(dossier: AdminDossier) {
-    if (dossier.id === LIVE_DOSSIER_ID) {
-      application.approveDossier()
-    } else {
-      setAdminStatus(dossier.id, 'approved')
+  async function handleDirectApprove(dossier: AdminDossier) {
+    const { error } = await supabase.rpc('approve_dossier', { p_dossier_id: dossier.id })
+    if (error) {
+      toast.error('Approbation impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
     }
+    await reload()
     toast.success('Dossier validé', `${dossier.reference} a été approuvé avec succès.`)
   }
 
-  function handleDirectDisburse(dossier: AdminDossier) {
-    if (dossier.id === LIVE_DOSSIER_ID) {
-      application.validateFunding()
-    } else {
-      setAdminStatus(dossier.id, 'financed')
+  async function handleDirectDisburse(dossier: AdminDossier) {
+    const { error } = await supabase.rpc('validate_funding', { p_dossier_id: dossier.id })
+    if (error) {
+      toast.error('Virement impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
     }
+    await reload()
     toast.success(
       'Virement de subvention ordonné',
-      `Ordre de ${formatEuro(dossier.amount)} émis vers le compte du porteur.`
+      `Ordre de ${formatEuro(dossier.amount ?? 0)} émis vers le compte du porteur.`
     )
   }
 
-  function handleDirectReject(dossier: AdminDossier) {
-    const reason = 'Dossier non conforme aux exigences du programme 2026.'
-    if (dossier.id === LIVE_DOSSIER_ID) {
-      application.rejectDossier(reason)
-    } else {
-      setAdminStatus(dossier.id, 'rejected', reason)
+  async function handleDirectReject(dossier: AdminDossier, note?: string) {
+    const reason = note ?? 'Dossier non conforme aux exigences du programme 2026.'
+    const { error } = await supabase.rpc('reject_dossier', {
+      p_dossier_id: dossier.id,
+      p_note: reason,
+    })
+    if (error) {
+      toast.error('Rejet impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
     }
+    await reload()
     toast.error('Dossier refusé', `${dossier.reference} a été rejeté.`)
   }
+
+  /** Dossier déposé le plus récent, cible des raccourcis du tableau de bord. */
+  const latest: AdminDossier | null =
+    dossiers.find((d) => d.submitted_at !== null) ?? dossiers[0] ?? null
 
   // Si non connecté en admin, proposer une prise de contrôle immédiate
   const isSuperAdmin = user?.role === 'admin'
@@ -363,36 +376,41 @@ export function SupremeAdmin() {
                 </div>
               </div>
 
-              {/* Statut du Dossier Live du navigateur */}
+              {/* Dernier dossier déposé — remplace l'ancien « dossier Live »,
+                  qui n'avait de sens qu'avec un stockage local par navigateur. */}
               <div className="rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-400/10 to-transparent p-6">
                 <div className="flex items-center justify-between">
                   <span className="rounded-md bg-amber-400 px-2 py-0.5 text-[0.65rem] font-extrabold text-ink-950 uppercase">
-                    Dossier en direct (Live)
+                    Dernier dossier déposé
                   </span>
-                  <span className="text-xs font-mono text-amber-300">{application.reference ?? 'Non créé'}</span>
+                  <span className="font-mono text-xs text-amber-300">
+                    {latest?.reference ?? 'Aucun'}
+                  </span>
                 </div>
-                <h4 className="mt-4 font-bold text-white text-base">
-                  {application.project?.title || 'Aucun dossier actif dans ce navigateur'}
+                <h4 className="mt-4 text-base font-bold text-white">
+                  {latest?.title ?? 'Aucun dossier déposé pour le moment'}
                 </h4>
                 <p className="mt-1 text-xs text-ink-300">
-                  Statut : <strong className="text-white">{application.status}</strong>
+                  Statut : <strong className="text-white">{latest ? STATUS_LABELS[latest.status].label : '—'}</strong>
                 </p>
                 <div className="mt-4 space-y-2 text-xs text-ink-300">
                   <div className="flex justify-between border-b border-white/10 py-1.5">
                     <span>Montant sollicité</span>
-                    <strong className="text-amber-400 font-bold">
-                      {application.project ? formatEuro(application.project.amount) : '—'}
+                    <strong className="font-bold text-amber-400">
+                      {latest ? formatEuro(latest.amount ?? 0) : '—'}
                     </strong>
                   </div>
                   <div className="flex justify-between border-b border-white/10 py-1.5">
                     <span>Garantie 30 %</span>
-                    <strong className="text-sky-400 font-bold">
-                      {application.project ? formatEuro(application.project.amount * GUARANTEE_RATE) : '—'}
+                    <strong className="font-bold text-sky-400">
+                      {latest ? formatEuro(Math.round((latest.amount ?? 0) * GUARANTEE_RATE)) : '—'}
                     </strong>
                   </div>
                   <div className="flex justify-between py-1.5">
                     <span>Phases QCM</span>
-                    <strong className="text-white font-bold">{application.phases.length} / 3 terminées</strong>
+                    <strong className="font-bold text-white">
+                      {latest ? latest.phases.length : 0} / 3 terminées
+                    </strong>
                   </div>
                 </div>
 
@@ -400,27 +418,25 @@ export function SupremeAdmin() {
                   <Button
                     size="sm"
                     full
-                    disabled={!application.project}
-                    onClick={() => {
-                      application.approveDossier()
-                      toast.success('Dossier Live approuvé', 'Le candidat peut passer le QCM 1.')
-                    }}
-                    className="bg-emerald-500 text-white hover:bg-emerald-400 font-bold"
+                    disabled={!latest || latest.status !== 'submitted'}
+                    onClick={() => latest && void handleDirectApprove(latest)}
+                    className="bg-emerald-500 font-bold text-white hover:bg-emerald-400"
                   >
-                    Approuver le dossier Live
+                    Approuver ce dossier
                   </Button>
                   <Button
                     size="sm"
                     full
-                    disabled={!application.project}
-                    onClick={() => {
-                      application.unlockNow()
-                      toast.success('Délai de 48h forcé', 'La phase suivante est déverrouillée.')
-                    }}
-                    className="bg-white/10 text-white ring-white/20 hover:bg-white/20 text-xs"
+                    disabled={!latest}
+                    onClick={() => latest && setOpenDrawerId(latest.id)}
+                    className="bg-white/10 text-xs text-white ring-white/20 hover:bg-white/20"
                   >
-                    Déverrouiller le délai de 48h
+                    Ouvrir la fiche de révision
                   </Button>
+                  <p className="pt-1 text-[0.7rem] leading-relaxed text-ink-400">
+                    Le délai de 48 h entre deux phases est désormais appliqué par la base de
+                    données : il ne peut plus être contourné depuis l’interface.
+                  </p>
                 </div>
               </div>
             </div>
@@ -475,11 +491,6 @@ export function SupremeAdmin() {
                         <span className="font-mono text-xs font-bold text-amber-400">
                           {dossier.reference}
                         </span>
-                        {dossier.live && (
-                          <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[0.6rem] font-bold text-emerald-400">
-                            LIVE
-                          </span>
-                        )}
                       </div>
                       <span
                         className={cn(
@@ -505,16 +516,16 @@ export function SupremeAdmin() {
                     <div className="grid grid-cols-2 gap-2 rounded-xl bg-white/5 p-2.5 text-xs">
                       <div>
                         <span className="text-[0.65rem] text-ink-400 uppercase block font-semibold">Subvention</span>
-                        <span className="font-bold text-white text-sm">{formatEuro(dossier.amount)}</span>
+                        <span className="font-bold text-white text-sm">{formatEuro((dossier.amount ?? 0))}</span>
                       </div>
                       <div>
                         <span className="text-[0.65rem] text-ink-400 uppercase block font-semibold">Garantie 30 %</span>
-                        <span className="font-semibold text-sky-400 text-sm">{formatEuro(dossier.amount * GUARANTEE_RATE)}</span>
+                        <span className="font-semibold text-sky-400 text-sm">{formatEuro((dossier.amount ?? 0) * GUARANTEE_RATE)}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between pt-1 text-[0.7rem] text-ink-400 border-t border-white/5">
-                      <span>Déposé le {formatDate(dossier.submittedAt)}</span>
+                      <span>Déposé le {dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'}</span>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -584,11 +595,6 @@ export function SupremeAdmin() {
                             <span className="font-mono font-bold text-amber-400">
                               {dossier.reference}
                             </span>
-                            {dossier.live && (
-                              <span className="ml-1.5 rounded bg-emerald-500/20 px-1.5 py-0.5 text-[0.6rem] font-bold text-emerald-400">
-                                LIVE
-                              </span>
-                            )}
                           </td>
                           <td className="px-5 py-4">
                             <p className="font-bold text-white text-sm line-clamp-1">{dossier.title}</p>
@@ -597,10 +603,10 @@ export function SupremeAdmin() {
                             </p>
                           </td>
                           <td className="px-5 py-4 font-black text-white text-sm">
-                            {formatEuro(dossier.amount)}
+                            {formatEuro((dossier.amount ?? 0))}
                           </td>
                           <td className="px-5 py-4 font-semibold text-sky-400">
-                            {formatEuro(dossier.amount * GUARANTEE_RATE)}
+                            {formatEuro((dossier.amount ?? 0) * GUARANTEE_RATE)}
                           </td>
                           <td className="px-5 py-4">
                             <span
@@ -617,7 +623,7 @@ export function SupremeAdmin() {
                             </span>
                           </td>
                           <td className="px-5 py-4 text-ink-400">
-                            {formatDate(dossier.submittedAt)}
+                            {dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'}
                           </td>
                           <td className="px-5 py-4 text-right space-x-1.5 whitespace-nowrap">
                             <Button
@@ -705,12 +711,12 @@ export function SupremeAdmin() {
                       >
                         <div className="flex justify-between items-center text-xs">
                           <span className="font-mono font-bold text-amber-400">{dossier.reference}</span>
-                          <span className="font-bold text-white">{formatEuro(dossier.amount)}</span>
+                          <span className="font-bold text-white">{formatEuro((dossier.amount ?? 0))}</span>
                         </div>
                         <p className="mt-1.5 font-bold text-sm text-white truncate">{dossier.title}</p>
                         <p className="text-xs text-ink-400 mt-0.5 truncate">{dossier.applicant}</p>
                         <p className="mt-2 text-[0.7rem] text-sky-300 font-semibold">
-                          Garantie attendue : {formatEuro(dossier.amount * GUARANTEE_RATE)}
+                          Garantie attendue : {formatEuro((dossier.amount ?? 0) * GUARANTEE_RATE)}
                         </p>
                       </button>
                     )
@@ -729,7 +735,7 @@ export function SupremeAdmin() {
                           </span>
                         </div>
                         <p className="text-xs text-ink-400 mt-1">
-                          Porteur : {activeProofDossier.applicant} ({activeProofDossier.email}) • Banque : {activeProofDossier.funding?.bankName ?? 'Banque partenaire'}
+                          Porteur : {activeProofDossier.applicant} ({activeProofDossier.email}) • Banque : {activeProofDossier.funding?.bank_name ?? 'Banque partenaire'}
                         </p>
                       </div>
 
@@ -739,7 +745,7 @@ export function SupremeAdmin() {
                           className="bg-amber-400 text-ink-950 hover:bg-amber-300 font-black text-sm"
                         >
                           <CheckIcon className="h-4 w-4" />
-                          Valider & Décaisser {formatEuro(activeProofDossier.amount)}
+                          Valider & Décaisser {formatEuro(activeProofDossier.amount ?? 0)}
                         </Button>
                       </div>
                     </div>
@@ -751,14 +757,14 @@ export function SupremeAdmin() {
                           <ReceiptIcon className="h-4 w-4 text-sky-400" />
                           1. Reçu de dépôt de garantie (30 %)
                         </h5>
-                        {activeProofDossier.funding?.depositReceipt[0] ? (
+                        {depositProof ? (
                           <div className="rounded-xl border border-white/10 bg-black/40 p-3">
                             <DocumentViewer
-                              file={activeProofDossier.funding.depositReceipt[0]}
+                              file={depositProof}
                               className="h-72"
                             />
                             <p className="mt-2 text-xs text-ink-400 truncate">
-                              {activeProofDossier.funding.depositReceipt[0].name}
+                              {depositProof.file_name}
                             </p>
                           </div>
                         ) : (
@@ -773,14 +779,14 @@ export function SupremeAdmin() {
                           <InstitutionIcon className="h-4 w-4 text-emerald-400" />
                           2. Relevé / Justificatif de compte partenaire
                         </h5>
-                        {activeProofDossier.funding?.accountProof[0] ? (
+                        {accountProof ? (
                           <div className="rounded-xl border border-white/10 bg-black/40 p-3">
                             <DocumentViewer
-                              file={activeProofDossier.funding.accountProof[0]}
+                              file={accountProof}
                               className="h-72"
                             />
                             <p className="mt-2 text-xs text-ink-400 truncate">
-                              {activeProofDossier.funding.accountProof[0].name}
+                              {accountProof.file_name}
                             </p>
                           </div>
                         ) : (
@@ -799,11 +805,11 @@ export function SupremeAdmin() {
                       <div className="flex items-center gap-4">
                         <div>
                           <span className="text-ink-400">Subvention :</span>{' '}
-                          <span className="text-amber-400 font-extrabold">{formatEuro(activeProofDossier.amount)}</span>
+                          <span className="text-amber-400 font-extrabold">{formatEuro(activeProofDossier.amount ?? 0)}</span>
                         </div>
                         <div>
                           <span className="text-ink-400">Garantie 30 % :</span>{' '}
-                          <span className="text-sky-400 font-extrabold">{formatEuro(activeProofDossier.amount * GUARANTEE_RATE)}</span>
+                          <span className="text-sky-400 font-extrabold">{formatEuro((activeProofDossier.amount ?? 0) * GUARANTEE_RATE)}</span>
                         </div>
                       </div>
                     </div>
@@ -831,94 +837,45 @@ export function SupremeAdmin() {
                 <div className="mt-6 space-y-3">
                   <Button
                     full
-                    onClick={() => {
-                      application.approveDossier()
-                      toast.success('Dossier validé', 'Phase QCM 1 débloquée.')
-                    }}
-                    className="bg-emerald-500 text-white hover:bg-emerald-400 justify-center"
+                    disabled={!latest || latest.status !== 'submitted'}
+                    onClick={() => latest && void handleDirectApprove(latest)}
+                    className="justify-center bg-emerald-500 text-white hover:bg-emerald-400"
                   >
                     1. Valider le dossier soumis
                   </Button>
 
                   <Button
                     full
-                    onClick={() => {
-                      application.unlockNow()
-                      toast.success('Délai 48h shunté', 'Phase QCM suivante immédiatement ouverte.')
-                    }}
-                    className="bg-brand-500 text-white hover:bg-brand-400 justify-center"
+                    disabled={!latest || latest.status !== 'proofs_submitted'}
+                    onClick={() => latest && void handleDirectDisburse(latest)}
+                    className="justify-center bg-amber-400 font-bold text-ink-950 hover:bg-amber-300"
                   >
-                    2. Forcer le déverrouillage du délai de 48h
-                  </Button>
-
-                  <Button
-                    full
-                    onClick={() => {
-                      application.validateFunding()
-                      toast.success('Virement validé', 'La subvention est marquée comme financée.')
-                    }}
-                    className="bg-amber-400 text-ink-950 hover:bg-amber-300 font-bold justify-center"
-                  >
-                    3. Valider la preuve et déclencher le virement
+                    2. Valider la preuve et déclencher le virement
                   </Button>
 
                   <Button
                     full
                     variant="danger"
-                    onClick={() => {
-                      application.rejectDossier('Critères d’impact insuffisants après examen.')
-                      toast.error('Dossier rejeté', 'Le statut a été mis à jour.')
-                    }}
+                    disabled={!latest || latest.status !== 'submitted'}
+                    onClick={() =>
+                      latest &&
+                      void handleDirectReject(latest, 'Critères d’impact insuffisants après examen.')
+                    }
                     className="justify-center"
                   >
                     Rejeter le dossier en cours
                   </Button>
+
+                  <p className="pt-1 text-[0.7rem] leading-relaxed text-ink-400">
+                    Le déverrouillage du délai de 48 h ne figure plus ici : il est appliqué par la
+                    base de données, qui refuse toute transition hors séquence — y compris demandée
+                    par un administrateur.
+                  </p>
                 </div>
               </div>
 
               {/* Maintenance & Réinitialisation */}
-              <div className="rounded-2xl border border-white/10 bg-ink-900 p-6 shadow-xl">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <ResetIcon className="h-5 w-5 text-rose-400" />
-                  Maintenance & Réinitialisation Démo
-                </h3>
-                <p className="mt-1 text-xs text-ink-400">
-                  Restaure les données de démonstration initiales et réinitialise les surcharges administratives.
-                </p>
 
-                <div className="mt-6 space-y-4">
-                  <div className="rounded-xl bg-white/5 p-4 text-xs text-ink-300">
-                    <p className="font-bold text-white">Attention aux réinitialisations :</p>
-                    <p className="mt-1">
-                      Cette opération réinitialise les décisions administratives enregistrées dans ce navigateur pour le programme.
-                    </p>
-                  </div>
-
-                  <Button
-                    full
-                    variant="secondary"
-                    onClick={() => {
-                      resetAdmin()
-                      toast.success('Back-office réinitialisé', 'Statuts d’origine rétablis.')
-                    }}
-                    className="bg-white/10 text-white ring-white/20 hover:bg-white/20 justify-center"
-                  >
-                    Réinitialiser les décisions du back-office
-                  </Button>
-
-                  <Button
-                    full
-                    variant="secondary"
-                    onClick={() => {
-                      application.reset()
-                      toast.success('Dossier candidat réinitialisé', 'Vous pouvez recommencer un parcours complet.')
-                    }}
-                    className="bg-white/10 text-white ring-white/20 hover:bg-white/20 justify-center"
-                  >
-                    Réinitialiser le dossier candidat (Live)
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
         )}
@@ -930,16 +887,11 @@ export function SupremeAdmin() {
           dossier={openDrawerDossier}
           onClose={() => setOpenDrawerId(null)}
           onApprove={(d) => {
-            handleDirectApprove(d)
+            void handleDirectApprove(d)
             setOpenDrawerId(null)
           }}
           onReject={(d, note) => {
-            if (d.id === LIVE_DOSSIER_ID) {
-              application.rejectDossier(note)
-            } else {
-              setAdminStatus(d.id, 'rejected', note)
-            }
-            toast.error('Dossier refusé', `${d.reference} a été rejeté.`)
+            void handleDirectReject(d, note)
             setOpenDrawerId(null)
           }}
         />

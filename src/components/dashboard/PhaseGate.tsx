@@ -30,7 +30,7 @@ export function PhaseGate({
   nextPhase: PhaseNumber
   unlockAt: number
 }) {
-  const unlockNow = useApplication((state) => state.unlockNow)
+  const refresh = useApplication((state) => state.refresh)
   const remaining = useDeadline(unlockAt)
   const { days, hours, minutes, seconds } = splitDuration(remaining)
   const ready = remaining <= 0
@@ -71,22 +71,13 @@ export function PhaseGate({
             </div>
           )}
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button
-              size="lg"
-              variant="secondary"
-              onClick={unlockNow}
-              className={ready ? '' : 'bg-white/10 text-white ring-white/25 hover:bg-white/20'}
-            >
-              {ready ? `Continuer vers la phase ${nextPhase}` : `Débloquer maintenant (démo)`}
-            </Button>
-            {!ready && (
-              <p className="text-xs text-brand-200">
-                Raccourci de démonstration — en production, le déverrouillage est strictement
-                calendaire.
-              </p>
-            )}
-          </div>
+          {ready && (
+            <div className="mt-8">
+              <Button size="lg" variant="secondary" onClick={() => void refresh()}>
+                Continuer vers la phase {nextPhase}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

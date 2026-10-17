@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import {
   ArrowLeftIcon,
@@ -46,11 +47,19 @@ const STATUS_TONE: Record<DossierStatus, 'brand' | 'neutral' | 'success' | 'warn
 export function DashboardLayout() {
   const user = useAuth((state) => state.user)
   const logout = useAuth((state) => state.logout)
-  const status = useApplication((state) => state.status)
-  const reference = useApplication((state) => state.reference)
+  const dossier = useApplication((state) => state.dossier)
+  const load = useApplication((state) => state.load)
+
+  // Crée le brouillon au premier accès et charge l'état réel du dossier.
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  const status = dossier?.status ?? 'draft'
+  const reference = dossier?.reference ?? null
 
   function handleLogout() {
-    logout()
+    void logout()
     // Navigation complète plutôt que `navigate()` : une mise à jour de store
     // externe ne peut pas être différée par React, alors que celle du routeur
     // l'est. Router côté client ferait donc passer un rendu intermédiaire

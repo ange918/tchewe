@@ -1,18 +1,62 @@
-import { FileBlankIcon } from '../ui/icons'
+import { useEffect, useState } from 'react'
+import { FileBlankIcon, LoaderIcon } from '../ui/icons'
 import { cn, formatBytes } from '../../lib/utils'
-import { getFileUrl, type FileMeta } from '../../lib/fileVault'
+import { signedUrlFor } from '../../lib/storage'
+import type { DocumentRow } from '../../lib/database.types'
 
 /**
- * Visualiseur de pièce jointe intégré.
+ * Visualiseur de pièce jointe.
  *
- * Les PDF sont rendus dans une `iframe`, les images dans une balise `img`. Les
- * pièces du jeu de démonstration n'ont pas de blob : on affiche alors un état
- * explicite plutôt qu'un cadre vide.
+ * Les buckets sont privés : l'aperçu passe par une URL signée à durée limitée,
+ * délivrée seulement si la RLS autorise l'accès au dossier.
  */
-export function DocumentViewer({ file, className }: { file: FileMeta; className?: string }) {
-  const url = getFileUrl(file.id)
+export function DocumentViewer({
+  file,
+  className,
+}: {
+  file: DocumentRow
+  className?: string
+}) {
+  const [url, setUrl] = useState<string | null>(null)
+  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading')
+  const [shown, setShown] = useState(file)
 
-  if (!url) {
+  // Remise à zéro au changement de pièce, pendant le rendu : un setState
+  // synchrone dans l'effet provoquerait un rendu intermédiaire inutile.
+  if (shown !== file) {
+    setShown(file)
+    setUrl(null)
+    setState('loading')
+  }
+
+  useEffect(() => {
+    let cancelled = false
+
+    void signedUrlFor(file).then((signed) => {
+      if (cancelled) return
+      setUrl(signed)
+      setState(signed ? 'ready' : 'failed')
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [file])
+
+  if (state === 'loading') {
+    return (
+      <div
+        className={cn(
+          'flex items-center justify-center rounded-xl border border-ink-200 bg-ink-50',
+          className,
+        )}
+      >
+        <LoaderIcon className="h-6 w-6 animate-spin text-ink-400" aria-hidden />
+      </div>
+    )
+  }
+
+  if (state === 'failed' || !url) {
     return (
       <div
         className={cn(
@@ -21,20 +65,19 @@ export function DocumentViewer({ file, className }: { file: FileMeta; className?
         )}
       >
         <FileBlankIcon className="h-6 w-6 text-ink-400" aria-hidden />
-        <p className="text-sm font-bold text-ink-700">{file.name}</p>
+        <p className="text-sm font-bold text-ink-700">{file.file_name}</p>
         <p className="max-w-xs text-xs leading-relaxed text-ink-500">
-          Aperçu indisponible : le fichier n’a pas été téléversé dans cette session de
-          démonstration. En production, il serait servi depuis le stockage du programme.
+          Aperçu indisponible : le fichier n’a pas pu être récupéré depuis le stockage.
         </p>
       </div>
     )
   }
 
-  if (file.type.startsWith('image/')) {
+  if (file.mime_type?.startsWith('image/')) {
     return (
       <img
         src={url}
-        alt={file.name}
+        alt={file.file_name}
         className={cn('w-full rounded-xl border border-ink-200 object-contain', className)}
       />
     )
@@ -43,7 +86,7 @@ export function DocumentViewer({ file, className }: { file: FileMeta; className?
   return (
     <iframe
       src={url}
-      title={file.name}
+      title={file.file_name}
       className={cn('w-full rounded-xl border border-ink-200 bg-white', className)}
     />
   )
@@ -54,7 +97,7 @@ export function DocumentTabs({
   activeId,
   onSelect,
 }: {
-  files: FileMeta[]
+  files: DocumentRow[]
   activeId: string
   onSelect: (id: string) => void
 }) {
@@ -72,9 +115,9 @@ export function DocumentTabs({
               : 'bg-ink-100 text-ink-600 hover:bg-ink-200',
           )}
         >
-          <span className="block max-w-40 truncate">{file.name}</span>
+          <span className="block max-w-40 truncate">{file.file_name}</span>
           <span className={cn('block', file.id === activeId ? 'text-brand-100' : 'text-ink-400')}>
-            {formatBytes(file.size)}
+            {formatBytes(file.size_bytes ?? 0)}
           </span>
         </button>
       ))}

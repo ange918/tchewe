@@ -30,6 +30,22 @@ export interface PhaseResult {
   completedAt: number
 }
 
+/**
+ * Conditions d'accès à l'évaluation.
+ *
+ * Le candidat les valide une seule fois, avant la première session de QCM.
+ * Deux d'entre elles sont bloquantes : un refus arrête le parcours au lieu
+ * d'être enregistré (voir `EligibilityGate`).
+ */
+export interface Eligibility {
+  isAdult: boolean
+  idDocument: FileMeta[]
+  revenueShare: boolean
+  determined: boolean
+  guaranteeReady: boolean
+  acceptedAt: number
+}
+
 export interface FundingProof {
   iban: string
   bankName: string
@@ -51,10 +67,12 @@ interface ApplicationState {
   phases: PhaseResult[]
   currentPhase: PhaseNumber
   unlockAt: number | null
+  eligibility: Eligibility | null
   funding: FundingProof | null
   reviewNote: string | null
 
   submitProject: (project: Omit<ProjectDraft, 'submittedAt'>) => void
+  acceptEligibility: (eligibility: Omit<Eligibility, 'acceptedAt'>) => void
   approveDossier: () => void
   rejectDossier: (note: string) => void
   completePhase: (phase: PhaseNumber, score: number, total: number) => void
@@ -76,6 +94,7 @@ const initial = {
   phases: [] as PhaseResult[],
   currentPhase: 1 as PhaseNumber,
   unlockAt: null,
+  eligibility: null,
   funding: null,
   reviewNote: null,
 }
@@ -92,6 +111,9 @@ export const useApplication = create<ApplicationState>()(
           project: { ...project, submittedAt: Date.now() },
           reviewNote: null,
         }),
+
+      acceptEligibility: (eligibility) =>
+        set({ eligibility: { ...eligibility, acceptedAt: Date.now() } }),
 
       approveDossier: () => set({ status: 'approved', currentPhase: 1, unlockAt: null }),
 

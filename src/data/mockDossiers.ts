@@ -1,5 +1,5 @@
 import type { FileMeta } from '../lib/fileVault'
-import type { DossierStatus, PhaseResult } from '../store/application'
+import type { DossierStatus, Eligibility, PhaseResult } from '../store/application'
 
 export interface AdminDossier {
   id: string
@@ -14,6 +14,7 @@ export interface AdminDossier {
   status: DossierStatus
   documents: FileMeta[]
   phases: PhaseResult[]
+  eligibility?: Eligibility
   reviewNote?: string
   funding?: {
     iban: string

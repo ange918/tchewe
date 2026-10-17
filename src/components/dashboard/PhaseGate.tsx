@@ -78,7 +78,7 @@ export function PhaseGate({
               onClick={unlockNow}
               className={ready ? '' : 'bg-white/10 text-white ring-white/25 hover:bg-white/20'}
             >
-              {ready ? `Démarrer la phase ${nextPhase}` : `Débloquer maintenant (démo)`}
+              {ready ? `Continuer vers la phase ${nextPhase}` : `Débloquer maintenant (démo)`}
             </Button>
             {!ready && (
               <p className="text-xs text-brand-200">

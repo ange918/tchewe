@@ -5,12 +5,16 @@ import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
 import { QuizRunner } from '../../components/dashboard/QuizRunner'
 import { PhaseGate } from '../../components/dashboard/PhaseGate'
+import { EligibilityGate } from '../../components/dashboard/EligibilityGate'
 import { toast } from '../../lib/toast'
 import { getPhase, PASS_THRESHOLD, PHASES } from '../../data/quiz'
-import { formatDate } from '../../lib/utils'
+import { formatDate, formatDateTime } from '../../lib/utils'
 import { useApplication, type PhaseNumber } from '../../store/application'
 
-type Screen = { kind: 'intro' } | { kind: 'running' } | { kind: 'result'; score: number; total: number }
+type Screen =
+  | { kind: 'intro' }
+  | { kind: 'running' }
+  | { kind: 'result'; phase: PhaseNumber; score: number; total: number }
 
 function PhaseIntro({ phase, onStart }: { phase: PhaseNumber; onStart: () => void }) {
   const definition = getPhase(phase)
@@ -67,13 +71,19 @@ function PhaseResult({
   score,
   total,
   passed,
+  isLast,
+  unlockAt,
   onRetry,
+  onContinue,
 }: {
   phase: PhaseNumber
   score: number
   total: number
   passed: boolean
+  isLast: boolean
+  unlockAt: number | null
   onRetry: () => void
+  onContinue: () => void
 }) {
   const percentage = Math.round((score / total) * 100)
 
@@ -102,7 +112,43 @@ function PhaseResult({
           </p>
         </div>
 
-        {!passed && (
+        {passed && !isLast && (
+          <div className="mx-auto max-w-lg rounded-2xl bg-brand-50 p-5 text-left ring-1 ring-brand-100">
+            <p className="flex items-center gap-2 text-sm font-extrabold text-brand-700">
+              <ClockIcon className="h-4 w-4" aria-hidden />
+              Revenez dans 48 heures
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-ink-600">
+              La phase {phase + 1} s’ouvrira
+              {unlockAt ? (
+                <>
+                  {' '}le <strong className="font-bold text-ink-900">{formatDateTime(unlockAt)}</strong>
+                </>
+              ) : (
+                ' dans 48 heures'
+              )}
+              . Vous recevrez un e-mail dès qu’elle sera accessible, et le compte à rebours reste
+              affiché dans votre espace.
+            </p>
+          </div>
+        )}
+
+        {passed && isLast && (
+          <div className="mx-auto max-w-lg rounded-2xl bg-emerald-50 p-5 text-left ring-1 ring-emerald-100">
+            <p className="text-sm font-extrabold text-emerald-700">Évaluation terminée</p>
+            <p className="mt-2 text-sm leading-relaxed text-ink-600">
+              Les trois sessions sont validées. Vous pouvez maintenant ouvrir votre compte auprès de
+              la banque partenaire et déposer vos preuves de garantie.
+            </p>
+          </div>
+        )}
+
+        {passed ? (
+          <Button size="lg" onClick={onContinue}>
+            {isLast ? 'Passer au dépôt de ma garantie' : 'Voir le compte à rebours'}
+            <ArrowRightIcon className="h-4 w-4" aria-hidden />
+          </Button>
+        ) : (
           <Button size="lg" variant="secondary" onClick={onRetry}>
             <ResetIcon className="h-4 w-4" aria-hidden />
             Repasser la session
@@ -149,7 +195,52 @@ export function Evaluation() {
   const unlockAt = useApplication((state) => state.unlockAt)
   const completePhase = useApplication((state) => state.completePhase)
 
+  const eligibility = useApplication((state) => state.eligibility)
+  const project = useApplication((state) => state.project)
+
   const [screen, setScreen] = useState<Screen>({ kind: 'intro' })
+
+  if (screen.kind === 'running') {
+    return (
+      <QuizRunner
+        phase={getPhase(currentPhase)}
+        onFinish={(score, total) => {
+          const passed = (score / total) * 100 >= PASS_THRESHOLD
+          setScreen({ kind: 'result', phase: currentPhase, score, total })
+          if (passed) {
+            completePhase(currentPhase, score, total)
+            toast.success(
+              `Phase ${currentPhase} validée`,
+              currentPhase === 3
+                ? 'Vous pouvez déposer votre garantie.'
+                : 'La phase suivante s’ouvrira dans 48 heures.',
+            )
+          } else {
+            toast.error('Score insuffisant', `Le seuil de réussite est de ${PASS_THRESHOLD} %.`)
+          }
+        }}
+      />
+    )
+  }
+
+  if (screen.kind === 'result') {
+    const passed = (screen.score / screen.total) * 100 >= PASS_THRESHOLD
+    return (
+      <div className="space-y-6">
+        <PhaseResult
+          phase={screen.phase}
+          score={screen.score}
+          total={screen.total}
+          passed={passed}
+          isLast={screen.phase === PHASES.length}
+          unlockAt={unlockAt}
+          onRetry={() => setScreen({ kind: 'intro' })}
+          onContinue={() => setScreen({ kind: 'intro' })}
+        />
+        <PhaseHistory />
+      </div>
+    )
+  }
 
   // Verrouillage entre deux sessions (J+2, J+4)
   if (status === 'awaiting_next_phase' && unlockAt) {
@@ -210,43 +301,9 @@ export function Evaluation() {
     )
   }
 
-  if (screen.kind === 'running') {
-    return (
-      <QuizRunner
-        phase={getPhase(currentPhase)}
-        onFinish={(score, total) => {
-          const passed = (score / total) * 100 >= PASS_THRESHOLD
-          setScreen({ kind: 'result', score, total })
-          if (passed) {
-            completePhase(currentPhase, score, total)
-            toast.success(
-              `Phase ${currentPhase} validée`,
-              currentPhase === 3
-                ? 'Vous pouvez déposer votre garantie.'
-                : 'La phase suivante s’ouvrira dans 48 heures.',
-            )
-          } else {
-            toast.error('Score insuffisant', `Le seuil de réussite est de ${PASS_THRESHOLD} %.`)
-          }
-        }}
-      />
-    )
-  }
-
-  if (screen.kind === 'result') {
-    const passed = (screen.score / screen.total) * 100 >= PASS_THRESHOLD
-    return (
-      <div className="space-y-6">
-        <PhaseResult
-          phase={currentPhase}
-          score={screen.score}
-          total={screen.total}
-          passed={passed}
-          onRetry={() => setScreen({ kind: 'intro' })}
-        />
-        <PhaseHistory />
-      </div>
-    )
+  // Conditions d'accès : tant qu'elles ne sont pas validées, le QCM reste fermé.
+  if (!eligibility && project) {
+    return <EligibilityGate amount={project.amount} />
   }
 
   return (

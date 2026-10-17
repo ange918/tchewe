@@ -20,6 +20,17 @@ export function formatDate(value: number | string): string {
   }).format(new Date(value))
 }
 
+/** Date et heure courtes, pour les consignes de retour (« revenez le … »). */
+export function formatDateTime(value: number | string): string {
+  return new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value))
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`

@@ -121,6 +121,42 @@ export function DossierDrawer({
             </section>
           )}
 
+          {dossier.eligibility && (
+            <section>
+              <h3 className="text-sm font-extrabold tracking-[-0.01em] text-ink-900">
+                Conditions acceptées
+              </h3>
+              <ul className="mt-2 space-y-1.5">
+                {[
+                  { label: 'Majorité (18 ans ou plus)', ok: dossier.eligibility.isAdult },
+                  { label: 'Reversement de 30 % des revenus aux orphelins', ok: dossier.eligibility.revenueShare },
+                  { label: 'Détermination à mener le projet à bien', ok: dossier.eligibility.determined },
+                  { label: 'Preuve de garantie de 30 % disponible', ok: dossier.eligibility.guaranteeReady },
+                ].map((item) => (
+                  <li key={item.label} className="flex items-center gap-2.5 text-sm text-ink-700">
+                    {item.ok ? (
+                      <CheckIcon className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                    ) : (
+                      <CloseIcon className="h-4 w-4 shrink-0 text-rose-500" aria-hidden />
+                    )}
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+
+              {dossier.eligibility.idDocument.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs font-bold tracking-[0.08em] text-ink-400 uppercase">
+                    Pièce d’identité
+                  </p>
+                  <div className="mt-2">
+                    <DocumentViewer file={dossier.eligibility.idDocument[0]} className="h-64" />
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
           <section>
             <h3 className="text-sm font-extrabold tracking-[-0.01em] text-ink-900">
               Pièces jointes ({dossier.documents.length})

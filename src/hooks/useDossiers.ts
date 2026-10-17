@@ -41,6 +41,7 @@ export function useDossiers(): AdminDossier[] {
       status: application.status,
       documents: application.project.documents,
       phases: application.phases,
+      eligibility: application.eligibility ?? undefined,
       funding: application.funding ?? undefined,
       live: true,
     }

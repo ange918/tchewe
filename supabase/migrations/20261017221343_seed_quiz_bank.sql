@@ -1,0 +1,22 @@
+-- Le contenu du QCM n'est pas versionné ici.
+--
+-- Ce dépôt est public. Publier les 30 questions avec leur `answer_index`
+-- annulerait tout l'intérêt d'avoir déplacé la correction côté serveur : il
+-- suffirait de lire ce fichier pour connaître le corrigé. Les questions sont
+-- donc chargées directement en base, hors du dépôt.
+--
+-- Pour alimenter un nouvel environnement :
+--
+--   insert into public.quiz_phases (phase, title, theme, day) values
+--     (1, '…', '…', 'J0'),
+--     (2, '…', '…', 'J+2'),
+--     (3, '…', '…', 'J+4');
+--
+--   insert into public.quiz_questions
+--     (id, phase, ordinal, statement, options, answer_index, seconds)
+--   values
+--     ('p1q1', 1, 1, '…', array['…', '…', '…'], 0, 8);
+--
+-- Dix questions par phase, trois propositions chacune, `answer_index` entre
+-- 0 et 2. La contrainte `unique (phase, ordinal)` impose une numérotation de
+-- 1 à 10 par phase.

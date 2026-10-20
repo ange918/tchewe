@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { PublicLayout } from './components/layout/PublicLayout'
 import { RequireRole } from './components/layout/RouteGuards'
+import { AuthLinkNotice } from './components/layout/AuthLinkNotice'
 import { ScrollManager } from './components/layout/ScrollManager'
 import { RouteFallback } from './components/layout/RouteFallback'
 import { Toaster } from './components/ui/Toaster'
@@ -49,6 +50,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollManager />
+      <AuthLinkNotice />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Public */}

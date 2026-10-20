@@ -58,8 +58,17 @@ export default function App() {
             <Route path="conditions" element={<Terms />} />
           </Route>
 
-          {/* Console Super Admin /supreme */}
-          <Route path="supreme" element={<SupremeAdmin />} />
+          {/* Console Super Admin /supreme — même garde que le reste du back-office :
+              la RLS et les fonctions SQL refusaient déjà tout à un non-admin, mais
+              la console elle-même n'avait pas à être atteignable publiquement. */}
+          <Route
+            path="supreme"
+            element={
+              <RequireRole role="admin">
+                <SupremeAdmin />
+              </RequireRole>
+            }
+          />
 
           {/* Authentification */}
           <Route path="auth">

@@ -23,7 +23,10 @@ export const supabase = createClient<Database>(url, publishableKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false,
+    // Les liens de confirmation d'e-mail reviennent avec la session dans le
+    // fragment d'URL. Sans cette option, le porteur atterrissait sur le site
+    // sans être connecté, et les jetons restaient dans la barre d'adresse.
+    detectSessionInUrl: true,
   },
 })
 

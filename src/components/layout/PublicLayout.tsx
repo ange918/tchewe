@@ -118,7 +118,6 @@ const FOOTER_GROUPS = [
       { label: 'Conditions générales', to: '/conditions' },
       { label: 'Charte de confidentialité', to: '/a-propos#confidentialite' },
       { label: 'Mentions légales', to: '/a-propos#mentions' },
-      { label: 'Console Supreme', to: '/supreme' },
     ],
   },
 ]

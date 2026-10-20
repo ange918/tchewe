@@ -24,11 +24,18 @@ export interface RegisterPayload {
 
 type Result = { ok: true; user: User } | { ok: false; error: string }
 
+/**
+ * L'inscription a trois issues, pas deux. Quand la confirmation par e-mail est
+ * active, Supabase crée bien le compte mais n'ouvre pas de session : c'est un
+ * succès, pas un échec, et l'interface doit le présenter comme tel.
+ */
+type RegisterResult = Result | { ok: 'confirm-email' }
+
 interface AuthState {
   user: User | null
   /** Vrai tant que la session n'a pas été relue au démarrage. */
   loading: boolean
-  register: (payload: RegisterPayload) => Promise<Result>
+  register: (payload: RegisterPayload) => Promise<RegisterResult>
   login: (email: string, password: string) => Promise<Result>
   logout: () => Promise<void>
   initialize: () => () => void
@@ -99,12 +106,9 @@ export const useAuth = create<AuthState>()((set) => ({
             : error.message,
       }
     }
+    // Pas de session : la confirmation par e-mail est active. Le compte est créé.
     if (!data.session) {
-      return {
-        ok: false,
-        error:
-          'Compte créé. Confirmez votre adresse e-mail depuis le message que vous venez de recevoir, puis connectez-vous.',
-      }
+      return { ok: 'confirm-email' }
     }
 
     const user = await loadProfile(data.session)
@@ -121,6 +125,15 @@ export const useAuth = create<AuthState>()((set) => ({
     })
 
     if (error || !data.session) {
+      // Distinguer le compte non confirmé : renvoyer « identifiants incorrects »
+      // enverrait le porteur vérifier un mot de passe qui est pourtant le bon.
+      if (error?.message.toLowerCase().includes('not confirmed')) {
+        return {
+          ok: false,
+          error:
+            'Adresse e-mail pas encore confirmée. Ouvrez le lien envoyé lors de votre inscription.',
+        }
+      }
       return { ok: false, error: 'Adresse e-mail ou mot de passe incorrect.' }
     }
 

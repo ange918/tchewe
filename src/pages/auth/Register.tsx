@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldIcon } from '../../components/ui/icons'
+import { CheckIcon, ShieldIcon } from '../../components/ui/icons'
 import { AuthLayout } from '../../components/layout/AuthLayout'
 import { Button } from '../../components/ui/Button'
 import { Checkbox, Input } from '../../components/ui/Field'
@@ -41,6 +41,8 @@ export function Register() {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [accepted, setAccepted] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<keyof FormState | 'terms', string>>>({})
+  /** Adresse à confirmer : renseignée quand le compte est créé sans session. */
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState<string>()
   const [submitting, setSubmitting] = useState(false)
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -95,6 +97,13 @@ export function Register() {
     })
     setSubmitting(false)
 
+    // Compte créé mais session non ouverte : la confirmation par e-mail est
+    // active. C'est un succès — il ne doit pas atterrir dans le champ e-mail.
+    if (result.ok === 'confirm-email') {
+      setAwaitingConfirmation(form.email.trim())
+      return
+    }
+
     if (!result.ok) {
       setErrors({ email: result.error })
       return
@@ -123,6 +132,35 @@ export function Register() {
         </>
       }
     >
+      {awaitingConfirmation ? (
+        <div className="space-y-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+            <span
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white"
+              aria-hidden
+            >
+              <CheckIcon className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
+              <p className="font-extrabold tracking-[-0.01em] text-ink-900">Compte créé</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink-600">
+                Un lien de confirmation vient d’être envoyé à{' '}
+                <strong className="font-bold break-all text-ink-900">{awaitingConfirmation}</strong>.
+                Ouvrez-le pour activer votre compte, puis connectez-vous.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-sm text-ink-500">
+            Le message n’arrive pas ? Vérifiez vos courriers indésirables — l’expéditeur peut y
+            atterrir lors du premier envoi.
+          </p>
+
+          <Button type="button" size="lg" full onClick={() => navigate('/auth/login')}>
+            Aller à la connexion
+          </Button>
+        </div>
+      ) : (
       <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-5">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
@@ -222,6 +260,7 @@ export function Register() {
           Créer mon compte
         </Button>
       </form>
+      )}
     </AuthLayout>
   )
 }

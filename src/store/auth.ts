@@ -105,6 +105,11 @@ export const useAuth = create<AuthState>()((set) => ({
       email: payload.email.trim().toLowerCase(),
       password: payload.password,
       options: {
+        // Le lien de confirmation ramène sur la page de connexion, qui est la
+        // suite logique : le compte est actif, il reste à s'y connecter. Sans
+        // cette consigne, Supabase renvoie sur la « Site URL » du projet,
+        // c'est-à-dire l'accueil, où le porteur ne sait plus quoi faire.
+        emailRedirectTo: `${window.location.origin}/auth/login`,
         // Le rôle n'est volontairement pas transmis : le trigger d'inscription
         // force « candidate », quoi que le client envoie.
         data: {

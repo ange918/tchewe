@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { LoaderIcon } from './icons'
 import { cn } from '../../lib/utils'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'dark' | 'danger' | 'success'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'dark' | 'danger' | 'success' | 'onDark'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
@@ -17,6 +17,11 @@ const variants: Record<Variant, string> = {
   dark: 'bg-ink-900 text-white hover:bg-ink-800',
   danger: 'bg-white text-rose-600 ring-1 ring-inset ring-rose-200 hover:bg-rose-50',
   success: 'bg-emerald-600 text-white hover:bg-emerald-700',
+  // Pour les bandeaux photo : un contour à 70 % d'opacité reste lisible sur une
+  // zone claire de l'image, là où un contour à 25 % disparaissait — surtout sur
+  // un petit écran, où le bouton occupe toute la largeur sur un fond mouvant.
+  onDark:
+    'bg-white/15 text-white ring-1 ring-inset ring-white/70 hover:bg-white/25 backdrop-blur-sm',
 }
 
 // Tous les boutons sont entièrement arrondis : c'est la forme de la charte.

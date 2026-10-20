@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { AuthLayout } from '../../components/layout/AuthLayout'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Field'
@@ -10,6 +10,7 @@ export function Login() {
   const navigate = useNavigate()
   const location = useLocation()
   const login = useAuth((state) => state.login)
+  const user = useAuth((state) => state.user)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -17,6 +18,13 @@ export function Login() {
   const [submitting, setSubmitting] = useState(false)
 
   const from = (location.state as { from?: string } | null)?.from
+
+  // Le lien de confirmation d'e-mail aboutit ici avec une session déjà ouverte
+  // dans l'adresse : inutile de redemander un mot de passe à quelqu'un qui
+  // vient d'être authentifié.
+  if (user) {
+    return <Navigate to={from ?? (user.role === 'admin' ? '/admin' : '/dashboard')} replace />
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -30,7 +38,7 @@ export function Login() {
     }
 
     toast.success(`Bienvenue, ${result.user.firstName}`)
-    const fallback = result.user.role === 'admin' ? '/admin/dossiers' : '/dashboard'
+    const fallback = result.user.role === 'admin' ? '/admin' : '/dashboard'
     navigate(from ?? fallback, { replace: true })
   }
 

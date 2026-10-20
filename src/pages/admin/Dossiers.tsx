@@ -14,6 +14,9 @@ const COLUMNS: { id: string; label: string; statuses: DossierStatus[]; accent: s
   { id: 'done', label: 'QCM validés', statuses: ['evaluated'], accent: 'bg-violet-500' },
   { id: 'proofs', label: 'Preuves 30 % déposées', statuses: ['proofs_submitted'], accent: 'bg-sky-500' },
   { id: 'financed', label: 'Financés', statuses: ['financed'], accent: 'bg-emerald-500' },
+  // Un dossier rejeté doit rester visible : sans cette colonne il disparaissait
+  // du pipeline, et plus personne ne pouvait retrouver le motif transmis.
+  { id: 'rejected', label: 'Rejetés', statuses: ['rejected'], accent: 'bg-rose-500' },
 ]
 
 function DossierCard({ dossier, onOpen }: { dossier: AdminDossier; onOpen: () => void }) {
@@ -110,7 +113,7 @@ export function Dossiers() {
 
       {/* Vue pipeline — colonnes défilables horizontalement sur mobile */}
       <div className="-mx-4 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6">
-        <div className="flex min-w-max gap-4 xl:grid xl:min-w-0 xl:grid-cols-5">
+        <div className="flex min-w-max gap-4 xl:grid xl:min-w-0 xl:grid-cols-6">
           {COLUMNS.map((column) => {
             const items = filtered.filter((dossier) => column.statuses.includes(dossier.status))
             return (

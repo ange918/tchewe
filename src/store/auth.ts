@@ -1,15 +1,17 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import type { Session } from '@supabase/supabase-js'
+import { supabase } from '../lib/supabase'
+import type { ProfileRow, UserRole } from '../lib/database.types'
 
-export type Role = 'candidate' | 'admin'
+export type { UserRole as Role }
 
 export interface User {
   id: string
+  email: string
   firstName: string
   lastName: string
-  email: string
-  birthDate: string
-  role: Role
+  birthDate: string | null
+  role: UserRole
 }
 
 export interface RegisterPayload {
@@ -20,65 +22,117 @@ export interface RegisterPayload {
   password: string
 }
 
-interface Account extends User {
-  password: string
-}
+type Result = { ok: true; user: User } | { ok: false; error: string }
 
 interface AuthState {
   user: User | null
-  accounts: Account[]
-  register: (payload: RegisterPayload) => { ok: true; user: User } | { ok: false; error: string }
-  login: (email: string, password: string) => { ok: true; user: User } | { ok: false; error: string }
-  logout: () => void
+  /** Vrai tant que la session n'a pas été relue au démarrage. */
+  loading: boolean
+  register: (payload: RegisterPayload) => Promise<Result>
+  login: (email: string, password: string) => Promise<Result>
+  logout: () => Promise<void>
+  initialize: () => () => void
 }
 
-/**
- * Authentification de démonstration : les comptes vivent dans le navigateur.
- * Une adresse contenant « admin » ouvre le back-office, ce qui permet de
- * parcourir les deux côtés du parcours sans backend.
- */
-function roleFor(email: string): Role {
-  return email.toLowerCase().includes('admin') ? 'admin' : 'candidate'
+function toUser(session: Session, profile: ProfileRow): User {
+  return {
+    id: profile.id,
+    email: session.user.email ?? '',
+    firstName: profile.first_name,
+    lastName: profile.last_name,
+    birthDate: profile.birth_date,
+    role: profile.role,
+  }
 }
 
-export const useAuth = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      accounts: [],
+/** Le profil est créé par un trigger : il peut arriver juste après la session. */
+async function loadProfile(session: Session): Promise<User | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .maybeSingle()
 
-      register: (payload) => {
-        const email = payload.email.trim().toLowerCase()
-        if (get().accounts.some((account) => account.email === email)) {
-          return { ok: false, error: 'Un compte existe déjà avec cette adresse e-mail.' }
-        }
-        const account: Account = {
-          id: `usr_${Date.now().toString(36)}`,
-          firstName: payload.firstName.trim(),
-          lastName: payload.lastName.trim(),
-          email,
-          birthDate: payload.birthDate,
-          password: payload.password,
-          role: roleFor(email),
-        }
-        const { password: _password, ...user } = account
-        set((state) => ({ accounts: [...state.accounts, account], user }))
-        return { ok: true, user }
+  if (error || !data) return null
+  return toUser(session, data)
+}
+
+export const useAuth = create<AuthState>()((set) => ({
+  user: null,
+  loading: true,
+
+  initialize: () => {
+    void supabase.auth.getSession().then(async ({ data }) => {
+      const user = data.session ? await loadProfile(data.session) : null
+      set({ user, loading: false })
+    })
+
+    const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const user = session ? await loadProfile(session) : null
+      set({ user, loading: false })
+    })
+
+    return () => data.subscription.unsubscribe()
+  },
+
+  register: async (payload) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: payload.email.trim().toLowerCase(),
+      password: payload.password,
+      options: {
+        // Le rôle n'est volontairement pas transmis : le trigger d'inscription
+        // force « candidate », quoi que le client envoie.
+        data: {
+          first_name: payload.firstName.trim(),
+          last_name: payload.lastName.trim(),
+          birth_date: payload.birthDate,
+        },
       },
+    })
 
-      login: (email, password) => {
-        const normalized = email.trim().toLowerCase()
-        const account = get().accounts.find((item) => item.email === normalized)
-        if (!account || account.password !== password) {
-          return { ok: false, error: 'Adresse e-mail ou mot de passe incorrect.' }
-        }
-        const { password: _password, ...user } = account
-        set({ user })
-        return { ok: true, user }
-      },
+    if (error) {
+      return {
+        ok: false,
+        error:
+          error.message.toLowerCase().includes('already')
+            ? 'Un compte existe déjà avec cette adresse e-mail.'
+            : error.message,
+      }
+    }
+    if (!data.session) {
+      return {
+        ok: false,
+        error:
+          'Compte créé. Confirmez votre adresse e-mail depuis le message que vous venez de recevoir, puis connectez-vous.',
+      }
+    }
 
-      logout: () => set({ user: null }),
-    }),
-    { name: 'innova-fund.auth' },
-  ),
-)
+    const user = await loadProfile(data.session)
+    if (!user) return { ok: false, error: 'Profil introuvable après l’inscription.' }
+
+    set({ user, loading: false })
+    return { ok: true, user }
+  },
+
+  login: async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    })
+
+    if (error || !data.session) {
+      return { ok: false, error: 'Adresse e-mail ou mot de passe incorrect.' }
+    }
+
+    const user = await loadProfile(data.session)
+    if (!user) return { ok: false, error: 'Profil introuvable.' }
+
+    set({ user, loading: false })
+    return { ok: true, user }
+  },
+
+  logout: async () => {
+    await supabase.auth.signOut()
+    set({ user: null })
+  },
+}))

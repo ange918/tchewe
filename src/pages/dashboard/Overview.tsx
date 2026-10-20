@@ -58,7 +58,11 @@ const NEXT_ACTION: Record<DossierStatus, { label: string; to: string } | null> =
 
 export function Overview() {
   const user = useAuth((state) => state.user)
-  const { status, project, reference, phases } = useApplication()
+  const dossier = useApplication((state) => state.dossier)
+  const phases = useApplication((state) => state.phases)
+  const status = dossier?.status ?? 'draft'
+  const reference = dossier?.reference ?? null
+  const project = dossier && dossier.title ? dossier : null
   const action = NEXT_ACTION[status] ?? { label: 'Continuer', to: routeForStatus(status) }
 
   return (
@@ -78,8 +82,8 @@ export function Overview() {
       {project && (
         <dl className="grid gap-3 sm:grid-cols-3">
           {[
-            { label: 'Montant sollicité', value: formatEuro(project.amount) },
-            { label: 'Garantie à déposer', value: formatEuro(Math.round(project.amount * GUARANTEE_RATE)) },
+            { label: 'Montant sollicité', value: formatEuro(project.amount ?? 0) },
+            { label: 'Garantie à déposer', value: formatEuro(Math.round((project.amount ?? 0) * GUARANTEE_RATE)) },
             { label: 'Phases validées', value: `${phases.length} / 3` },
           ].map((item) => (
             <div key={item.label} className="rounded-2xl border border-ink-200/80 bg-white p-5">

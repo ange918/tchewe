@@ -4,7 +4,24 @@ Front-end de la plateforme d’appui au financement INNOVA FUND : landing page p
 espace porteur de projet (soumission, QCM chronométré, dépôt de garantie) et back-office
 d’instruction des dossiers.
 
-**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand · Framer Motion · Boxicons**
+**React 19 · Vite 8 · TypeScript · Tailwind CSS v4 · React Router 7 · Zustand · Framer Motion · Boxicons · Supabase**
+
+## Configuration
+
+L'application a besoin d'un projet Supabase. Copiez `.env.example` vers `.env.local` et
+renseignez :
+
+```
+VITE_SUPABASE_URL=https://<ref>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+La clé publiable est faite pour être exposée au navigateur : elle n'ouvre aucun droit par
+elle-même, c'est la RLS qui décide. **Ne jamais mettre ici la clé `service_role`**, qui
+contourne toutes les politiques.
+
+Pour un déploiement, les deux variables doivent être définies dans les variables
+d'environnement Vercel.
 
 ## Démarrage
 
@@ -124,6 +141,41 @@ Le seuil de réussite d’une phase est de 60 % ; en dessous, la session peut ê
 - passage automatique à la question suivante à l’expiration du temps imparti, ou juste
   après la sélection d’une réponse (court délai de confirmation visuelle) ;
 - banque de 30 questions réparties en trois blocs thématiques (`src/data/quiz.ts`).
+
+## Base de données
+
+Le schéma vit dans Supabase (PostgreSQL). Les tables : `profiles`, `dossiers`,
+`eligibility`, `documents`, `phase_results`, `funding_proofs`, plus la banque de questions
+`quiz_phases` / `quiz_questions`.
+
+### Ce qui n'est jamais décidé par le navigateur
+
+- **Les transitions de statut.** Aucune politique `INSERT`/`UPDATE` n'est accordée sur
+  `dossiers` : tout passe par des fonctions SQL (`submit_dossier`, `approve_dossier`,
+  `validate_funding`…) qui vérifient la séquence et le rôle. Un candidat ne peut pas se
+  déclarer approuvé ni financé.
+- **La correction du QCM.** `quiz_questions` n'a aucune politique RLS : la table est
+  inaccessible depuis l'API. Les énoncés sont servis sans la bonne réponse par
+  `get_phase_questions()`, et `submit_phase_answers()` corrige côté serveur. Le client
+  envoie des réponses, jamais un score.
+- **Le délai de 48 h.** Il est calculé et vérifié en base. Il n'existe aucune fonction
+  permettant de le contourner, y compris pour un administrateur.
+- **Le rôle.** Le trigger d'inscription force `candidate`, quelles que soient les
+  métadonnées envoyées. La promotion d'un administrateur se fait depuis la console
+  Supabase.
+
+### Fichiers
+
+Deux buckets privés : `dossier-files` (pièces du dossier et preuves de garantie) et
+`identity-documents` (pièces d'identité, séparées car leur conservation et leurs accès
+diffèrent). Aucun fichier n'est accessible par URL publique — la consultation passe par une
+URL signée d'une heure, délivrée seulement si la RLS autorise l'accès.
+
+### Régénérer les types
+
+```bash
+npx supabase gen types typescript --project-id <ref> > src/lib/database.types.ts
+```
 
 ## État et synchronisation
 

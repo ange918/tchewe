@@ -6,8 +6,7 @@ import { Card, CardBody, CardHeader } from '../ui/Card'
 import { Dropzone } from '../ui/Dropzone'
 import { cn, formatEuro } from '../../lib/utils'
 import { toast } from '../../lib/toast'
-import type { FileMeta } from '../../lib/fileVault'
-import { GUARANTEE_RATE, useApplication } from '../../store/application'
+import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
 
 type Answer = 'yes' | 'no' | null
 
@@ -121,9 +120,13 @@ function Blocked({ refused, onBack }: { refused: string[]; onBack: () => void })
  */
 export function EligibilityGate({ amount }: { amount: number }) {
   const acceptEligibility = useApplication((state) => state.acceptEligibility)
+  const dossier = useApplication((state) => state.dossier)
+  const documents = useApplication((state) => state.documents)
+  const addDocument = useApplication((state) => state.addDocument)
+  const dropDocument = useApplication((state) => state.dropDocument)
+  const idDocument = documentsOfKind(documents, 'identity')
 
   const [isAdult, setIsAdult] = useState<Answer>(null)
-  const [idDocument, setIdDocument] = useState<FileMeta[]>([])
   const [answers, setAnswers] = useState<Record<Condition['id'], Answer>>({
     revenueShare: null,
     determined: null,
@@ -134,7 +137,7 @@ export function EligibilityGate({ amount }: { amount: number }) {
 
   const items = conditions(amount)
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
 
     const missing: string[] = []
@@ -162,13 +165,17 @@ export function EligibilityGate({ amount }: { amount: number }) {
       return
     }
 
-    acceptEligibility({
+    const result = await acceptEligibility({
       isAdult: true,
-      idDocument,
       revenueShare: answers.revenueShare === 'yes',
       determined: answers.determined === 'yes',
       guaranteeReady: answers.guaranteeReady === 'yes',
     })
+
+    if (!result.ok) {
+      toast.error('Validation impossible', result.error)
+      return
+    }
     toast.success('Conditions validées', 'Votre première session d’évaluation est ouverte.')
   }
 
@@ -185,7 +192,7 @@ export function EligibilityGate({ amount }: { amount: number }) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-6">
         <Card>
           <CardHeader
             title="Majorité et identité"
@@ -204,8 +211,11 @@ export function EligibilityGate({ amount }: { amount: number }) {
                   hint="Carte nationale d’identité, passeport ou titre de séjour, au format PDF ou image."
                   accept="application/pdf,image/*"
                   multiple={false}
-                  files={idDocument}
-                  onChange={setIdDocument}
+                  dossierId={dossier?.id ?? ''}
+                  kind="identity"
+                  documents={idDocument}
+                  onAdded={addDocument}
+                  onRemoved={dropDocument}
                 />
               </div>
             )}

@@ -6,20 +6,20 @@ import { Card, CardBody, CardHeader } from '../../components/ui/Card'
 import { DocumentViewer } from '../../components/admin/DocumentViewer'
 import { toast } from '../../lib/toast'
 import { cn, formatDate, formatEuro } from '../../lib/utils'
-import { LIVE_DOSSIER_ID, useDossiers } from '../../hooks/useDossiers'
-import { useAdmin } from '../../store/admin'
-import { GUARANTEE_RATE, useApplication } from '../../store/application'
-import type { AdminDossier } from '../../data/mockDossiers'
+import { useDossiers, type AdminDossier } from '../../hooks/useDossiers'
+import { GUARANTEE_RATE } from '../../store/application'
+import { supabase, friendlyError } from '../../lib/supabase'
 
 function ProofPanel({ title, dossier, kind }: { title: string; dossier: AdminDossier; kind: 'depositReceipt' | 'accountProof' }) {
-  const file = dossier.funding?.[kind][0]
+  const wanted = kind === 'depositReceipt' ? 'deposit_receipt' : 'account_proof'
+  const file = dossier.documents.find((d) => d.kind === wanted)
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-extrabold tracking-[-0.01em] text-ink-900">{title}</h3>
       {file ? (
         <>
           <DocumentViewer file={file} className="h-64" />
-          <p className="truncate text-xs text-ink-500">{file.name}</p>
+          <p className="truncate text-xs text-ink-500">{file.file_name}</p>
         </>
       ) : (
         <p className="rounded-xl border border-dashed border-ink-200 bg-ink-50 p-6 text-center text-sm text-ink-500">
@@ -31,9 +31,7 @@ function ProofPanel({ title, dossier, kind }: { title: string; dossier: AdminDos
 }
 
 export function Verifications() {
-  const dossiers = useDossiers()
-  const setStatus = useAdmin((state) => state.setStatus)
-  const validateLive = useApplication((state) => state.validateFunding)
+  const { dossiers, reload } = useDossiers()
 
   const pending = dossiers.filter((dossier) => dossier.status === 'proofs_submitted')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -42,12 +40,16 @@ export function Verifications() {
   // premier dossier restant plutôt que d'être resynchronisée par un effet.
   const selected = pending.find((dossier) => dossier.id === selectedId) ?? pending[0] ?? null
 
-  function validate(dossier: AdminDossier) {
-    if (dossier.id === LIVE_DOSSIER_ID) validateLive()
-    else setStatus(dossier.id, 'financed')
+  async function validate(dossier: AdminDossier) {
+    const { error } = await supabase.rpc('validate_funding', { p_dossier_id: dossier.id })
+    if (error) {
+      toast.error('Validation impossible', friendlyError(error, 'Réessayez dans un instant.'))
+      return
+    }
+    await reload()
     toast.success(
       'Ordre de virement émis',
-      `${dossier.reference} — ${formatEuro(dossier.amount)} vers ${dossier.funding?.bankName ?? 'la banque partenaire'}.`,
+      `${dossier.reference} — ${formatEuro(dossier.amount ?? 0)} vers ${dossier.funding?.bank_name ?? 'la banque partenaire'}.`,
     )
   }
 
@@ -103,7 +105,7 @@ export function Verifications() {
                 {dossier.applicant}
               </span>
               <span className="mt-1.5 block text-xs font-extrabold text-brand-600">
-                {formatEuro(Math.round(dossier.amount * GUARANTEE_RATE))} attendus
+                {formatEuro(Math.round((dossier.amount ?? 0) * GUARANTEE_RATE))} attendus
               </span>
             </button>
           ))}
@@ -114,7 +116,7 @@ export function Verifications() {
             <CardHeader
               title={selected.title}
               description={`${selected.applicant} · déposé le ${
-                selected.funding ? formatDate(selected.funding.submittedAt) : '—'
+                selected.funding ? formatDate(selected.funding.submitted_at) : '—'
               }`}
               action={<Badge tone="outline">{selected.reference}</Badge>}
             />
@@ -126,7 +128,7 @@ export function Verifications() {
                     Garantie attendue
                   </dt>
                   <dd className="mt-1 text-xl font-extrabold tracking-[-0.03em] text-brand-700">
-                    {formatEuro(Math.round(selected.amount * GUARANTEE_RATE))}
+                    {formatEuro(Math.round((selected.amount ?? 0) * GUARANTEE_RATE))}
                   </dd>
                 </div>
                 <div className="rounded-xl bg-ink-50 p-4">
@@ -134,7 +136,7 @@ export function Verifications() {
                     Subvention à virer
                   </dt>
                   <dd className="mt-1 text-xl font-extrabold tracking-[-0.03em] text-ink-900">
-                    {formatEuro(selected.amount)}
+                    {formatEuro(selected.amount ?? 0)}
                   </dd>
                 </div>
                 <div className="rounded-xl bg-ink-50 p-4">
@@ -157,7 +159,7 @@ export function Verifications() {
                   Vérifiez que le montant du reçu correspond à la garantie attendue et que le
                   titulaire du compte est bien le porteur du dossier.
                 </p>
-                <Button size="lg" variant="success" onClick={() => validate(selected)}>
+                <Button size="lg" variant="success" onClick={() => void validate(selected)}>
                   <MoneyIcon className="h-4 w-4" aria-hidden />
                   Valider le financement
                 </Button>

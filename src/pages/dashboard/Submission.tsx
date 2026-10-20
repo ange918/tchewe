@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AlertCircleIcon, ArrowRightIcon, ClockIcon, FileIcon, SendIcon } from '../../components/ui/icons'
+import { ArrowRightIcon, AlertCircleIcon, ClockIcon, FileIcon, SendIcon } from '../../components/ui/icons'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
 import { Dropzone } from '../../components/ui/Dropzone'
@@ -8,8 +8,7 @@ import { Input, Select, Textarea } from '../../components/ui/Field'
 import { Badge } from '../../components/ui/Badge'
 import { toast } from '../../lib/toast'
 import { formatBytes, formatDate, formatEuro } from '../../lib/utils'
-import type { FileMeta } from '../../lib/fileVault'
-import { GUARANTEE_RATE, useApplication } from '../../store/application'
+import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
 
 const MIN_AMOUNT = 2000
 const MAX_AMOUNT = 650000
@@ -24,24 +23,28 @@ interface FormErrors {
 
 function SubmissionForm() {
   const navigate = useNavigate()
+  const dossier = useApplication((state) => state.dossier)
+  const documents = useApplication((state) => state.documents)
+  const addDocument = useApplication((state) => state.addDocument)
+  const dropDocument = useApplication((state) => state.dropDocument)
   const submitProject = useApplication((state) => state.submitProject)
 
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState('')
   const [durationMonths, setDurationMonths] = useState('12')
   const [summary, setSummary] = useState('')
-  const [documents, setDocuments] = useState<FileMeta[]>([])
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitting, setSubmitting] = useState(false)
 
+  const projectDocuments = documentsOfKind(documents, 'project')
   const numericAmount = Number(amount)
-  const guarantee = Number.isFinite(numericAmount) && numericAmount > 0
-    ? Math.round(numericAmount * GUARANTEE_RATE)
-    : 0
+  const guarantee =
+    Number.isFinite(numericAmount) && numericAmount > 0
+      ? Math.round(numericAmount * GUARANTEE_RATE)
+      : 0
 
   function validate(): boolean {
     const next: FormErrors = {}
-
     if (title.trim().length < 4) next.title = 'Donnez un intitulé d’au moins 4 caractères.'
     if (!Number.isFinite(numericAmount) || numericAmount < MIN_AMOUNT || numericAmount > MAX_AMOUNT) {
       next.amount = `Le montant doit être compris entre ${formatEuro(MIN_AMOUNT)} et ${formatEuro(MAX_AMOUNT)}.`
@@ -50,15 +53,14 @@ function SubmissionForm() {
     if (summary.trim().length < 120) {
       next.summary = `Le résumé exécutif doit faire au moins 120 caractères (${summary.trim().length} pour l’instant).`
     }
-    if (documents.length === 0) {
+    if (projectDocuments.length === 0) {
       next.documents = 'Joignez au minimum votre pitch deck ou votre business plan.'
     }
-
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     if (!validate()) {
       toast.error('Dossier incomplet', 'Corrigez les champs signalés avant l’envoi.')
@@ -66,17 +68,24 @@ function SubmissionForm() {
     }
 
     setSubmitting(true)
-    submitProject({
+    const result = await submitProject({
       title: title.trim(),
       amount: numericAmount,
       durationMonths: Number(durationMonths),
       summary: summary.trim(),
-      documents,
     })
     setSubmitting(false)
+
+    if (!result.ok) {
+      toast.error('Envoi impossible', result.error)
+      return
+    }
+
     toast.success('Dossier envoyé', 'Votre projet est transmis à l’administration.')
     navigate('/dashboard')
   }
+
+  if (!dossier) return null
 
   return (
     <div className="space-y-6">
@@ -89,7 +98,7 @@ function SubmissionForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-6">
         <Card>
           <CardHeader title="Le projet" description="L’essentiel de votre candidature." />
           <CardBody className="space-y-5">
@@ -110,7 +119,7 @@ function SubmissionForm() {
                 max={MAX_AMOUNT}
                 step={100}
                 suffix="€"
-                placeholder="650000"
+                placeholder="10000"
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 error={errors.amount}
@@ -156,8 +165,11 @@ function SubmissionForm() {
             <Dropzone
               label="Documents du dossier"
               hint="Format PDF uniquement, 10 Mo maximum par fichier."
-              files={documents}
-              onChange={setDocuments}
+              dossierId={dossier.id}
+              kind="project"
+              documents={projectDocuments}
+              onAdded={addDocument}
+              onRemoved={dropDocument}
               error={errors.documents}
             />
           </CardBody>
@@ -178,26 +190,27 @@ function SubmissionForm() {
 }
 
 function DossierRecap() {
-  const { project, reference, status, reviewNote } = useApplication()
+  const dossier = useApplication((state) => state.dossier)
+  const documents = useApplication((state) => state.documents)
+  if (!dossier) return null
 
-  if (!project) return null
-
-  const rejected = status === 'rejected'
+  const rejected = dossier.status === 'rejected'
+  const projectDocuments = documentsOfKind(documents, 'project')
 
   return (
     <div className="space-y-6">
       <div>
         <Badge tone={rejected ? 'danger' : 'brand'}>
-          {rejected ? 'Dossier rejeté' : `Référence ${reference}`}
+          {rejected ? 'Dossier rejeté' : `Référence ${dossier.reference}`}
         </Badge>
-        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">{project.title}</h1>
+        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">{dossier.title}</h1>
         <p className="mt-2 text-ink-600">
-          Déposé le {formatDate(project.submittedAt)} · {formatEuro(project.amount)} sur{' '}
-          {project.durationMonths} mois
+          Déposé le {dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'} ·{' '}
+          {formatEuro(dossier.amount ?? 0)} sur {dossier.duration_months} mois
         </p>
       </div>
 
-      {status === 'submitted' && (
+      {dossier.status === 'submitted' && (
         <Card className="border-amber-200 bg-amber-50/60">
           <CardBody className="flex items-start gap-4">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
@@ -207,8 +220,7 @@ function DossierRecap() {
               <h2 className="text-lg text-ink-900">Dossier en cours d’analyse</h2>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-600">
                 Votre dossier est entre les mains de l’administration. Dès sa validation, la première
-                session d’évaluation s’ouvrira automatiquement dans votre espace et vous en serez
-                informé par e-mail.
+                session d’évaluation s’ouvrira dans votre espace.
               </p>
             </div>
           </CardBody>
@@ -224,7 +236,7 @@ function DossierRecap() {
             <div>
               <h2 className="text-lg text-ink-900">Dossier non retenu</h2>
               <p className="mt-1.5 text-sm leading-relaxed text-ink-600">
-                {reviewNote ?? 'Aucun motif n’a été précisé par l’administration.'}
+                {dossier.review_note ?? 'Aucun motif n’a été précisé par l’administration.'}
               </p>
             </div>
           </CardBody>
@@ -234,17 +246,17 @@ function DossierRecap() {
       <Card>
         <CardHeader title="Résumé exécutif" />
         <CardBody>
-          <p className="whitespace-pre-line text-[0.98rem] leading-relaxed text-ink-600">
-            {project.summary}
+          <p className="text-[0.98rem] leading-relaxed whitespace-pre-line text-ink-600">
+            {dossier.summary}
           </p>
         </CardBody>
       </Card>
 
       <Card>
-        <CardHeader title="Pièces jointes" description={`${project.documents.length} document(s)`} />
+        <CardHeader title="Pièces jointes" description={`${projectDocuments.length} document(s)`} />
         <CardBody>
           <ul className="space-y-2">
-            {project.documents.map((file) => (
+            {projectDocuments.map((file) => (
               <li
                 key={file.id}
                 className="flex items-center gap-3 rounded-xl border border-ink-200 px-3.5 py-2.5"
@@ -254,9 +266,11 @@ function DossierRecap() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold text-ink-900">
-                    {file.name}
+                    {file.file_name}
                   </span>
-                  <span className="block text-xs text-ink-500">{formatBytes(file.size)}</span>
+                  <span className="block text-xs text-ink-500">
+                    {formatBytes(file.size_bytes ?? 0)}
+                  </span>
                 </span>
               </li>
             ))}
@@ -264,7 +278,7 @@ function DossierRecap() {
         </CardBody>
       </Card>
 
-      {['approved', 'awaiting_next_phase'].includes(status) && (
+      {['approved', 'awaiting_next_phase'].includes(dossier.status) && (
         <ButtonLink to="/dashboard/evaluation" size="lg">
           Accéder à l’évaluation
           <ArrowRightIcon className="h-4 w-4" aria-hidden />
@@ -275,9 +289,10 @@ function DossierRecap() {
 }
 
 export function Submission() {
-  const status = useApplication((state) => state.status)
-  const project = useApplication((state) => state.project)
-
-  if (status === 'draft' || (status === 'rejected' && !project)) return <SubmissionForm />
+  const dossier = useApplication((state) => state.dossier)
+  if (!dossier) return null
+  if (dossier.status === 'draft' || (dossier.status === 'rejected' && !dossier.title)) {
+    return <SubmissionForm />
+  }
   return <DossierRecap />
 }

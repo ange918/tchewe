@@ -7,7 +7,7 @@ import { Textarea } from '../ui/Field'
 import { DocumentTabs, DocumentViewer } from './DocumentViewer'
 import { formatDate, formatEuro } from '../../lib/utils'
 import { GUARANTEE_RATE, STATUS_LABELS } from '../../store/application'
-import type { AdminDossier } from '../../data/mockDossiers'
+import type { AdminDossier } from '../../hooks/useDossiers'
 
 /** Fiche de révision : pièces jointes, résumé et décision d'instruction. */
 export function DossierDrawer({
@@ -22,7 +22,7 @@ export function DossierDrawer({
   onReject: (dossier: AdminDossier, note: string) => void
 }) {
   const reduced = useReducedMotion()
-  const [activeDoc, setActiveDoc] = useState(dossier.documents[0]?.id ?? '')
+  const [activeDoc, setActiveDoc] = useState(dossier.documents.find((d) => d.kind === 'project')?.id ?? '')
   const [rejecting, setRejecting] = useState(false)
   const [note, setNote] = useState('')
   const [noteError, setNoteError] = useState<string>()
@@ -35,7 +35,9 @@ export function DossierDrawer({
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const file = dossier.documents.find((item) => item.id === activeDoc)
+  const projectDocuments = dossier.documents.filter((d) => d.kind === 'project')
+  const identityDocuments = dossier.documents.filter((d) => d.kind === 'identity')
+  const file = projectDocuments.find((item) => item.id === activeDoc)
   const pending = dossier.status === 'submitted'
 
   return (
@@ -61,8 +63,7 @@ export function DossierDrawer({
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="outline">{dossier.reference}</Badge>
               <Badge tone={pending ? 'warning' : 'neutral'}>{STATUS_LABELS[dossier.status]}</Badge>
-              {dossier.live && <Badge tone="brand">Dossier déposé ici</Badge>}
-            </div>
+                          </div>
             <h2 className="mt-3 truncate text-xl font-extrabold tracking-[-0.025em] text-ink-900">
               {dossier.title}
             </h2>
@@ -83,10 +84,10 @@ export function DossierDrawer({
         <div className="flex-1 space-y-6 overflow-y-auto p-5 sm:p-6">
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: 'Montant', value: formatEuro(dossier.amount) },
-              { label: 'Garantie 30 %', value: formatEuro(Math.round(dossier.amount * GUARANTEE_RATE)) },
-              { label: 'Durée', value: `${dossier.durationMonths} mois` },
-              { label: 'Déposé le', value: formatDate(dossier.submittedAt) },
+              { label: 'Montant', value: formatEuro(dossier.amount ?? 0) },
+              { label: 'Garantie 30 %', value: formatEuro(Math.round((dossier.amount ?? 0) * GUARANTEE_RATE)) },
+              { label: 'Durée', value: `${dossier.duration_months} mois` },
+              { label: 'Déposé le', value: dossier.submitted_at ? formatDate(dossier.submitted_at) : '—' },
             ].map((item) => (
               <div key={item.label} className="rounded-xl bg-ink-50 p-3.5">
                 <dt className="text-[0.65rem] font-bold tracking-[0.08em] text-ink-400 uppercase">
@@ -128,10 +129,10 @@ export function DossierDrawer({
               </h3>
               <ul className="mt-2 space-y-1.5">
                 {[
-                  { label: 'Majorité (18 ans ou plus)', ok: dossier.eligibility.isAdult },
-                  { label: 'Reversement de 30 % des revenus aux orphelins', ok: dossier.eligibility.revenueShare },
+                  { label: 'Majorité (18 ans ou plus)', ok: dossier.eligibility.is_adult },
+                  { label: 'Reversement de 30 % des revenus aux orphelins', ok: dossier.eligibility.revenue_share },
                   { label: 'Détermination à mener le projet à bien', ok: dossier.eligibility.determined },
-                  { label: 'Preuve de garantie de 30 % disponible', ok: dossier.eligibility.guaranteeReady },
+                  { label: 'Preuve de garantie de 30 % disponible', ok: dossier.eligibility.guarantee_ready },
                 ].map((item) => (
                   <li key={item.label} className="flex items-center gap-2.5 text-sm text-ink-700">
                     {item.ok ? (
@@ -144,13 +145,13 @@ export function DossierDrawer({
                 ))}
               </ul>
 
-              {dossier.eligibility.idDocument.length > 0 && (
+              {identityDocuments.length > 0 && (
                 <div className="mt-3">
                   <p className="text-xs font-bold tracking-[0.08em] text-ink-400 uppercase">
                     Pièce d’identité
                   </p>
                   <div className="mt-2">
-                    <DocumentViewer file={dossier.eligibility.idDocument[0]} className="h-64" />
+                    <DocumentViewer file={identityDocuments[0]} className="h-64" />
                   </div>
                 </div>
               )}
@@ -159,11 +160,11 @@ export function DossierDrawer({
 
           <section>
             <h3 className="text-sm font-extrabold tracking-[-0.01em] text-ink-900">
-              Pièces jointes ({dossier.documents.length})
+              Pièces jointes ({projectDocuments.length})
             </h3>
-            {dossier.documents.length > 0 ? (
+            {projectDocuments.length > 0 ? (
               <div className="mt-3 space-y-3">
-                <DocumentTabs files={dossier.documents} activeId={activeDoc} onSelect={setActiveDoc} />
+                <DocumentTabs files={projectDocuments} activeId={activeDoc} onSelect={setActiveDoc} />
                 {file && <DocumentViewer file={file} className="h-96" />}
               </div>
             ) : (
@@ -171,10 +172,10 @@ export function DossierDrawer({
             )}
           </section>
 
-          {dossier.reviewNote && (
+          {dossier.review_note && (
             <section className="rounded-xl border border-rose-200 bg-rose-50/60 p-4">
               <h3 className="text-sm font-extrabold text-ink-900">Motif du rejet</h3>
-              <p className="mt-1 text-sm text-ink-600">{dossier.reviewNote}</p>
+              <p className="mt-1 text-sm text-ink-600">{dossier.review_note}</p>
             </section>
           )}
         </div>

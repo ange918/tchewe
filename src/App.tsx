@@ -39,9 +39,6 @@ const Dossiers = lazy(() => import('./pages/admin/Dossiers').then((m) => ({ defa
 const Verifications = lazy(() =>
   import('./pages/admin/Verifications').then((m) => ({ default: m.Verifications })),
 )
-const SupremeAdmin = lazy(() =>
-  import('./pages/admin/SupremeAdmin').then((m) => ({ default: m.SupremeAdmin })),
-)
 const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms })))
 
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
@@ -60,17 +57,10 @@ export default function App() {
             <Route path="conditions" element={<Terms />} />
           </Route>
 
-          {/* Console Super Admin /supreme — même garde que le reste du back-office :
-              la RLS et les fonctions SQL refusaient déjà tout à un non-admin, mais
-              la console elle-même n'avait pas à être atteignable publiquement. */}
-          <Route
-            path="supreme"
-            element={
-              <RequireRole role="admin">
-                <SupremeAdmin />
-              </RequireRole>
-            }
-          />
+          {/* La console Supreme a été retirée : elle dupliquait les décisions du
+              back-office sans rien y ajouter. L'adresse reste redirigée pour les
+              signets existants. */}
+          <Route path="supreme" element={<Navigate to="/admin/dossiers" replace />} />
 
           {/* Authentification */}
           <Route path="auth">

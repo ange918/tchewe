@@ -54,14 +54,21 @@ function toUser(session: Session, profile: ProfileRow): User {
 
 /** Le profil est créé par un trigger : il peut arriver juste après la session. */
 async function loadProfile(session: Session): Promise<User | null> {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .maybeSingle()
+  // Deux tentatives : une inscription toute fraîche peut devancer le trigger,
+  // et un incident réseau ne doit pas déconnecter quelqu'un qui a bien une
+  // session ouverte.
+  for (let essai = 0; essai < 2; essai++) {
+    if (essai > 0) await new Promise((r) => setTimeout(r, 400))
 
-  if (error || !data) return null
-  return toUser(session, data)
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .maybeSingle()
+
+    if (data) return toUser(session, data)
+  }
+  return null
 }
 
 export const useAuth = create<AuthState>()((set) => ({
@@ -69,17 +76,28 @@ export const useAuth = create<AuthState>()((set) => ({
   loading: true,
 
   initialize: () => {
-    void supabase.auth.getSession().then(async ({ data }) => {
-      const user = data.session ? await loadProfile(data.session) : null
-      set({ user, loading: false })
-    })
+    let actif = true
 
-    const { data } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    async function appliquer(session: Session | null) {
       const user = session ? await loadProfile(session) : null
-      set({ user, loading: false })
+      if (actif) set({ user, loading: false })
+    }
+
+    void supabase.auth.getSession().then(({ data }) => appliquer(data.session))
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Ne jamais attendre un appel Supabase à l'intérieur de ce rappel : il
+      // s'exécute pendant que le verrou d'authentification est tenu, et toute
+      // requête qui réclame ce verrou à son tour attendrait indéfiniment. Le
+      // symptôme est une application figée sur son écran d'attente. On repasse
+      // donc par la file de tâches pour travailler hors du verrou.
+      setTimeout(() => void appliquer(session), 0)
     })
 
-    return () => data.subscription.unsubscribe()
+    return () => {
+      actif = false
+      data.subscription.unsubscribe()
+    }
   },
 
   register: async (payload) => {

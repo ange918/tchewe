@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/plus-jakarta-sans'
 import App from './App.tsx'
+import { ErrorBoundary } from './components/layout/ErrorBoundary'
 import { useAuth } from './store/auth'
 import './index.css'
 
@@ -11,6 +12,8 @@ useAuth.getState().initialize()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 )

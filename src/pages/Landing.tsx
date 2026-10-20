@@ -306,7 +306,7 @@ export function Landing() {
                 <ButtonLink
                   to="/a-propos"
                   size="lg"
-                  className="bg-white/10 text-white ring-1 ring-inset ring-white/25 hover:bg-white/20"
+                  variant="onDark"
                 >
                   En savoir plus
                 </ButtonLink>

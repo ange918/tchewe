@@ -225,7 +225,7 @@ export function Terms() {
               Créer mon compte candidat
               <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
-            <ButtonLink to="/#processus" variant="secondary" size="lg" className="bg-white/10 text-white ring-white/20 hover:bg-white/20">
+            <ButtonLink to="/#processus" variant="onDark" size="lg">
               Revoir les 6 étapes
             </ButtonLink>
           </div>

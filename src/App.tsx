@@ -35,10 +35,8 @@ const Funding = lazy(() => import('./pages/dashboard/Funding').then((m) => ({ de
 const AdminLayout = lazy(() =>
   import('./components/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })),
 )
-const Dossiers = lazy(() => import('./pages/admin/Dossiers').then((m) => ({ default: m.Dossiers })))
-const Verifications = lazy(() =>
-  import('./pages/admin/Verifications').then((m) => ({ default: m.Verifications })),
-)
+const AdminHome = lazy(() => import('./pages/admin/Home').then((m) => ({ default: m.Home })))
+const Stage = lazy(() => import('./pages/admin/Stage').then((m) => ({ default: m.Stage })))
 const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms })))
 
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
@@ -84,6 +82,10 @@ export default function App() {
             <Route path="funding" element={<Funding />} />
           </Route>
 
+          {/* Anciennes adresses du back-office, conservées pour les signets. */}
+          <Route path="admin/dossiers" element={<Navigate to="/admin/nouveaux" replace />} />
+          <Route path="admin/verifications" element={<Navigate to="/admin/preuves" replace />} />
+
           {/* Back-office administrateur */}
           <Route
             path="admin"
@@ -93,9 +95,10 @@ export default function App() {
               </RequireRole>
             }
           >
-            <Route index element={<Navigate to="/admin/dossiers" replace />} />
-            <Route path="dossiers" element={<Dossiers />} />
-            <Route path="verifications" element={<Verifications />} />
+            <Route index element={<AdminHome />} />
+            {/* Une seule route pour toutes les étapes : leur liste vit dans
+                lib/pipeline.ts, et l'ajout d'une étape ne touche pas au routage. */}
+            <Route path=":slug" element={<Stage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

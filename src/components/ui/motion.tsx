@@ -42,7 +42,11 @@ export function Reveal({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
+      // `some` déclenche dès qu'un fragment de l'élément entre dans l'écran.
+      // Un seuil en proportion (0.2) ne peut jamais être atteint par un bloc
+      // plus haut que la fenêtre : sur téléphone, le contenu restait alors à
+      // opacité zéro, invisible mais bien présent.
+      viewport={{ once: true, amount: 'some', margin: '0px 0px -40px 0px' }}
       variants={reduced ? fadeIn : fadeUp}
       transition={{ delay }}
     >
@@ -71,7 +75,7 @@ export function RevealGroup({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.15, margin: '0px 0px -60px 0px' }}
+      viewport={{ once: true, amount: 'some', margin: '0px 0px -40px 0px' }}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: reduced ? 0 : stagger } },

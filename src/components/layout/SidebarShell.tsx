@@ -12,6 +12,10 @@ export interface SidebarItem {
   exact?: boolean
   /** Étape pas encore ouverte : visible, mais non cliquable. */
   locked?: boolean
+  /** Nombre d'éléments à cette entrée. Zéro reste affiché, en sourdine. */
+  count?: number
+  /** Une action est attendue ici : le compteur se met en avant. */
+  attention?: boolean
 }
 
 interface Props {
@@ -29,7 +33,7 @@ interface Props {
 function Nav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: () => void }) {
   return (
     <ul className="space-y-1">
-      {items.map(({ to, label, icon: Icon, exact, locked }) => (
+      {items.map(({ to, label, icon: Icon, exact, locked, count, attention }) => (
         <li key={to}>
           <NavLink
             to={to}
@@ -58,7 +62,19 @@ function Nav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: () => v
             ) : (
               <Icon className="h-4.5 w-4.5 shrink-0" aria-hidden />
             )}
-            <span className="truncate">{label}</span>
+            <span className="min-w-0 flex-1 truncate">{label}</span>
+            {count !== undefined && (
+              <span
+                className={cn(
+                  'shrink-0 rounded-full px-2 py-0.5 text-xs font-extrabold tabular-nums',
+                  attention && count > 0
+                    ? 'bg-amber-400 text-ink-950'
+                    : 'bg-ink-100 text-ink-500',
+                )}
+              >
+                {count}
+              </span>
+            )}
           </NavLink>
         </li>
       ))}

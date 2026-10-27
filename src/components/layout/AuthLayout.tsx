@@ -19,7 +19,8 @@ export function AuthLayout({
   title: string
   subtitle: string
   children: ReactNode
-  footer: ReactNode
+  /** Facultatif : un écran d'attente ou de lien expiré n'a rien à y mettre. */
+  footer?: ReactNode
 }) {
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[1fr_minmax(0,34rem)]">
@@ -83,7 +84,9 @@ export function AuthLayout({
 
           <div className="mt-8">{children}</div>
 
-          <div className="mt-8 border-t border-ink-100 pt-6 text-sm text-ink-600">{footer}</div>
+          {footer && (
+            <div className="mt-8 border-t border-ink-100 pt-6 text-sm text-ink-600">{footer}</div>
+          )}
         </div>
       </main>
     </div>

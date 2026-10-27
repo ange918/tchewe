@@ -81,6 +81,15 @@ export function Login() {
           }}
         />
 
+        <div className="-mt-2 text-right">
+          <Link
+            to="/auth/mot-de-passe-oublie"
+            className="text-sm font-bold text-brand-600 hover:underline"
+          >
+            Mot de passe oublié ?
+          </Link>
+        </div>
+
         <Button type="submit" size="lg" full loading={submitting}>
           Se connecter
         </Button>

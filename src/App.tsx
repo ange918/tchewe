@@ -37,6 +37,9 @@ const AdminLayout = lazy(() =>
 )
 const AdminHome = lazy(() => import('./pages/admin/Home').then((m) => ({ default: m.Home })))
 const Stage = lazy(() => import('./pages/admin/Stage').then((m) => ({ default: m.Stage })))
+const Accounts = lazy(() =>
+  import('./pages/admin/Accounts').then((m) => ({ default: m.Accounts })),
+)
 const Terms = lazy(() => import('./pages/Terms').then((m) => ({ default: m.Terms })))
 
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
@@ -96,6 +99,8 @@ export default function App() {
             }
           >
             <Route index element={<AdminHome />} />
+            {/* Déclarée avant la route dynamique, qui sinon l'absorberait. */}
+            <Route path="comptes" element={<Accounts />} />
             {/* Une seule route pour toutes les étapes : leur liste vit dans
                 lib/pipeline.ts, et l'ajout d'une étape ne touche pas au routage. */}
             <Route path=":slug" element={<Stage />} />

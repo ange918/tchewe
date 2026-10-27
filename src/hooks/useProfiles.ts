@@ -3,6 +3,10 @@ import { supabase } from '../lib/supabase'
 
 export interface ProfileSummary {
   id: string
+  first_name: string
+  last_name: string
+  email: string | null
+  birth_date: string | null
   role: string
   created_at: string
 }
@@ -21,7 +25,7 @@ export function useProfiles() {
   const reload = useCallback(async () => {
     const { data } = await supabase
       .from('profiles')
-      .select('id, role, created_at')
+      .select('id, first_name, last_name, email, birth_date, role, created_at')
       .order('created_at')
 
     setProfiles((data as ProfileSummary[] | null) ?? [])

@@ -1,5 +1,6 @@
 import {
   CollectionIcon,
+  UserPlusIcon,
   FileBlankIcon,
   MoneyIcon,
   ReceiptIcon,
@@ -29,6 +30,8 @@ export function AdminLayout() {
       count: dossiers.filter((d) => stage.statuses.includes(d.status)).length,
       attention: stage.actionable,
     })),
+    // Hors du tunnel : s'inscrire n'est pas une étape du parcours d'un dossier.
+    { to: '/admin/comptes', label: 'Comptes inscrits', icon: UserPlusIcon },
   ]
 
   return (

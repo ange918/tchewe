@@ -18,6 +18,15 @@ import { Landing } from './pages/Landing'
  */
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
 const Login = lazy(() => import('./pages/auth/Login').then((m) => ({ default: m.Login })))
+const ForgotPassword = lazy(() =>
+  import('./pages/auth/ForgotPassword').then((m) => ({ default: m.ForgotPassword })),
+)
+const ResetPassword = lazy(() =>
+  import('./pages/auth/ResetPassword').then((m) => ({ default: m.ResetPassword })),
+)
+const Password = lazy(() =>
+  import('./pages/account/Password').then((m) => ({ default: m.Password })),
+)
 const Register = lazy(() => import('./pages/auth/Register').then((m) => ({ default: m.Register })))
 
 const DashboardLayout = lazy(() =>
@@ -68,6 +77,8 @@ export default function App() {
             <Route index element={<Navigate to="/auth/login" replace />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="mot-de-passe-oublie" element={<ForgotPassword />} />
+            <Route path="nouveau-mot-de-passe" element={<ResetPassword />} />
           </Route>
 
           {/* Espace porteur de projet */}
@@ -83,6 +94,7 @@ export default function App() {
             <Route path="submission" element={<Submission />} />
             <Route path="evaluation" element={<Evaluation />} />
             <Route path="funding" element={<Funding />} />
+            <Route path="mot-de-passe" element={<Password />} />
           </Route>
 
           {/* Anciennes adresses du back-office, conservées pour les signets. */}
@@ -101,6 +113,7 @@ export default function App() {
             <Route index element={<AdminHome />} />
             {/* Déclarée avant la route dynamique, qui sinon l'absorberait. */}
             <Route path="comptes" element={<Accounts />} />
+            <Route path="mot-de-passe" element={<Password />} />
             {/* Une seule route pour toutes les étapes : leur liste vit dans
                 lib/pipeline.ts, et l'ajout d'une étape ne touche pas au routage. */}
             <Route path=":slug" element={<Stage />} />

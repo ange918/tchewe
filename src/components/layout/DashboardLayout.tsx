@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ClipboardIcon, CollectionIcon, TimerIcon, WalletIcon } from '../ui/icons'
+import { ClipboardIcon, CollectionIcon, LockIcon, TimerIcon, WalletIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { SidebarShell, type SidebarItem } from './SidebarShell'
 import { useAuth } from '../../store/auth'
@@ -54,6 +54,9 @@ export function DashboardLayout() {
     exact: 'exact' in step ? step.exact : undefined,
     locked: !isUnlocked(step.to, status),
   }))
+
+  // Hors du parcours : accessible à tout moment, jamais verrouillé.
+  items.push({ to: '/dashboard/mot-de-passe', label: 'Mot de passe', icon: LockIcon })
 
   return (
     <SidebarShell

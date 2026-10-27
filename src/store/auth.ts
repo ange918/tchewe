@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { Session } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { friendlyError, supabase } from '../lib/supabase'
 import type { ProfileRow, UserRole } from '../lib/database.types'
 
 export type { UserRole as Role }
@@ -31,12 +31,23 @@ type Result = { ok: true; user: User } | { ok: false; error: string }
  */
 type RegisterResult = Result | { ok: 'confirm-email' }
 
+/** Issue d'une action qui ne renvoie pas d'utilisateur. */
+export type Outcome = { ok: true } | { ok: false; error: string }
+
+export const MOT_DE_PASSE_MINIMUM = 8
+
 interface AuthState {
   user: User | null
   /** Vrai tant que la session n'a pas été relue au démarrage. */
   loading: boolean
   register: (payload: RegisterPayload) => Promise<RegisterResult>
   login: (email: string, password: string) => Promise<Result>
+  /** Envoie le lien de réinitialisation. */
+  requestPasswordReset: (email: string) => Promise<Outcome>
+  /** Pose un nouveau mot de passe sur la session en cours (lien de secours). */
+  setPassword: (password: string) => Promise<Outcome>
+  /** Change le mot de passe en vérifiant d'abord l'actuel. */
+  changePassword: (current: string, next: string) => Promise<Outcome>
   logout: () => Promise<void>
   initialize: () => () => void
 }
@@ -165,6 +176,50 @@ export const useAuth = create<AuthState>()((set) => ({
 
     set({ user, loading: false })
     return { ok: true, user }
+  },
+
+  requestPasswordReset: async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+      redirectTo: `${window.location.origin}/auth/nouveau-mot-de-passe`,
+    })
+    // La réponse ne dit jamais si l'adresse existe : l'inverse permettrait de
+    // savoir qui est inscrit en essayant des adresses une à une.
+    if (error) return { ok: false, error: 'Envoi impossible. Réessayez dans un instant.' }
+    return { ok: true }
+  },
+
+  setPassword: async (password) => {
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) {
+      return {
+        ok: false,
+        error: friendlyError(error, 'Le mot de passe n’a pas pu être enregistré.'),
+      }
+    }
+    return { ok: true }
+  },
+
+  changePassword: async (current, next) => {
+    const email = useAuth.getState().user?.email
+    if (!email) return { ok: false, error: 'Session expirée. Reconnectez-vous.' }
+
+    // Supabase ne redemande pas l'ancien mot de passe. Sans cette vérification,
+    // quiconque trouve une session ouverte pourrait en changer et verrouiller
+    // le titulaire hors de son propre compte.
+    const { error: verification } = await supabase.auth.signInWithPassword({
+      email,
+      password: current,
+    })
+    if (verification) return { ok: false, error: 'Mot de passe actuel incorrect.' }
+
+    const { error } = await supabase.auth.updateUser({ password: next })
+    if (error) {
+      return {
+        ok: false,
+        error: friendlyError(error, 'Le mot de passe n’a pas pu être enregistré.'),
+      }
+    }
+    return { ok: true }
   },
 
   logout: async () => {

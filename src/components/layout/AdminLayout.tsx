@@ -1,6 +1,7 @@
 import {
   CollectionIcon,
   UserPlusIcon,
+  LockIcon,
   FileBlankIcon,
   MoneyIcon,
   ReceiptIcon,
@@ -32,6 +33,7 @@ export function AdminLayout() {
     })),
     // Hors du tunnel : s'inscrire n'est pas une étape du parcours d'un dossier.
     { to: '/admin/comptes', label: 'Comptes inscrits', icon: UserPlusIcon },
+    { to: '/admin/mot-de-passe', label: 'Mot de passe', icon: LockIcon },
   ]
 
   return (

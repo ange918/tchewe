@@ -288,16 +288,22 @@ export function Evaluation() {
   }
 
   if (dossier.status === 'awaiting_next_phase' && dossier.unlock_at) {
-    return (
-      <div className="space-y-6">
-        <PhaseGate
-          completedPhase={(currentPhase - 1) as PhaseNumber}
-          nextPhase={currentPhase}
-          unlockAt={new Date(dossier.unlock_at).getTime()}
-        />
-        <PhaseHistory titles={titles} />
-      </div>
-    )
+    const unlockAt = new Date(dossier.unlock_at).getTime()
+    const stillLocked = unlockAt > Date.now()
+
+    if (stillLocked) {
+      return (
+        <div className="space-y-6">
+          <PhaseGate
+            completedPhase={(currentPhase - 1) as PhaseNumber}
+            nextPhase={currentPhase}
+            unlockAt={unlockAt}
+          />
+          <PhaseHistory titles={titles} />
+        </div>
+      )
+    }
+    // Délai écoulé : on continue vers PhaseIntro
   }
 
   if (['evaluated', 'proofs_submitted', 'financed'].includes(dossier.status)) {
@@ -325,7 +331,7 @@ export function Evaluation() {
     )
   }
 
-  if (dossier.status !== 'approved') {
+  if (dossier.status !== 'approved' && dossier.status !== 'awaiting_next_phase') {
     return (
       <Card className="border-amber-200 bg-amber-50/60">
         <CardBody className="flex items-start gap-4">

@@ -32,7 +32,7 @@ const FAQ_ITEMS: FAQItem[] = [
     category: 'garantie',
     question: 'Pourquoi un apport de garantie de 30 % est-il requis ?',
     answer:
-      'Pour constater que vous disposez d’une trésorerie de démarrage, et pour écarter les candidatures fictives. Ces 30 % sont déposés sur un compte ouvert à votre nom, chez une banque partenaire. Ils ne sont versés ni à la plateforme ni à personne d’autre, et ils restent vôtres. Seule la preuve est examinée, avant le virement de la subvention.',
+      'Pour constater que vous disposez d’une trésorerie de démarrage, et pour écarter les candidatures fictives. Ces 30 % sont déposés sur un compte à votre nom, dans une banque agréée de votre choix. Ils ne sont versés ni à la plateforme ni à personne d’autre, et ils restent vôtres. Seule la preuve est examinée, avant le virement de la subvention.',
   },
   {
     id: 'qcm-48h',

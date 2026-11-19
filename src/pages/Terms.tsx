@@ -124,10 +124,10 @@ export function Terms() {
             </div>
             <div className="mt-4 space-y-3 text-base leading-relaxed text-ink-700">
               <p>
-                Conformément aux protocoles d’accord signés avec nos institutions financières partenaires, l’octroi effectif de la subvention requiert qu’un <strong>apport de 30 %</strong> du montant sollicité soit constaté au préalable.
+                L’octroi effectif de la subvention requiert qu’un <strong>apport de 30 %</strong> du montant sollicité soit constaté au préalable.
               </p>
               <p>
-                <strong>Cet argent n’est pas versé à la plateforme, ni à un tiers.</strong> Le candidat le dépose sur un compte bancaire ouvert à son nom, auprès d’une banque partenaire. Les fonds restent sa propriété pendant toute la procédure. La plateforme ne les encaisse pas et ne les séquestre pas : elle demande seulement la preuve qu’ils sont bien sur ce compte.
+                <strong>Cet argent n’est pas versé à la plateforme, ni à un tiers.</strong> Le candidat le dépose sur un compte ouvert à son nom, dans une banque agréée de son choix. Les fonds restent sa propriété pendant toute la procédure. La plateforme ne les encaisse pas et ne les séquestre pas : elle demande seulement la preuve qu’ils sont bien sur ce compte.
               </p>
               <div className="grid gap-3 sm:grid-cols-2 mt-4">
                 <div className="rounded-xl border border-ink-200 bg-white p-4">

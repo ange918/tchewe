@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: 'Est-ce que je donne les 30 % à quelqu’un ?',
-    a: 'Non. Vous les déposez sur un compte ouvert à votre nom, chez une banque partenaire. Ils ne sont versés ni à la plateforme ni à un tiers : ils restent les vôtres. Nous demandons seulement la preuve que ces fonds sont bien là, avant le virement de la subvention.',
+    a: 'Non. Vous les déposez sur un compte à votre nom, dans une banque agréée de votre choix. Ils ne sont versés ni à la plateforme ni à un tiers : ils restent les vôtres. Nous demandons seulement la preuve que ces fonds sont bien là, avant le virement de la subvention.',
   },
   {
     q: 'Pourquoi trois sessions de QCM espacées de 48 heures ?',
@@ -188,7 +188,7 @@ export function About() {
             <li>
               <strong className="font-bold text-ink-900">Garantie de 30 % sur votre compte.</strong> Le
               porteur dépose, avant le virement, 30 % du montant sollicité sur un compte ouvert à son
-              nom chez une banque partenaire. Cette somme n’est pas versée à la plateforme : elle
+              nom, dans une banque agréée de son choix. Cette somme n’est pas versée à la plateforme : elle
               reste la sienne. Seule la preuve du dépôt est transmise.
             </li>
           </ol>

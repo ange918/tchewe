@@ -56,7 +56,7 @@ export function Verifications() {
     await reload()
     toast.success(
       'Ordre de virement émis',
-      `${dossier.reference} — ${formatEuro(dossier.amount ?? 0)} vers ${dossier.funding?.bank_name ?? 'la banque partenaire'}.`,
+      `${dossier.reference} — ${formatEuro(dossier.amount ?? 0)} vers ${dossier.funding?.bank_name ?? 'la banque indiquée'}.`,
     )
   }
 

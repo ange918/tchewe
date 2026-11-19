@@ -41,7 +41,7 @@ function conditions(amount: number): Condition[] {
       id: 'guaranteeReady',
       question: `Pouvez-vous déposer ${guarantee}, soit 30 % du montant demandé, sur un compte ouvert à votre nom ?`,
       detail:
-        'Cette somme n’est versée ni à la plateforme ni à un tiers. Elle reste sur votre compte, chez une banque partenaire. Seule la preuve sera demandée, à la fin de l’évaluation.',
+        'Cette somme n’est versée ni à la plateforme ni à un tiers. Elle reste sur un compte à votre nom, dans une banque agréée de votre choix. Seule la preuve sera demandée, à la fin de l’évaluation.',
       blocking: true,
     },
   ]

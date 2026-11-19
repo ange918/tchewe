@@ -1,23 +1,21 @@
 import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   CheckCircleIcon,
-  ExternalLinkIcon,
   MoneyIcon,
   ShieldIcon,
 } from '../../components/ui/icons'
 import { Badge } from '../../components/ui/Badge'
-import { Button, ButtonLink } from '../../components/ui/Button'
+import { Button } from '../../components/ui/Button'
 import { Card, CardBody, CardHeader } from '../../components/ui/Card'
 import { Dropzone } from '../../components/ui/Dropzone'
 import { Input } from '../../components/ui/Field'
 import { GuaranteeExplainer } from '../../components/guarantee/GuaranteeExplainer'
+import { GUARANTEE_REMINDER } from '../../lib/guarantee'
 import { ProofStatusCard } from '../../components/dashboard/ProofStatusCard'
 import { toast } from '../../lib/toast'
 import { formatDate, formatEuro } from '../../lib/utils'
 import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
-
-/** Lien d'affiliation vers la banque partenaire (à remplacer par l'URL réelle). */
-const PARTNER_BANK_URL = 'https://example.com/banque-partenaire'
 
 const IBAN_PATTERN = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}$/
 
@@ -68,6 +66,10 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
   const [bankName, setBankName] = useState(saved.bankName)
   const [errors, setErrors] = useState<Errors>({})
   const [submitting, setSubmitting] = useState(false)
+  const [opened, setOpened] = useState(
+    depositReceipt.length > 0 || accountProof.length > 0 || saved.iban.length > 0 || saved.bankName.length > 0,
+  )
+  const reduced = useReducedMotion()
 
   function remember(nextIban: string, nextBank: string) {
     sessionStorage.setItem(draftKey(dossierId), JSON.stringify({ iban: nextIban, bankName: nextBank }))
@@ -127,15 +129,37 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
     <div className="space-y-6">
       <div>
         <Badge tone="outline">Étape 3 sur 3</Badge>
-        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Déposez votre garantie.</h1>
+        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Faites votre dépôt.</h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-600">
-          {formatEuro(guarantee)} — soit 30 % de {formatEuro(amount)} — vont sur le compte ouvert à
-          votre nom. Ensuite, l’administration vérifie la preuve, puis émet le virement de{' '}
-          {formatEuro(amount)} vers ce même compte.
+          {formatEuro(guarantee)} — soit 30 % de {formatEuro(amount)} — restent sur un compte à votre
+          nom, dans une banque agréée de votre choix. Ensuite, l’administration vérifie la preuve,
+          puis émet le virement de {formatEuro(amount)} vers ce même compte.
         </p>
       </div>
 
+      {!opened && (
+        <div className="rounded-3xl border border-ink-200 bg-white p-6 sm:p-8">
+          <p className="max-w-xl text-base leading-relaxed text-ink-700">{GUARANTEE_REMINDER}</p>
+          <Button className="mt-6" size="lg" type="button" onClick={() => setOpened(true)}>
+            Faire mon dépôt
+          </Button>
+        </div>
+      )}
+
+      <AnimatePresence initial={false}>
+        {opened && (
+          <motion.div
+            key="depot"
+            className="space-y-6"
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            transition={reduced ? { duration: 0.15 } : { type: 'spring', stiffness: 320, damping: 28 }}
+          >
       <GuaranteeExplainer amountLabel={formatEuro(guarantee)} />
+      <p className="rounded-2xl bg-brass-50 px-5 py-4 text-base font-bold leading-relaxed text-brass-800">
+        {GUARANTEE_REMINDER}
+      </p>
 
       <div className="rounded-2xl border border-ink-200 bg-white p-4 sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -164,20 +188,6 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
         </ul>
       </div>
 
-      <div className="rounded-2xl bg-ink-950 px-4 py-6 text-white sm:px-6">
-        <h2 className="text-lg text-white">Ouvrez le compte à votre nom.</h2>
-        <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-200">
-          Le lien quitte INNOVA FUND et ouvre le site de la banque partenaire. Le dépôt se fait là,
-          sur un compte à vous. Aucun paiement n’est réalisé sur cette page.
-        </p>
-        <div className="mt-4">
-          <ButtonLink to={PARTNER_BANK_URL} external size="lg" variant="secondary">
-            Ouvrir mon compte
-            <ExternalLinkIcon className="h-4 w-4" aria-hidden />
-          </ButtonLink>
-        </div>
-      </div>
-
       <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-6">
         <Card>
           <CardHeader
@@ -201,7 +211,7 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
               error={errors.iban}
             />
             <Input
-              label="Banque partenaire"
+              label="Votre banque"
               placeholder="Nom de l’établissement"
               value={bankName}
               onChange={(event) => {
@@ -212,7 +222,7 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
               }}
               onBlur={() => setErrors((current) => ({ ...current, bankName: validateBank(bankName) }))}
               error={errors.bankName}
-              hint="L’établissement où le compte est ouvert à votre nom."
+              hint="La banque agréée où le compte est ouvert à votre nom."
             />
           </CardBody>
         </Card>
@@ -280,6 +290,9 @@ function FundingForm({ amount, dossierId }: { amount: number; dossierId: string 
           </Button>
         </div>
       </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

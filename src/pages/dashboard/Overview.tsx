@@ -21,7 +21,7 @@ const NEXT_ACTION: Record<DossierStatus, { label: string; to: string } | null> =
   submitted: { label: 'Consulter mon dossier', to: '/dashboard/submission' },
   approved: { label: 'Démarrer l’évaluation', to: '/dashboard/evaluation' },
   awaiting_next_phase: { label: 'Voir le compte à rebours', to: '/dashboard/evaluation' },
-  evaluated: { label: 'Déposer ma garantie', to: '/dashboard/funding' },
+  evaluated: { label: 'Faire mon dépôt', to: '/dashboard/funding' },
   proofs_submitted: { label: 'Suivre la preuve', to: '/dashboard/funding' },
   financed: { label: 'Voir mon financement', to: '/dashboard/funding' },
   rejected: { label: 'Lire le motif', to: '/dashboard/submission' },

@@ -61,7 +61,7 @@ export const JOURNEY: JourneyStep[] = [
     id: 'garantie',
     label: 'Garantie de 30 %',
     detail: 'Dépôt sur votre compte, puis envoi de la preuve.',
-    next: 'Ouvrez votre compte à votre nom, déposez-y 30 % et transmettez la preuve.',
+    next: 'Ayez un compte à votre nom dans une banque agréée de votre choix, déposez-y 30 % et téléversez la preuve.',
     done: ['proofs_submitted', 'financed'],
     current: ['evaluated'],
   },

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { InstitutionIcon, ShieldIcon, UploadIcon, WalletIcon } from '../ui/icons'
-import { GUARANTEE_FAQ, GUARANTEE_STEPS } from '../../lib/guarantee'
+import { GUARANTEE_FAQ, GUARANTEE_REMINDER, GUARANTEE_STEPS } from '../../lib/guarantee'
 import { cn } from '../../lib/utils'
 
 const ICONS = [InstitutionIcon, WalletIcon, UploadIcon] as const
@@ -44,8 +44,8 @@ export function GuaranteeExplainer({
         <p className={cn('max-w-2xl text-base leading-relaxed text-ink-700', heading ? 'mt-4' : 'mt-3')}>
           Ces {amountLabel ? <strong className="font-extrabold text-ink-900">{amountLabel}</strong> : '30 %'}{' '}
           ne sont pas payés à la plateforme, ni à personne d’autre. Vous les déposez sur un compte
-          bancaire ouvert <strong className="font-extrabold text-ink-900">à votre nom</strong>, chez
-          une banque partenaire. Ils restent vôtres. Nous vérifions seulement que vous les avez.
+          ouvert <strong className="font-extrabold text-ink-900">à votre nom</strong>, dans une banque
+          agréée de votre choix. {GUARANTEE_REMINDER}
         </p>
 
         <ol className={cn('grid gap-4', compact ? 'mt-4 sm:grid-cols-3' : 'mt-6 sm:grid-cols-3')}>

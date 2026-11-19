@@ -56,7 +56,7 @@ const STEPS = [
     icon: WalletIcon,
     step: '05',
     title: 'Déposez 30 % sur votre compte',
-    text: 'Chez une banque partenaire, à votre nom. L’argent reste le vôtre : vous n’envoyez que la preuve.',
+    text: 'Sur un compte à votre nom, dans une banque agréée de votre choix. L’argent reste le vôtre : vous n’envoyez que la preuve.',
     next: 'Ensuite, la preuve est vérifiée. Le virement part vers ce même compte.',
     image: '/images/steps/05-garantie.jpg',
   },
@@ -84,7 +84,7 @@ const COMMITMENTS = [
   {
     icon: BadgeCheckIcon,
     title: 'Garantie de 30 % sur votre compte',
-    text: 'Vous déposez 30 % du montant sur un compte ouvert à votre nom, chez une banque partenaire. Vous ne les versez à personne : la plateforme vérifie la preuve, et l’argent reste le vôtre.',
+    text: 'Vous déposez 30 % du montant sur un compte à votre nom, dans une banque agréée de votre choix. Vous ne les versez à personne : la plateforme vérifie la preuve, et l’argent reste le vôtre.',
   },
 ]
 

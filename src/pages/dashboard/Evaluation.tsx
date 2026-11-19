@@ -162,7 +162,7 @@ function PhaseResult({
 
         {outcome.passed ? (
           <Button size="lg" onClick={onContinue}>
-            {isLast ? 'Passer au dépôt de ma garantie' : 'Voir le compte à rebours'}
+            {isLast ? 'Faire mon dépôt' : 'Voir le compte à rebours'}
             <ArrowRightIcon className="h-4 w-4" aria-hidden />
           </Button>
         ) : (

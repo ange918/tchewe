@@ -7,8 +7,9 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'dark' | 'danger' | 'success'
 type Size = 'sm' | 'md' | 'lg'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-[-0.01em] transition ' +
-  'disabled:pointer-events-none disabled:opacity-50 active:translate-y-px select-none'
+  'inline-flex items-center justify-center gap-2 rounded-full font-bold tracking-[-0.01em] ' +
+  'transition duration-200 ease-out active:scale-[0.97] ' +
+  'disabled:pointer-events-none disabled:opacity-50 select-none'
 
 const variants: Record<Variant, string> = {
   primary: 'bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-600/25',

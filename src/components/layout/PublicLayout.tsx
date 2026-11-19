@@ -161,11 +161,11 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-ink-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 INNOVA FUND — Programme financé par ses bailleurs institutionnels et privés.</p>
-          <p>
-            La subvention est non remboursable. Un apport de garantie de 30 % et un engagement de
-            reversement de dividendes aux ONG partenaires conditionnent le versement.
+          <p className="max-w-xl sm:text-right">
+            La garantie de 30 % reste sur un compte ouvert à votre nom. Elle n’est pas versée à la
+            plateforme. Le versement dépend aussi d’un reversement de dividendes aux ONG partenaires.
           </p>
         </div>
       </div>

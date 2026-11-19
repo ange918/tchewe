@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader } from '../ui/Card'
 import { Dropzone } from '../ui/Dropzone'
 import { cn, formatEuro } from '../../lib/utils'
 import { toast } from '../../lib/toast'
+import { GuaranteeExplainer } from '../guarantee/GuaranteeExplainer'
 import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
 
 type Answer = 'yes' | 'no' | null
@@ -38,9 +39,9 @@ function conditions(amount: number): Condition[] {
     },
     {
       id: 'guaranteeReady',
-      question: `Êtes-vous en mesure de fournir une preuve de garantie de 30 % du montant demandé, soit ${guarantee} ?`,
+      question: `Pouvez-vous déposer ${guarantee}, soit 30 % du montant demandé, sur un compte ouvert à votre nom ?`,
       detail:
-        'La preuve sera demandée à la fin de l’évaluation, avant l’émission de l’ordre de virement.',
+        'Cette somme n’est versée ni à la plateforme ni à un tiers. Elle reste sur un compte à votre nom, dans une banque agréée de votre choix. Seule la preuve sera demandée, à la fin de l’évaluation.',
       blocking: true,
     },
   ]
@@ -65,7 +66,7 @@ function YesNo({
           aria-checked={value === option}
           onClick={() => onChange(option)}
           className={cn(
-            'h-10 min-w-24 rounded-full px-5 text-sm font-bold transition',
+            'h-11 min-w-24 rounded-full px-5 text-sm font-bold transition duration-200 active:scale-[0.97]',
             value === option
               ? option === 'yes'
                 ? 'bg-brand-600 text-white'
@@ -136,6 +137,8 @@ export function EligibilityGate({ amount }: { amount: number }) {
   const [refused, setRefused] = useState<string[] | null>(null)
 
   const items = conditions(amount)
+  const answered =
+    (isAdult === null ? 0 : 1) + items.filter((item) => answers[item.id] !== null).length
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -185,11 +188,29 @@ export function EligibilityGate({ amount }: { amount: number }) {
     <div className="space-y-6">
       <div>
         <Badge tone="outline">Avant de commencer</Badge>
-        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Conditions d’accès à l’évaluation</h1>
+        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Répondez avant l’évaluation.</h1>
         <p className="mt-2 max-w-2xl text-ink-600">
-          Ces quatre points conditionnent l’ouverture de votre première session de questions.
-          Répondez-y honnêtement : vos réponses engagent votre candidature.
+          Ces quatre points ouvrent la première session. Répondez-y honnêtement : vos réponses
+          engagent la candidature. Ensuite, les questions chronométrées commencent.
         </p>
+        <div className="mt-6 max-w-md">
+          <p className="text-sm font-bold text-ink-700">
+            {answered} réponse{answered > 1 ? 's' : ''} sur 4
+          </p>
+          <div
+            className="mt-2 h-2 overflow-hidden rounded-full bg-ink-100"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={4}
+            aria-valuenow={answered}
+            aria-label="Réponses données"
+          >
+            <div
+              className="h-full rounded-full bg-brand-600 transition-[width] duration-200"
+              style={{ width: `${(answered / 4) * 100}%` }}
+            />
+          </div>
+        </div>
       </div>
 
       <form onSubmit={(event) => void handleSubmit(event)} noValidate className="space-y-6">
@@ -201,7 +222,14 @@ export function EligibilityGate({ amount }: { amount: number }) {
           <CardBody className="space-y-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-semibold text-ink-800">J’ai au moins 18 ans</p>
-              <YesNo value={isAdult} onChange={setIsAdult} name="Avez-vous au moins 18 ans ?" />
+              <YesNo
+                value={isAdult}
+                onChange={(value) => {
+                  setIsAdult(value)
+                  setErrors([])
+                }}
+                name="Avez-vous au moins 18 ans ?"
+              />
             </div>
 
             {isAdult === 'yes' && (
@@ -222,10 +250,15 @@ export function EligibilityGate({ amount }: { amount: number }) {
           </CardBody>
         </Card>
 
+        <GuaranteeExplainer
+          compact
+          amountLabel={formatEuro(Math.round(amount * GUARANTEE_RATE))}
+        />
+
         <Card>
           <CardHeader
             title="Engagements du programme"
-            description="Trois questions, une réponse par question."
+            description="Trois questions, une réponse par question. Ensuite, la session chronométrée s’ouvre."
           />
           <CardBody className="divide-y divide-ink-100">
             {items.map((item) => (
@@ -235,12 +268,15 @@ export function EligibilityGate({ amount }: { amount: number }) {
               >
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-ink-800">{item.question}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{item.detail}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-600">{item.detail}</p>
                 </div>
                 <div className="shrink-0">
                   <YesNo
                     value={answers[item.id]}
-                    onChange={(value) => setAnswers((current) => ({ ...current, [item.id]: value }))}
+                    onChange={(value) => {
+                      setAnswers((current) => ({ ...current, [item.id]: value }))
+                      setErrors([])
+                    }}
                     name={item.question}
                   />
                 </div>

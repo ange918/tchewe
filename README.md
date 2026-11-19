@@ -206,8 +206,8 @@ L’interface fonctionne de bout en bout **sans backend**. Ce qui en découle :
   programme (voir « Visuels » plus haut).
 - **Blocage 48 h** — un bouton « Débloquer maintenant (démo) », explicitement étiqueté,
   permet de parcourir les trois phases sans attendre.
-- **Lien bancaire** — `PARTNER_BANK_URL` dans `src/pages/dashboard/Funding.tsx` pointe
-  vers `example.com` et doit être remplacé par le lien d’affiliation réel.
+- **Dépôt de garantie** — le porteur utilise une banque agréée de son choix. L’interface
+  ne renvoie vers aucun établissement et ne crée pas de compte.
 
 ## Déploiement
 

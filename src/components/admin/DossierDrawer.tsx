@@ -62,7 +62,19 @@ export function DossierDrawer({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="outline">{dossier.reference}</Badge>
-              <Badge tone={pending ? 'warning' : 'neutral'}>{STATUS_LABELS[dossier.status]}</Badge>
+              <Badge
+                tone={
+                  dossier.status === 'rejected'
+                    ? 'danger'
+                    : dossier.status === 'financed'
+                      ? 'success'
+                      : dossier.status === 'submitted' || dossier.status === 'proofs_submitted'
+                        ? 'warning'
+                        : 'brand'
+                }
+              >
+                {STATUS_LABELS[dossier.status]}
+              </Badge>
                           </div>
             <h2 className="mt-3 truncate text-xl font-extrabold tracking-[-0.025em] text-ink-900">
               {dossier.title}
@@ -85,7 +97,7 @@ export function DossierDrawer({
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               { label: 'Montant', value: formatEuro(dossier.amount ?? 0) },
-              { label: 'Garantie 30 %', value: formatEuro(Math.round((dossier.amount ?? 0) * GUARANTEE_RATE)) },
+              { label: 'Garantie sur son compte', value: formatEuro(Math.round((dossier.amount ?? 0) * GUARANTEE_RATE)) },
               { label: 'Durée', value: `${dossier.duration_months} mois` },
               { label: 'Déposé le', value: dossier.submitted_at ? formatDate(dossier.submitted_at) : '—' },
             ].map((item) => (
@@ -132,7 +144,7 @@ export function DossierDrawer({
                   { label: 'Majorité (18 ans ou plus)', ok: dossier.eligibility.is_adult },
                   { label: 'Reversement de 30 % des revenus aux orphelins', ok: dossier.eligibility.revenue_share },
                   { label: 'Détermination à mener le projet à bien', ok: dossier.eligibility.determined },
-                  { label: 'Preuve de garantie de 30 % disponible', ok: dossier.eligibility.guarantee_ready },
+                  { label: 'Peut déposer 30 % sur un compte à son nom', ok: dossier.eligibility.guarantee_ready },
                 ].map((item) => (
                   <li key={item.label} className="flex items-center gap-2.5 text-sm text-ink-700">
                     {item.ok ? (

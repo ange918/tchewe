@@ -13,8 +13,8 @@ import { motion, useReducedMotion, type Variants } from 'framer-motion'
 const EASE = [0.16, 1, 0.3, 1] as const
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: EASE } },
 }
 
 const fadeIn: Variants = {

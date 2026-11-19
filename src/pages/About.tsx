@@ -10,7 +10,7 @@ const ELIGIBILITY = [
   'Projet à impact social, environnemental ou éducatif, déjà formalisé.',
   'Montant sollicité compris entre 2 000 € et 650 000 €.',
   'Durée d’exécution prévisionnelle inférieure à 24 mois.',
-  'Capacité à déposer l’apport de garantie de 30 % du montant sollicité.',
+  'Capacité à déposer 30 % du montant sollicité sur un compte ouvert à votre nom.',
   'Dossier complet : pitch deck, business plan et documents d’enregistrement légal.',
 ]
 
@@ -48,8 +48,8 @@ const FAQ = [
     a: 'Non. Il s’agit d’une subvention non remboursable dès lors que les conditions du programme sont respectées et que l’usage des fonds reste traçable et justifié.',
   },
   {
-    q: 'À quoi sert l’apport de garantie de 30 % ?',
-    a: 'Il constitue la preuve d’engagement du porteur. Il est déposé sur un compte ouvert auprès de la banque partenaire avant l’émission de l’ordre de virement de la subvention.',
+    q: 'Est-ce que je donne les 30 % à quelqu’un ?',
+    a: 'Non. Vous les déposez sur un compte à votre nom, dans une banque agréée de votre choix. Ils ne sont versés ni à la plateforme ni à un tiers : ils restent les vôtres. Nous demandons seulement la preuve que ces fonds sont bien là, avant le virement de la subvention.',
   },
   {
     q: 'Pourquoi trois sessions de QCM espacées de 48 heures ?',
@@ -186,9 +186,10 @@ export function About() {
               les modalités fixées par la convention de financement.
             </li>
             <li>
-              <strong className="font-bold text-ink-900">Apport de garantie de 30 %.</strong> Le
-              porteur dépose, avant le virement, un apport équivalent à 30 % du montant sollicité sur
-              un compte ouvert auprès de la banque partenaire.
+              <strong className="font-bold text-ink-900">Garantie de 30 % sur votre compte.</strong> Le
+              porteur dépose, avant le virement, 30 % du montant sollicité sur un compte ouvert à son
+              nom, dans une banque agréée de son choix. Cette somme n’est pas versée à la plateforme : elle
+              reste la sienne. Seule la preuve du dépôt est transmise.
             </li>
           </ol>
         </Section>

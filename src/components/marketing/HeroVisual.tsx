@@ -20,7 +20,7 @@ export function HeroVisual() {
         <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,5,7,0.94)_0%,rgba(5,5,7,0.6)_20%,rgba(5,5,7,0.12)_42%,transparent_62%)]" />
 
         <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-6 sm:p-8">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-sm font-bold text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm">
             <LogoMark className="h-4 w-4" />
             Édition 2026 · dossiers ouverts
           </span>
@@ -38,7 +38,7 @@ export function HeroVisual() {
           </span>
           <div>
             <p className="text-sm font-extrabold text-ink-900">650 000 €</p>
-            <p className="text-xs text-ink-500">subvention maximale</p>
+            <p className="text-sm text-ink-600">subvention maximale</p>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ export function HeroVisual() {
           </span>
           <div>
             <p className="text-sm font-extrabold text-ink-900">Non remboursable</p>
-            <p className="text-xs text-ink-500">sous conditions du programme</p>
+            <p className="text-sm text-ink-600">sous conditions du programme</p>
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@ export function HeroVisual() {
           </span>
           <div>
             <p className="text-sm font-extrabold text-white">3 phases</p>
-            <p className="text-xs text-ink-400">J0 · J+2 · J+4</p>
+            <p className="text-sm text-ink-200">J0 · J+2 · J+4</p>
           </div>
         </div>
       </div>

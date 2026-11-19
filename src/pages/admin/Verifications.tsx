@@ -7,6 +7,7 @@ import { DocumentViewer } from '../../components/admin/DocumentViewer'
 import { toast } from '../../lib/toast'
 import { cn, formatDate, formatEuro } from '../../lib/utils'
 import { useDossiers, type AdminDossier } from '../../hooks/useDossiers'
+import { useAdminQuery } from '../../components/layout/adminQuery'
 import { GUARANTEE_RATE } from '../../store/application'
 import { supabase, friendlyError } from '../../lib/supabase'
 
@@ -33,7 +34,13 @@ function ProofPanel({ title, dossier, kind }: { title: string; dossier: AdminDos
 export function Verifications() {
   const { dossiers, reload } = useDossiers()
 
-  const pending = dossiers.filter((dossier) => dossier.status === 'proofs_submitted')
+  const { query } = useAdminQuery()
+  const needle = query.trim().toLowerCase()
+  const pending = dossiers.filter((dossier) => dossier.status === 'proofs_submitted').filter((dossier) =>
+    needle
+      ? [dossier.title, dossier.applicant, dossier.reference, dossier.email].join(' ').toLowerCase().includes(needle)
+      : true,
+  )
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   // La liste se vide au fil des validations : la sélection retombe sur le
@@ -49,7 +56,7 @@ export function Verifications() {
     await reload()
     toast.success(
       'Ordre de virement émis',
-      `${dossier.reference} — ${formatEuro(dossier.amount ?? 0)} vers ${dossier.funding?.bank_name ?? 'la banque partenaire'}.`,
+      `${dossier.reference} — ${formatEuro(dossier.amount ?? 0)} vers ${dossier.funding?.bank_name ?? 'la banque indiquée'}.`,
     )
   }
 
@@ -64,8 +71,8 @@ export function Verifications() {
             Aucune preuve en attente
           </h1>
           <p className="max-w-sm text-sm text-ink-600">
-            Les dossiers apparaîtront ici dès que leurs porteurs auront déposé le reçu de garantie et
-            le justificatif de compte.
+            Les dossiers apparaîtront ici dès que leurs porteurs auront transmis le reçu du dépôt
+            effectué sur leur propre compte, et le justificatif de ce compte.
           </p>
         </CardBody>
       </Card>
@@ -76,7 +83,7 @@ export function Verifications() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold tracking-[-0.03em] text-ink-900 sm:text-3xl">
-          Validation des preuves financières
+          Vérifiez la preuve de dépôt
         </h1>
         <p className="mt-1 text-ink-600">
           {pending.length} dossier(s) en attente de vérification avant émission de l’ordre de
@@ -92,13 +99,13 @@ export function Verifications() {
               type="button"
               onClick={() => setSelectedId(dossier.id)}
               className={cn(
-                'w-full rounded-xl border p-3.5 text-left transition',
+                'w-full rounded-2xl border p-4 text-left shadow-[0_12px_40px_-18px_rgba(11,11,15,0.12)] transition duration-200',
                 dossier.id === selected?.id
                   ? 'border-brand-600 bg-brand-50 ring-2 ring-brand-600/15'
                   : 'border-ink-200 bg-white hover:border-brand-300',
               )}
             >
-              <span className="block text-[0.7rem] font-bold tracking-[0.05em] text-ink-400">
+              <span className="block text-sm font-bold text-ink-600">
                 {dossier.reference}
               </span>
               <span className="mt-1 block truncate text-sm font-bold text-ink-900">
@@ -124,15 +131,15 @@ export function Verifications() {
               {/* Comparateur : montant attendu vs pièces transmises */}
               <dl className="grid gap-3 sm:grid-cols-3">
                 <div className="rounded-xl bg-brand-50 p-4">
-                  <dt className="text-[0.65rem] font-bold tracking-[0.08em] text-brand-700 uppercase">
-                    Garantie attendue
+                  <dt className="text-sm font-bold text-brand-800">
+                    Sur le compte du porteur
                   </dt>
                   <dd className="mt-1 text-xl font-extrabold tracking-[-0.03em] text-brand-700">
                     {formatEuro(Math.round((selected.amount ?? 0) * GUARANTEE_RATE))}
                   </dd>
                 </div>
                 <div className="rounded-xl bg-ink-50 p-4">
-                  <dt className="text-[0.65rem] font-bold tracking-[0.08em] text-ink-400 uppercase">
+                  <dt className="text-sm font-bold text-ink-600">
                     Subvention à virer
                   </dt>
                   <dd className="mt-1 text-xl font-extrabold tracking-[-0.03em] text-ink-900">
@@ -140,8 +147,8 @@ export function Verifications() {
                   </dd>
                 </div>
                 <div className="rounded-xl bg-ink-50 p-4">
-                  <dt className="text-[0.65rem] font-bold tracking-[0.08em] text-ink-400 uppercase">
-                    IBAN déclaré
+                  <dt className="text-sm font-bold text-ink-600">
+                    IBAN du porteur
                   </dt>
                   <dd className="mt-1 truncate font-mono text-sm font-bold text-ink-900">
                     {selected.funding?.iban ?? '—'}
@@ -150,14 +157,14 @@ export function Verifications() {
               </dl>
 
               <div className="grid gap-5 sm:grid-cols-2">
-                <ProofPanel title="Reçu de dépôt des 30 %" dossier={selected} kind="depositReceipt" />
+                <ProofPanel title="Reçu du dépôt sur le compte du porteur" dossier={selected} kind="depositReceipt" />
                 <ProofPanel title="Justificatif de compte" dossier={selected} kind="accountProof" />
               </div>
 
               <div className="flex flex-col gap-3 border-t border-ink-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-md text-xs leading-relaxed text-ink-500">
-                  Vérifiez que le montant du reçu correspond à la garantie attendue et que le
-                  titulaire du compte est bien le porteur du dossier.
+                  Le reçu doit montrer un dépôt sur le compte du porteur, ouvert à son nom. Cette somme
+                  n’est pas versée à la plateforme. Vérifiez le montant et l’identité du titulaire.
                 </p>
                 <Button size="lg" variant="success" onClick={() => void validate(selected)}>
                   <MoneyIcon className="h-4 w-4" aria-hidden />

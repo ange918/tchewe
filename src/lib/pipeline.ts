@@ -56,7 +56,7 @@ export const STAGES: Stage[] = [
   },
   {
     slug: 'preuves',
-    label: 'Preuves 30 % déposées',
+    label: 'Preuves de dépôt à vérifier',
     short: 'Preuves 30 %',
     statuses: ['proofs_submitted'],
     color: '#5741ee',

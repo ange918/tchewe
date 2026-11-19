@@ -7,6 +7,7 @@ import { DocumentViewer } from '../../components/admin/DocumentViewer'
 import { toast } from '../../lib/toast'
 import { cn, formatDate, formatEuro } from '../../lib/utils'
 import { useDossiers, type AdminDossier } from '../../hooks/useDossiers'
+import { useAdminQuery } from '../../components/layout/adminQuery'
 import { GUARANTEE_RATE } from '../../store/application'
 import { supabase, friendlyError } from '../../lib/supabase'
 
@@ -33,7 +34,13 @@ function ProofPanel({ title, dossier, kind }: { title: string; dossier: AdminDos
 export function Verifications() {
   const { dossiers, reload } = useDossiers()
 
-  const pending = dossiers.filter((dossier) => dossier.status === 'proofs_submitted')
+  const { query } = useAdminQuery()
+  const needle = query.trim().toLowerCase()
+  const pending = dossiers.filter((dossier) => dossier.status === 'proofs_submitted').filter((dossier) =>
+    needle
+      ? [dossier.title, dossier.applicant, dossier.reference, dossier.email].join(' ').toLowerCase().includes(needle)
+      : true,
+  )
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   // La liste se vide au fil des validations : la sélection retombe sur le
@@ -92,7 +99,7 @@ export function Verifications() {
               type="button"
               onClick={() => setSelectedId(dossier.id)}
               className={cn(
-                'w-full rounded-xl border p-3.5 text-left transition',
+                'w-full rounded-2xl border p-4 text-left shadow-[0_12px_40px_-18px_rgba(11,11,15,0.12)] transition duration-200',
                 dossier.id === selected?.id
                   ? 'border-brand-600 bg-brand-50 ring-2 ring-brand-600/15'
                   : 'border-ink-200 bg-white hover:border-brand-300',

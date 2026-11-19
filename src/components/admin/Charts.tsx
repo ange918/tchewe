@@ -103,9 +103,7 @@ export function Donut({
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-3xl font-extrabold tracking-[-0.04em] text-ink-900">{total}</span>
-          <span className="text-[0.65rem] font-bold tracking-[0.08em] text-ink-400 uppercase">
-            {totalLabel}
-          </span>
+          <span className="text-sm font-bold text-ink-600">{totalLabel}</span>
         </div>
       </div>
 
@@ -157,12 +155,98 @@ export function Bars({ bars, color = '#3d2be8' }: { bars: Bar[]; color?: string 
                 title={`${bar.title} : ${bar.value}`}
               />
             </div>
-            <span className="text-[0.6rem] font-semibold text-ink-400 tabular-nums">
-              {bar.label}
-            </span>
+            <span className="text-sm font-semibold text-ink-600 tabular-nums">{bar.label}</span>
           </div>
         )
       })}
     </div>
   )
+}
+
+/** Courbe courte, lue à côté d'un indicateur. Les valeurs viennent des dates réelles. */
+export function Sparkline({ values, color = '#3d2be8' }: { values: number[]; color?: string }) {
+  const width = 96
+  const height = 32
+  const max = Math.max(1, ...values, 0)
+  const step = values.length > 1 ? width / (values.length - 1) : width
+  const points = values
+    .map((value, index) => {
+      const x = index * step
+      const y = height - 3 - (value / Math.max(max, 1)) * (height - 8)
+      return `${x},${y}`
+    })
+    .join(' ')
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-8 w-24" aria-hidden>
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+/** Aire lissée d'une seule série. Chaque point porte sa valeur dans un titre. */
+export function AreaChart({ points, color = '#3d2be8' }: { points: Bar[]; color?: string }) {
+  const gradientId = useId().replace(/:/g, '')
+  const width = 640
+  const height = 220
+  const pad = 18
+  const max = Math.max(1, ...points.map((point) => point.value))
+  const coords = points.map((point, index) => {
+    const x = pad + (points.length <= 1 ? 0 : (index / (points.length - 1)) * (width - pad * 2))
+    const y = height - pad - (point.value / max) * (height - pad * 2)
+    return { x, y, point }
+  })
+  const line = smooth(coords)
+  const first = coords[0]
+  const last = coords[coords.length - 1]
+  const area = first && last ? `${line} L ${last.x} ${height - pad} L ${first.x} ${height - pad} Z` : ''
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-52 w-full" role="img" aria-label="Dossiers déposés sur la période">
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.28" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        {area && <path d={area} fill={`url(#${gradientId})`} />}
+        {line && <path d={line} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" />}
+        {coords.map((coord) => (
+          <circle key={coord.point.title} cx={coord.x} cy={coord.y} r="3.5" fill={color}>
+            <title>{`${coord.point.title} : ${coord.point.value}`}</title>
+          </circle>
+        ))}
+      </svg>
+      <div className="mt-2 flex justify-between gap-2 text-sm font-semibold text-ink-600">
+        <span>{points[0]?.label}</span>
+        <span>{points[Math.floor(points.length / 2)]?.label}</span>
+        <span>{points[points.length - 1]?.label}</span>
+      </div>
+    </div>
+  )
+}
+
+function smooth(coords: { x: number; y: number }[]) {
+  if (coords.length === 0) return ''
+  let path = `M ${coords[0].x} ${coords[0].y}`
+  for (let index = 0; index < coords.length - 1; index++) {
+    const previous = coords[index - 1] ?? coords[index]
+    const current = coords[index]
+    const next = coords[index + 1]
+    const after = coords[index + 2] ?? next
+    const c1x = current.x + (next.x - previous.x) / 6
+    const c1y = current.y + (next.y - previous.y) / 6
+    const c2x = next.x - (after.x - current.x) / 6
+    const c2y = next.y - (after.y - current.y) / 6
+    path += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${next.x} ${next.y}`
+  }
+  return path
 }

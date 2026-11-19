@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
 import { InboxIcon, SearchIcon } from '../../components/ui/icons'
 import { Input } from '../../components/ui/Field'
+import { Badge } from '../../components/ui/Badge'
 import { Card, CardBody } from '../../components/ui/Card'
+import { useAdminQuery } from '../../components/layout/adminQuery'
 import { DossierDrawer } from '../../components/admin/DossierDrawer'
 import { toast } from '../../lib/toast'
 import { formatDate, formatEuro } from '../../lib/utils'
@@ -14,41 +17,39 @@ import { Verifications } from './Verifications'
 function Carte({
   dossier,
   couleur,
+  label,
   onOpen,
 }: {
   dossier: AdminDossier
   couleur: string
+  label: string
   onOpen: () => void
 }) {
+  const reduced = useReducedMotion()
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onOpen}
-      className="w-full rounded-xl border border-ink-200 bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md hover:shadow-brand-600/5"
+      whileHover={reduced ? undefined : { y: -5 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+      className="w-full rounded-2xl border border-ink-100 bg-white p-5 text-left shadow-[0_12px_40px_-18px_rgba(11,11,15,0.18)]"
     >
-      <div className="flex items-center gap-2">
-        <span
-          className="h-2 w-2 shrink-0 rounded-full"
-          style={{ backgroundColor: couleur }}
-          aria-hidden
-        />
-        <span className="text-[0.7rem] font-bold tracking-[0.05em] text-ink-400">
-          {dossier.reference}
+      <div className="flex items-center justify-between gap-2">
+        <Badge tone="outline">{dossier.reference}</Badge>
+        <span className="inline-flex items-center gap-2 text-sm font-bold text-ink-700">
+          <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: couleur }} aria-hidden />
+          {label}
         </span>
       </div>
-      <p className="mt-2 line-clamp-2 text-sm leading-snug font-bold text-ink-900">
+      <p className="mt-3 line-clamp-2 text-base leading-snug font-bold text-ink-900">
         {dossier.title ?? 'Sans intitulé'}
       </p>
-      <p className="mt-1 truncate text-xs text-ink-500">{dossier.applicant}</p>
-      <div className="mt-3 flex items-center justify-between text-xs">
-        <span className="font-extrabold text-brand-600">
-          {formatEuro(Number(dossier.amount ?? 0))}
-        </span>
-        <span className="text-ink-400">
-          {dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'}
-        </span>
+      <p className="mt-1 truncate text-sm text-ink-600">{dossier.applicant}</p>
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <span className="font-extrabold text-brand-700">{formatEuro(Number(dossier.amount ?? 0))}</span>
+        <span className="text-ink-600">{dossier.submitted_at ? formatDate(dossier.submitted_at) : '—'}</span>
       </div>
-    </button>
+    </motion.button>
   )
 }
 
@@ -58,7 +59,7 @@ export function Stage() {
   const stage = stageBySlug(slug)
   const { dossiers, reload } = useDossiers()
 
-  const [query, setQuery] = useState('')
+  const { query, setQuery } = useAdminQuery()
   const [openId, setOpenId] = useState<string | null>(null)
 
   const liste = useMemo(() => {
@@ -158,6 +159,7 @@ export function Stage() {
               <Carte
                 dossier={dossier}
                 couleur={stage.color}
+                label={stage.short}
                 onOpen={() => setOpenId(dossier.id)}
               />
             </li>

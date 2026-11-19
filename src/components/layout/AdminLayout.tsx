@@ -9,12 +9,11 @@ import {
   BadgeCheckIcon,
   CloseIcon,
 } from '../ui/icons'
-import { SidebarShell, type SidebarItem } from './SidebarShell'
+import { AdminShell } from './AdminShell'
 import { useAuth } from '../../store/auth'
 import { useDossiers } from '../../hooks/useDossiers'
 import { STAGES } from '../../lib/pipeline'
 
-/** Une icône par étape, dans l'ordre du parcours. */
 const ICONES = [FileBlankIcon, TimerIcon, BadgeCheckIcon, ReceiptIcon, MoneyIcon, CloseIcon]
 
 export function AdminLayout() {
@@ -22,35 +21,33 @@ export function AdminLayout() {
   const logout = useAuth((state) => state.logout)
   const { dossiers } = useDossiers()
 
-  const items: SidebarItem[] = [
-    { to: '/admin', label: 'Tableau de bord', icon: CollectionIcon, exact: true },
-    ...STAGES.map((stage, index) => ({
-      to: `/admin/${stage.slug}`,
-      label: stage.short,
-      icon: ICONES[index],
-      count: dossiers.filter((d) => stage.statuses.includes(d.status)).length,
-      attention: stage.actionable,
-    })),
-    // Hors du tunnel : s'inscrire n'est pas une étape du parcours d'un dossier.
-    { to: '/admin/comptes', label: 'Comptes inscrits', icon: UserPlusIcon },
-    { to: '/admin/mot-de-passe', label: 'Mot de passe', icon: LockIcon },
-  ]
+  const pendingProofs = dossiers.filter((dossier) => dossier.status === 'proofs_submitted').length
+  const pendingNew = dossiers.filter((dossier) => dossier.status === 'submitted').length
+  const pending = pendingProofs + pendingNew
+  const pendingTo = pendingProofs > 0 ? '/admin/preuves' : '/admin/nouveaux'
 
   return (
-    <SidebarShell
-      section="Back-office"
-      items={items}
-      identity={{
-        primary:
-          `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Administrateur',
-        secondary: user?.email,
-      }}
+    <AdminShell
+      firstName={user?.firstName || 'Administrateur'}
+      email={user?.email}
+      pending={pending}
+      pendingTo={pendingTo}
       onLogout={() => {
-        // Voir DashboardLayout : navigation complète à la déconnexion.
         void logout()
         window.location.assign('/')
       }}
-      wide
+      items={[
+        { to: '/admin', label: 'Tableau de bord', icon: CollectionIcon, exact: true },
+        ...STAGES.map((stage, index) => ({
+          to: `/admin/${stage.slug}`,
+          label: stage.short,
+          icon: ICONES[index],
+          count: dossiers.filter((dossier) => stage.statuses.includes(dossier.status)).length,
+          attention: stage.actionable,
+        })),
+        { to: '/admin/comptes', label: 'Comptes inscrits', icon: UserPlusIcon },
+        { to: '/admin/mot-de-passe', label: 'Mot de passe', icon: LockIcon },
+      ]}
     />
   )
 }

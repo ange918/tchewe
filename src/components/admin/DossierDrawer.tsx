@@ -62,7 +62,19 @@ export function DossierDrawer({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="outline">{dossier.reference}</Badge>
-              <Badge tone={pending ? 'warning' : 'neutral'}>{STATUS_LABELS[dossier.status]}</Badge>
+              <Badge
+                tone={
+                  dossier.status === 'rejected'
+                    ? 'danger'
+                    : dossier.status === 'financed'
+                      ? 'success'
+                      : dossier.status === 'submitted' || dossier.status === 'proofs_submitted'
+                        ? 'warning'
+                        : 'brand'
+                }
+              >
+                {STATUS_LABELS[dossier.status]}
+              </Badge>
                           </div>
             <h2 className="mt-3 truncate text-xl font-extrabold tracking-[-0.025em] text-ink-900">
               {dossier.title}

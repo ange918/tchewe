@@ -9,6 +9,8 @@
 export {
   BiArchiveIn as InboxIcon,
   BiBadgeCheck as BadgeCheckIcon,
+  BiBell as BellIcon,
+  BiCog as SettingsIcon,
   BiBuildings as InstitutionIcon,
   BiCheck as CheckIcon,
   BiCheckCircle as CheckCircleIcon,

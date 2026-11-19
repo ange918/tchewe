@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { InboxIcon, SearchIcon } from '../../components/ui/icons'
 import { Input } from '../../components/ui/Field'
@@ -6,6 +6,7 @@ import { Badge } from '../../components/ui/Badge'
 import { Card, CardBody } from '../../components/ui/Card'
 import { formatDate } from '../../lib/utils'
 import { stageOf } from '../../lib/pipeline'
+import { useAdminQuery } from '../../components/layout/adminQuery'
 import { useDossiers } from '../../hooks/useDossiers'
 import { useProfiles } from '../../hooks/useProfiles'
 
@@ -19,7 +20,7 @@ import { useProfiles } from '../../hooks/useProfiles'
 export function Accounts() {
   const { profiles, loading } = useProfiles()
   const { dossiers } = useDossiers()
-  const [query, setQuery] = useState('')
+  const { query, setQuery } = useAdminQuery()
 
   const liste = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -75,9 +76,7 @@ export function Accounts() {
           </CardBody>
         </Card>
       ) : (
-        <Card>
-          <CardBody className="p-0">
-            <ul className="divide-y divide-ink-100">
+        <ul className="grid gap-3">
               {liste.map((compte) => {
                 const stage = compte.dossier ? stageOf(compte.dossier.status) : undefined
                 const nom = `${compte.first_name} ${compte.last_name}`.trim()
@@ -85,7 +84,7 @@ export function Accounts() {
                 return (
                   <li
                     key={compte.id}
-                    className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-4 sm:px-5"
+                    className="flex flex-col gap-3 rounded-2xl border border-ink-100 bg-white p-4 shadow-[0_12px_40px_-18px_rgba(11,11,15,0.18)] sm:flex-row sm:items-center sm:gap-4 sm:p-5"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-bold text-ink-900">
@@ -107,7 +106,7 @@ export function Accounts() {
                       </p>
                     </div>
 
-                    <dl className="flex shrink-0 flex-wrap gap-x-6 gap-y-1 text-xs text-ink-500">
+                    <dl className="flex shrink-0 flex-wrap gap-x-6 gap-y-1 text-sm text-ink-600">
                       <div>
                         <dt className="font-bold tracking-[0.06em] text-ink-400 uppercase">
                           Naissance
@@ -140,7 +139,7 @@ export function Accounts() {
                               {stage.short}
                             </Link>
                           ) : (
-                            <span className="text-ink-400">Aucun dépôt</span>
+                            <span className="text-ink-600">Aucun dépôt</span>
                           )}
                         </dd>
                       </div>
@@ -149,8 +148,6 @@ export function Accounts() {
                 )
               })}
             </ul>
-          </CardBody>
-        </Card>
       )}
     </div>
   )

@@ -119,29 +119,32 @@ export function Terms() {
                 04
               </span>
               <h2 className="text-xl font-bold text-ink-900">
-                Garantie d’Engagement de 30 % & Compte Bancaire Partenaire
+                Garantie de 30 % sur le compte du candidat
               </h2>
             </div>
-            <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-700">
+            <div className="mt-4 space-y-3 text-base leading-relaxed text-ink-700">
               <p>
-                Conformément aux protocoles d’accord signés avec nos institutions financières partenaires, l’octroi effectif de la subvention requiert le versement préalable d'un <strong>apport d’engagement de 30 %</strong> du montant sollicité.
+                Conformément aux protocoles d’accord signés avec nos institutions financières partenaires, l’octroi effectif de la subvention requiert qu’un <strong>apport de 30 %</strong> du montant sollicité soit constaté au préalable.
+              </p>
+              <p>
+                <strong>Cet argent n’est pas versé à la plateforme, ni à un tiers.</strong> Le candidat le dépose sur un compte bancaire ouvert à son nom, auprès d’une banque partenaire. Les fonds restent sa propriété pendant toute la procédure. La plateforme ne les encaisse pas et ne les séquestre pas : elle demande seulement la preuve qu’ils sont bien sur ce compte.
               </p>
               <div className="grid gap-3 sm:grid-cols-2 mt-4">
                 <div className="rounded-xl border border-ink-200 bg-white p-4">
-                  <h3 className="font-bold text-ink-900 text-xs uppercase tracking-wider">Finalité de la garantie</h3>
-                  <p className="mt-1.5 text-xs text-ink-600 leading-normal">
-                    Atteste de la capacité d’action du porteur, prévient les candidatures fictives et sécurise la trésorerie de démarrage du projet.
+                  <h3 className="text-sm font-bold text-ink-900">À quoi sert la preuve</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-700">
+                    Elle atteste que le porteur dispose des fonds, écarte les candidatures fictives et montre que la trésorerie de démarrage est bien la sienne.
                   </p>
                 </div>
                 <div className="rounded-xl border border-ink-200 bg-white p-4">
-                  <h3 className="font-bold text-ink-900 text-xs uppercase tracking-wider">Séquestre et traçabilité</h3>
-                  <p className="mt-1.5 text-xs text-ink-600 leading-normal">
-                    L’apport est versé sur un compte bancaire dédié et reste affecté aux opérations du projet du candidat.
+                  <h3 className="text-sm font-bold text-ink-900">Où va l’argent</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-700">
+                    Sur le compte du candidat, ouvert à son nom. Il y reste. Il n’est affecté à personne d’autre.
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-ink-600 mt-2">
-                Le candidat doit téléverser le reçu de dépôt ainsi que le relevé d’identité bancaire dans son espace membre pour validation par le pôle d'audit avant le virement de la subvention.
+              <p className="mt-2 text-sm leading-relaxed text-ink-700">
+                Le candidat téléverse le reçu de dépôt et le justificatif du compte dans son espace. Le pôle d’audit les examine avant le virement de la subvention, qui est ensuite émis vers ce même compte.
               </p>
             </div>
           </Reveal>
@@ -181,7 +184,7 @@ export function Terms() {
             </div>
             <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-700">
               <p>
-                Après vérification administrative de la conformité du dossier, des scores obtenus aux trois sessions de QCM et de la constatation du dépôt de garantie de 30 %, <strong>l’ordre de virement irrévocable</strong> de la subvention est émis vers les coordonnées bancaires transmises.
+                Après vérification administrative de la conformité du dossier, des scores obtenus aux trois sessions de QCM et de la constatation du dépôt de 30 % sur le compte ouvert au nom du candidat, <strong>l’ordre de virement irrévocable</strong> de la subvention est émis vers ce même compte. La garantie, elle, n’a jamais quitté le candidat.
               </p>
               <p>
                 Le bénéficiaire s’engage à conserver l'ensemble des factures et pièces comptables relatives aux dépenses effectuées au moyen de la subvention pendant une durée minimale de cinq (5) ans, afin de satisfaire à tout contrôle inopiné mandaté par les auditeurs institutionnels.

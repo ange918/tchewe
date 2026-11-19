@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ArrowRightIcon, InfoIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { ButtonLink } from '../ui/Button'
 import { Reveal } from '../ui/motion'
+import { GUARANTEE_FAQ } from '../../lib/guarantee'
 
 export interface FAQItem {
   id: string
@@ -21,11 +22,17 @@ const FAQ_ITEMS: FAQItem[] = [
       'Non. Il s’agit d’une subvention d’amorçage non remboursable comprise entre 2 000 € et 650 000 €. Dès lors que les fonds sont alloués au projet approuvé et que les dépenses demeurent traçables et justifiées, aucune restitution n’est exigée.',
   },
   {
+    id: 'donne-argent',
+    category: 'garantie',
+    question: GUARANTEE_FAQ.question,
+    answer: GUARANTEE_FAQ.answer,
+  },
+  {
     id: 'garantie-30',
     category: 'garantie',
     question: 'Pourquoi un apport de garantie de 30 % est-il requis ?',
     answer:
-      'L’apport de 30 % constitue la preuve d’engagement irrévocable du porteur. Il est déposé sur un compte bancaire dédié auprès de notre établissement financier partenaire avant l’émission du virement de la subvention. Cet apport reste entièrement affecté aux besoins et à la trésorerie de votre propre projet.',
+      'Pour constater que vous disposez d’une trésorerie de démarrage, et pour écarter les candidatures fictives. Ces 30 % sont déposés sur un compte ouvert à votre nom, chez une banque partenaire. Ils ne sont versés ni à la plateforme ni à personne d’autre, et ils restent vôtres. Seule la preuve est examinée, avant le virement de la subvention.',
   },
   {
     id: 'qcm-48h',
@@ -46,7 +53,7 @@ const FAQ_ITEMS: FAQItem[] = [
     category: 'garantie',
     question: 'Quel est le délai de virement effectif de la subvention ?',
     answer:
-      'Dès la validation des 3 sessions de QCM et la vérification des pièces de garantie (reçu de versement de 30 % et justificatif de compte) par le comité administratif, l’ordre de virement irrévocable est émis sous 48 à 72 heures ouvrées vers votre compte.',
+      'Dès que les 3 sessions sont validées et que la preuve du dépôt — reçu et justificatif du compte ouvert à votre nom — est acceptée, l’ordre de virement est émis sous 48 à 72 heures ouvrées vers ce même compte. La garantie, elle, n’a pas quitté votre compte.',
   },
   {
     id: 'candidats-eligibles',
@@ -75,13 +82,14 @@ const CATEGORIES = [
   { id: 'all', label: 'Toutes les questions' },
   { id: 'financement', label: 'Financement & Subvention' },
   { id: 'evaluation', label: 'Évaluation & QCM' },
-  { id: 'garantie', label: 'Garantie bancaire 30 %' },
+  { id: 'garantie', label: 'Garantie de 30 %' },
   { id: 'candidature', label: 'Candidature & Documents' },
 ] as const
 
 export function FAQSection() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [openId, setOpenId] = useState<string | null>('non-remboursable')
+  const reduced = useReducedMotion()
 
   const filteredItems = FAQ_ITEMS.filter((item) =>
     selectedCategory === 'all' ? true : item.category === selectedCategory
@@ -101,7 +109,7 @@ export function FAQSection() {
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-ink-600 sm:text-lg">
             Retrouvez toutes les réponses essentielles sur le fonctionnement des subventions,
-            les 3 étapes de QCM, l'apport de garantie de 30 % et les modalités de versement.
+            les 3 étapes de QCM, la garantie de 30 % (qui reste sur votre compte) et le versement.
           </p>
         </Reveal>
 
@@ -114,7 +122,7 @@ export function FAQSection() {
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`rounded-xl px-4 py-2 text-xs font-bold transition sm:text-sm ${
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition duration-200 active:scale-[0.97] ${
                   active
                     ? 'bg-brand-600 text-white shadow-md shadow-brand-600/20'
                     : 'bg-ink-50 text-ink-600 hover:bg-ink-100 hover:text-ink-900'
@@ -145,7 +153,7 @@ export function FAQSection() {
                   className="flex w-full items-center justify-between gap-4 p-5 text-left font-bold text-ink-900 transition hover:bg-white sm:text-lg"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs font-black text-brand-600">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-sm font-black text-brand-600">
                       ?
                     </span>
                     <span>{item.question}</span>
@@ -180,10 +188,10 @@ export function FAQSection() {
                   {isOpen && (
                     <motion.div
                       id={`faq-answer-${item.id}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                      initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                      animate={reduced ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
+                      exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                      transition={reduced ? { duration: 0.15 } : { type: 'spring', stiffness: 320, damping: 28 }}
                       className="overflow-hidden bg-white px-5 pb-5 pt-1 text-sm leading-relaxed text-ink-600 sm:text-base"
                     >
                       <div className="rounded-xl border border-brand-100 bg-brand-50/40 p-4 text-ink-700">
@@ -207,7 +215,7 @@ export function FAQSection() {
               <h3 className="text-base font-bold text-ink-900 sm:text-lg">
                 Vous avez d'autres questions sur le règlement ?
               </h3>
-              <p className="mt-0.5 text-xs text-ink-600 sm:text-sm">
+              <p className="mt-1 text-sm text-ink-600">
                 Consultez le texte intégral des conditions générales ou lancez votre candidature.
               </p>
             </div>

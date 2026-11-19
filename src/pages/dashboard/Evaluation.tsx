@@ -154,8 +154,8 @@ function PhaseResult({
           <div className="mx-auto max-w-lg rounded-2xl bg-emerald-50 p-5 text-left ring-1 ring-emerald-100">
             <p className="text-sm font-extrabold text-emerald-700">Évaluation terminée</p>
             <p className="mt-2 text-sm leading-relaxed text-ink-600">
-              Les trois sessions sont validées. Vous pouvez maintenant déposer vos preuves de
-              garantie.
+              Les trois sessions sont validées. Prochaine étape : déposer 30 % sur un compte ouvert
+              à votre nom, puis transmettre la preuve. Cet argent ne nous est pas versé.
             </p>
           </div>
         )}
@@ -258,7 +258,7 @@ export function Evaluation() {
                 toast.success(
                   `Phase ${outcome.phase} validée`,
                   outcome.phase >= TOTAL_PHASES
-                    ? 'Vous pouvez déposer votre garantie.'
+                    ? 'Déposez 30 % sur votre compte, puis envoyez la preuve.'
                     : 'La phase suivante s’ouvrira dans 48 heures.',
                 )
               } else {
@@ -315,9 +315,10 @@ export function Evaluation() {
               <CheckCircleIcon className="h-6 w-6" aria-hidden />
             </span>
             <div className="flex-1">
-              <h1 className="text-2xl text-ink-900">Évaluation terminée</h1>
+              <h1 className="text-2xl text-ink-900">Passez à la garantie.</h1>
               <p className="mt-1 text-ink-600">
-                Les {TOTAL_PHASES} phases sont validées. Passez au dépôt de votre garantie.
+                Les {TOTAL_PHASES} phases sont validées. Déposez 30 % sur le compte ouvert à votre
+                nom : la plateforme ne reçoit pas cet argent, elle vérifie la preuve.
               </p>
             </div>
             <ButtonLink to="/dashboard/funding" size="lg">
@@ -357,7 +358,7 @@ export function Evaluation() {
     <div className="space-y-6">
       <div>
         <Badge tone="outline">Étape 2 sur 3</Badge>
-        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Évaluation chronométrée</h1>
+        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Passez l’évaluation.</h1>
         <p className="mt-2 max-w-2xl text-ink-600">
           Trois sessions de 10 questions, espacées de 48 heures, évaluent votre maîtrise du projet,
           de sa gestion financière et de ses engagements.

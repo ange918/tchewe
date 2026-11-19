@@ -20,6 +20,7 @@ function Shell({
   htmlFor: string
   children: ReactNode
 }) {
+  const messageId = error ? `${htmlFor}-error` : hint ? `${htmlFor}-hint` : undefined
   return (
     <div className="space-y-1.5">
       {label && (
@@ -29,9 +30,13 @@ function Shell({
       )}
       {children}
       {error ? (
-        <p className="text-sm font-medium text-rose-600">{error}</p>
+        <p id={messageId} className="text-sm font-medium text-rose-700">
+          {error}
+        </p>
       ) : hint ? (
-        <p className="text-sm text-ink-500">{hint}</p>
+        <p id={messageId} className="text-sm text-ink-600">
+          {hint}
+        </p>
       ) : null}
     </div>
   )
@@ -53,6 +58,7 @@ export function Input({ label, hint, error, suffix, className, id, ...props }: I
         <input
           id={inputId}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
           className={cn(control, error && 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/15', suffix && 'pr-12', className)}
           {...props}
         />
@@ -80,6 +86,7 @@ export function Textarea({ label, hint, error, className, id, ...props }: Textar
       <textarea
         id={inputId}
         aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
         className={cn(control, 'min-h-32 resize-y', error && 'border-rose-300', className)}
         {...props}
       />
@@ -98,7 +105,13 @@ export function Select({ label, hint, error, className, id, children, ...props }
   const inputId = id ?? generated
   return (
     <Shell label={label} hint={hint} error={error} htmlFor={inputId}>
-      <select id={inputId} className={cn(control, 'appearance-none pr-10', className)} {...props}>
+      <select
+        id={inputId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
+        className={cn(control, 'appearance-none pr-10', className)}
+        {...props}
+      >
         {children}
       </select>
     </Shell>
@@ -129,6 +142,7 @@ export function Checkbox({
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
           aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${inputId}-error` : undefined}
           className={cn(
             'mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded-[0.35rem] border-ink-300 text-brand-600',
             'focus:ring-4 focus:ring-brand-500/20',
@@ -139,7 +153,11 @@ export function Checkbox({
           {children}
         </label>
       </div>
-      {error && <p className="mt-1.5 pl-8 text-sm font-medium text-rose-600">{error}</p>}
+      {error && (
+        <p id={`${inputId}-error`} className="mt-1.5 pl-8 text-sm font-medium text-rose-700">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

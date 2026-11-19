@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { ArrowRightIcon, BadgeCheckIcon, CheckCircleIcon, ClipboardIcon, DonateIcon, MoneyIcon, TimerIcon, UserPlusIcon, WalletIcon } from '../components/ui/icons'
 import { Badge } from '../components/ui/Badge'
 import { ButtonLink } from '../components/ui/Button'
 import { HeroVisual } from '../components/marketing/HeroVisual'
 import { Partners } from '../components/marketing/Partners'
 import { FAQSection } from '../components/marketing/FAQSection'
+import { GuaranteeExplainer } from '../components/guarantee/GuaranteeExplainer'
+import { cn } from '../lib/utils'
 import { Counter } from '../components/ui/Counter'
 import { MEDIA, MEDIA_ALT } from '../data/media'
 import { Enter, Reveal, RevealGroup, RevealItem } from '../components/ui/motion'
@@ -21,42 +24,48 @@ const STEPS = [
     icon: UserPlusIcon,
     step: '01',
     title: 'Inscription',
-    text: 'Créez votre compte et acceptez les conditions du programme : subvention non remboursable, reversement de dividendes aux ONG, garantie de 30 %.',
+    text: 'Créez votre compte et acceptez les conditions : subvention non remboursable, reversement aux ONG, et 30 % qui restent sur votre compte.',
+    next: 'Ensuite, vous présentez le projet.',
     image: '/images/steps/01-inscription.jpg',
   },
   {
     icon: ClipboardIcon,
     step: '02',
     title: 'Soumission du dossier',
-    text: 'Présentez votre projet, le montant sollicité et la durée d’exécution, puis joignez votre pitch deck, business plan et documents d’enregistrement.',
+    text: 'Présentez votre projet, le montant sollicité et la durée, puis joignez le pitch deck et le business plan.',
+    next: 'Ensuite, l’administration lit le dossier.',
     image: '/images/steps/02-soumission.jpg',
   },
   {
     icon: TimerIcon,
     step: '03',
     title: 'QCM — Phase 1 (J0)',
-    text: 'Dès la validation de votre dossier par l’administration, 10 questions chronométrées évaluent vos fondamentaux entrepreneuriaux.',
+    text: 'Dès la validation du dossier, 10 questions chronométrées évaluent vos fondamentaux entrepreneuriaux.',
+    next: 'Ensuite, deux sessions s’ouvrent à 48 heures d’intervalle.',
     image: '/images/steps/03-quiz1.jpg',
   },
   {
     icon: TimerIcon,
     step: '04',
     title: 'QCM — Phases 2 & 3 (J+2, J+4)',
-    text: 'Deux sessions supplémentaires s’ouvrent toutes les 48 heures : modèle économique, gestion financière, impact et conformité.',
+    text: 'Deux sessions s’ouvrent toutes les 48 heures : modèle économique, gestion, impact et conformité.',
+    next: 'Ensuite, vous déposez 30 % sur un compte à votre nom.',
     image: '/images/steps/04-quiz2.jpg',
   },
   {
     icon: WalletIcon,
     step: '05',
-    title: 'Dépôt de la garantie de 30 %',
-    text: 'Ouvrez votre compte auprès de la banque partenaire, déposez votre apport puis transmettez le reçu et le justificatif de compte.',
+    title: 'Déposez 30 % sur votre compte',
+    text: 'Chez une banque partenaire, à votre nom. L’argent reste le vôtre : vous n’envoyez que la preuve.',
+    next: 'Ensuite, la preuve est vérifiée. Le virement part vers ce même compte.',
     image: '/images/steps/05-garantie.jpg',
   },
   {
     icon: MoneyIcon,
     step: '06',
     title: 'Virement de la subvention',
-    text: 'Après vérification des preuves par l’administration, l’ordre de virement est émis vers votre compte.',
+    text: 'Après vérification de la preuve, l’ordre de virement est émis vers votre compte. Les 30 % n’ont pas bougé.',
+    next: 'La subvention arrive sur le compte ouvert à votre nom.',
     image: '/images/steps/06-virement.jpg',
   },
 ]
@@ -74,8 +83,8 @@ const COMMITMENTS = [
   },
   {
     icon: BadgeCheckIcon,
-    title: 'Apport de garantie de 30 %',
-    text: 'Un apport équivalent à 30 % du montant sollicité est déposé sur le compte partenaire avant le virement, comme preuve d’engagement du porteur.',
+    title: 'Garantie de 30 % sur votre compte',
+    text: 'Vous déposez 30 % du montant sur un compte ouvert à votre nom, chez une banque partenaire. Vous ne les versez à personne : la plateforme vérifie la preuve, et l’argent reste le vôtre.',
   },
 ]
 
@@ -87,6 +96,9 @@ const FIGURES = [
 ]
 
 export function Landing() {
+  const [activeStep, setActiveStep] = useState('05')
+  const active = STEPS.find((step) => step.step === activeStep) ?? STEPS[4]
+
   return (
     <>
       {/* ---------------------------------------------------------------- Hero */}
@@ -104,7 +116,8 @@ export function Landing() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-600 sm:text-xl">
               INNOVA FUND accompagne les porteurs de projets à fort impact social et environnemental
               par une <strong className="font-bold text-ink-900">subvention non remboursable</strong>,
-              attribuée après une évaluation en trois sessions et le dépôt d’une garantie de 30 %.
+              après une évaluation en trois sessions. Une garantie de 30 % est déposée sur un compte
+              à votre nom : elle ne nous est pas versée.
             </p>
 
             </Enter>
@@ -120,7 +133,7 @@ export function Landing() {
             </Enter>
 
             <Enter delay={0.24} className="mt-10 border-t border-ink-100 pt-6">
-              <p className="text-xs font-bold tracking-[0.12em] text-ink-400 uppercase">
+              <p className="text-sm font-bold tracking-[0.08em] text-ink-600 uppercase">
                 Avec le soutien de nos partenaires institutionnels
               </p>
               <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -136,7 +149,7 @@ export function Landing() {
                       loading="lazy"
                       referrerPolicy="no-referrer"
                     />
-                    <span className="text-xs font-bold tracking-[-0.01em] text-ink-700">
+                    <span className="text-sm font-bold tracking-[-0.01em] text-ink-700">
                       {partner.name}
                     </span>
                   </li>
@@ -196,10 +209,17 @@ export function Landing() {
 
           <RevealGroup as="ol" className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {STEPS.map(({ icon: Icon, ...step }) => (
-              <RevealItem
-                as="li"
-                key={step.step}
-                className="group relative flex min-h-[360px] flex-col justify-between overflow-hidden rounded-2xl border border-ink-200/80 bg-ink-950 p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-brand-400 hover:shadow-2xl hover:shadow-ink-950/30"
+              <RevealItem as="li" key={step.step}>
+              <button
+                type="button"
+                onClick={() => setActiveStep(step.step)}
+                aria-pressed={activeStep === step.step}
+                className={cn(
+                  'group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden rounded-2xl border bg-ink-950 p-6 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-2xl hover:shadow-ink-950/30 active:scale-[0.97]',
+                  activeStep === step.step
+                    ? 'border-brass-700 ring-2 ring-brass-700'
+                    : 'border-ink-200/80 hover:border-brand-400',
+                )}
               >
                 {/* Image couvrant l'intégralité de la carte (Full Card) */}
                 <img
@@ -218,7 +238,7 @@ export function Landing() {
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 text-brand-600 shadow-lg backdrop-blur-md ring-1 ring-white/40 transition duration-300 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
-                  <span className="rounded-lg bg-ink-950/75 px-3 py-1 font-mono text-xs font-black tracking-wider text-amber-300 shadow-md backdrop-blur-md ring-1 ring-white/20">
+                  <span className="rounded-lg bg-ink-950/75 px-3 py-1 font-mono text-sm font-black tracking-wider text-brass-100 shadow-md backdrop-blur-md ring-1 ring-white/20">
                     ÉTAPE {step.step}
                   </span>
                 </div>
@@ -228,13 +248,21 @@ export function Landing() {
                   <h3 className="text-lg font-bold tracking-tight text-white group-hover:text-amber-300">
                     {step.title}
                   </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-ink-200">
+                  <p className="mt-2 text-sm leading-relaxed text-ink-100">
                     {step.text}
                   </p>
                 </div>
+              </button>
               </RevealItem>
             ))}
           </RevealGroup>
+
+          <div className="mt-6 rounded-2xl bg-ink-950 px-6 py-6 text-white sm:px-8" aria-live="polite">
+            <p className="text-sm font-bold tracking-[0.08em] text-brass-100 uppercase">
+              Étape {active?.step} · ce qui suit
+            </p>
+            <p className="mt-2 max-w-2xl text-lg leading-snug font-bold">{active?.next}</p>
+          </div>
 
           <Reveal className="mt-10">
             <ButtonLink to="/auth/register" size="lg">
@@ -242,6 +270,12 @@ export function Landing() {
               <ArrowRightIcon className="h-4 w-4" aria-hidden />
             </ButtonLink>
           </Reveal>
+        </div>
+      </section>
+
+      <section id="garantie" className="scroll-mt-20 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
+          <GuaranteeExplainer heading="Gardez vos 30 %." />
         </div>
       </section>
 

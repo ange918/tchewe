@@ -8,6 +8,7 @@ import { Input, Select, Textarea } from '../../components/ui/Field'
 import { Badge } from '../../components/ui/Badge'
 import { toast } from '../../lib/toast'
 import { formatBytes, formatDate, formatEuro } from '../../lib/utils'
+import { GuaranteeExplainer } from '../../components/guarantee/GuaranteeExplainer'
 import { documentsOfKind, GUARANTEE_RATE, useApplication } from '../../store/application'
 
 const MIN_AMOUNT = 2000
@@ -91,10 +92,11 @@ function SubmissionForm() {
     <div className="space-y-6">
       <div>
         <Badge tone="outline">Étape 1 sur 3</Badge>
-        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Présentation de votre projet</h1>
+        <h1 className="mt-4 text-3xl text-ink-900 sm:text-4xl">Présentez votre projet.</h1>
         <p className="mt-2 max-w-2xl text-ink-600">
-          Ces informations servent de base à l’instruction de votre dossier. Vous pourrez les
-          compléter tant que l’administration ne l’a pas validé.
+          Ces informations servent de base à l’instruction. Une fois envoyé, le dossier part en
+          lecture : il n’est plus modifiable. Ensuite, l’administration le valide et l’évaluation
+          s’ouvre.
         </p>
       </div>
 
@@ -125,7 +127,7 @@ function SubmissionForm() {
                 error={errors.amount}
                 hint={
                   guarantee > 0
-                    ? `Garantie de 30 % à déposer : ${formatEuro(guarantee)}`
+                    ? `Garantie à déposer sur votre compte : ${formatEuro(guarantee)}. Cet argent reste le vôtre.`
                     : `Entre ${formatEuro(MIN_AMOUNT)} et ${formatEuro(MAX_AMOUNT)}`
                 }
               />
@@ -155,6 +157,8 @@ function SubmissionForm() {
             />
           </CardBody>
         </Card>
+
+        {guarantee > 0 && <GuaranteeExplainer amountLabel={formatEuro(guarantee)} compact />}
 
         <Card>
           <CardHeader

@@ -29,7 +29,7 @@ const EMPTY: FormState = {
 const TERMS = [
   'La subvention accordée est non remboursable, sous réserve du respect des conditions du programme.',
   'Je m’engage à reverser une part de mes dividendes aux ONG partenaires du programme.',
-  'Je devrai déposer un apport de garantie équivalent à 30 % du montant sollicité avant le virement.',
+  'Je déposerai 30 % du montant sollicité sur un compte ouvert à mon nom, chez une banque partenaire. Cet argent reste le mien : la plateforme n’en reçoit rien, elle vérifie seulement la preuve.',
 ]
 
 const MIN_AGE = 18

@@ -66,7 +66,7 @@ function Nav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: () => v
             {count !== undefined && (
               <span
                 className={cn(
-                  'shrink-0 rounded-full px-2 py-0.5 text-xs font-extrabold tabular-nums',
+                  'shrink-0 rounded-full px-2 py-0.5 text-sm font-extrabold tabular-nums',
                   attention && count > 0
                     ? 'bg-amber-400 text-ink-950'
                     : 'bg-ink-100 text-ink-500',
@@ -115,7 +115,7 @@ export function SidebarShell({ section, items, aside, identity, onLogout, wide }
         <NavLink to="/" aria-label="INNOVA FUND — accueil" className="inline-block">
           <Logo />
         </NavLink>
-        <p className="mt-2 text-[0.65rem] font-bold tracking-[0.12em] text-ink-400 uppercase">
+        <p className="mt-2 text-sm font-bold tracking-[0.08em] text-ink-600 uppercase">
           {section}
         </p>
       </div>
@@ -129,7 +129,7 @@ export function SidebarShell({ section, items, aside, identity, onLogout, wide }
       <div className="border-t border-ink-100 pt-4">
         <p className="truncate text-sm font-bold text-ink-900">{identity.primary}</p>
         {identity.secondary && (
-          <p className="truncate text-xs font-semibold text-brand-600">{identity.secondary}</p>
+          <p className="truncate text-sm font-semibold text-brand-700">{identity.secondary}</p>
         )}
         <button
           type="button"
